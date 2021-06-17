@@ -104,6 +104,9 @@ lib/
 .vscode
 demoPack
 plugins
+.classpath
+.factorypath
+.project
 
 pom.xml.tag
 pom.xml.releaseBackup
