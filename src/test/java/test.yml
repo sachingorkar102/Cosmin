@@ -1,0 +1,10 @@
+fancy-firework:
+  id: FIREWORK_STAR
+  enchants:
+    unbreaking: 1
+  flags:
+    - ALL  
+  firework:
+    type: STAR
+    colors:
+      - RED

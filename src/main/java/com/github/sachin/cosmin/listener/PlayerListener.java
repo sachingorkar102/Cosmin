@@ -1,0 +1,145 @@
+package com.github.sachin.cosmin.listener;
+
+import java.util.Arrays;
+
+import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.database.PlayerData;
+import com.github.sachin.cosmin.player.CosminPlayer;
+import com.github.sachin.cosmin.utils.CItemSlot;
+import com.github.sachin.cosmin.utils.InventoryUtils;
+
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
+
+
+public class PlayerListener implements Listener{
+
+    private Cosmin plugin;
+
+    public PlayerListener(Cosmin plugin){
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void playerJoin(PlayerJoinEvent e){
+        Player player = e.getPlayer();
+        plugin.getEntityIdMap().put(player.getEntityId(), player);
+        new BukkitRunnable(){
+            @Override
+            public void run() {
+                if(plugin.getConfigUtils().isMySQLEnabled()){
+                    if(plugin.MySQL().isConnected()){
+                        PlayerData playerData = new PlayerData(player.getUniqueId());
+                        if(playerData.playerExists()){
+                            CosminPlayer cosminPlayer = new CosminPlayer(player.getUniqueId(),Arrays.asList(InventoryUtils.base64ToItemStackArray(playerData.getPlayerData())));
+                            cosminPlayer.setPurchasedItems(playerData.getPurchasedItems("PurchasedItems"));
+                            cosminPlayer.setPurchasedSets(playerData.getPurchasedItems("PurchasedSets"));
+                            cosminPlayer.clearNonExsistantArmorItems();
+                            cosminPlayer.computeAndPutEquipmentPairList();
+                            plugin.getPlayerManager().addPlayer(cosminPlayer);
+                            cosminPlayer.setFakeSlotItems();
+                            return;
+                        }
+                    }
+                }
+                if(plugin.getPlayerManager().containsPlayer(player)){
+                    CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+                    cosminPlayer.setFakeSlotItems();
+                    cosminPlayer.sendPacketWithinRange(60);
+                }
+            }
+        }.runTaskLater(plugin, 40);
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerQuitEvent e){
+        Player player = e.getPlayer();
+        plugin.getEntityIdMap().remove(player.getEntityId());
+        if(plugin.getConfigUtils().isMySQLEnabled() && plugin.getPlayerManager().containsPlayer(player)){
+            PlayerData playerData = new PlayerData(player.getUniqueId());
+            CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+            String data = InventoryUtils.itemStackListToBase64(cPlayer.getCosminInvContents());
+            playerData.updatePlayerData(data,cPlayer.getPurchasedItems(),cPlayer.getPurchasedSets());
+            plugin.getPlayerManager().removePlayer(player.getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void playerSwapItemEvent(PlayerSwapHandItemsEvent e){
+        Player player = e.getPlayer();
+        if(plugin.getPlayerManager().containsPlayer(player)){
+            CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+            if(!cosminPlayer.isEnabled(CItemSlot.OFFHAND)){
+                cosminPlayer.setSlotItem(CItemSlot.OFFHAND, e.getOffHandItem());
+
+            }
+        }
+    }
+
+    @EventHandler
+    public void playerExpChangeEvent(PlayerExpChangeEvent e){
+        Player player = e.getPlayer();
+        if(plugin.getPlayerManager().containsPlayer(player)){
+            CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+            cosminPlayer.setFakeSlotItems();
+        }
+    }
+
+    @EventHandler
+    public void playerEquipArmorEvent(PlayerInteractEvent e){
+        if(e.getItem() == null || e.getHand() != EquipmentSlot.HAND) return;
+        Player player = e.getPlayer();
+        if(!plugin.getPlayerManager().containsPlayer(player)) return;
+        CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+        ItemStack item = e.getItem();
+        String itemName = item.getType().name();
+        for(String s: Arrays.asList("HELMET","CHESTPLATE","LEGGINGS","BOOTS","ELYTRA")){
+            if(itemName.endsWith(s)){
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        cPlayer.computeAndPutEquipmentPairList();
+                        cPlayer.setFakeSlotItems();
+                    }
+                }.runTaskLater(plugin, 1);
+            }
+        }
+
+    }
+
+    @EventHandler
+    public void playerGameModeChangeEvent(PlayerGameModeChangeEvent e){
+        Player player = e.getPlayer();
+        if(!plugin.getPlayerManager().containsPlayer(player)) return;
+        CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+        if(e.getNewGameMode() == GameMode.CREATIVE) {
+            cPlayer.equipOrignalArmor();
+        }
+        else{
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    cPlayer.computeAndPutEquipmentPairList();
+                    cPlayer.setFakeSlotItems();
+                }
+            }.runTaskLater(plugin, 1);
+        }
+    }
+
+   
+
+
+    
+}

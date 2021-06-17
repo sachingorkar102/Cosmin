@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.sachin.cosmin</groupId>
+    <artifactId>Cosmin</artifactId>
+    <version>0.1</version>
+    <packaging>jar</packaging>
+
+    <name>Cosmin</name>
+
+    <description>Adds ability to wear fake armor</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                  <execution>
+                    <id>shade</id>
+                    <phase>package</phase>
+                    <goals>
+                      <goal>shade</goal>
+                    </goals>
+                  </execution>
+                </executions>
+                <configuration>
+                  <relocations>
+                    <relocation>
+                      <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                      <shadedPattern>de.tr7zw.shaded.nbtapi</shadedPattern>
+                    </relocation>
+                  </relocations>
+                </configuration>
+            </plugin>
+
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+          </repository>
+
+          <!-- placeholder api -->
+          <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.12.2</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.12.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.12.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.17</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.17</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.17.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>Spigot-1.16.5</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.16.5</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.16.5.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.16.1</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.16.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.16.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.16.3</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.16.3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.16.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.14.4</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.14.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.14.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>Spigot-1.15.2</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.15.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spigot-1.15.2.jar</systemPath>
+        </dependency>
+
+        
+        <!-- HikariCP -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>4.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- NBTApi -->
+        <!-- <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api-plugin</artifactId>
+            <version>2.7.1</version>
+            <scope>compile</scope>
+        </dependency> -->
+
+        <!-- Protocol Lib -->
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.6.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Placeholder Api -->
+        <dependency>
+            <groupId>me.clip</groupId>
+             <artifactId>placeholderapi</artifactId>
+             <version>2.10.9</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Vault -->
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.0-alpha1</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.0-alpha1</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+    </dependencies>
+</project>
