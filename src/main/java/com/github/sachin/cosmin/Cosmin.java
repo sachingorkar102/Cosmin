@@ -58,6 +58,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private static final Gson gson = new Gson();
     private static Cosmin instance;
     private String minecraftVersion;
+    private boolean pluginDisabled;
 
     public boolean postNetherUpdate;
     private boolean papiEnabled;
@@ -80,17 +81,25 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     @Override
     public void onEnable() {
-
+        this.pluginDisabled = false;
         instance = this;
+        if(!getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
+            getLogger().warning("Could not find ProtocolLib which is a required dependency, stopping cosmin");
+            this.pluginDisabled = true;
+        }
         if(!setupVersion()){
             getLogger().warning("Running incompatiable minecraft version, stopping cosmin");
-            Bukkit.getPluginManager().disablePlugin(this);
+            this.pluginDisabled = true;
             return;
         }
         NBTAPI nbt = new NBTAPI();
         if(!nbt.loadVersions(this)){
             getLogger().warning("Running incompatiable minecraft version, stopping cosmin");
-            Bukkit.getPluginManager().disablePlugin(this);
+            this.pluginDisabled = true;
+            return;
+        }
+        if(this.pluginDisabled){
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
         this.saveDefaultConfig();
@@ -124,7 +133,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     @Override
     public void onDisable() {
-        if(!isEnabled()) return;
+        if(pluginDisabled) return;
         savePlayerData();
     }
 

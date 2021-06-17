@@ -23,6 +23,7 @@ import com.github.sachin.cosmin.utils.ItemBuilder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -224,6 +225,9 @@ public class CosminPlayer {
                         orignalArmor = inv.getItemInOffHand().clone();
                     }
                     break;             
+            }
+            if(armor == null){
+                armor = new ItemStack(Material.AIR);
             }
             if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType())){
                 pairs.put(slot, armor);
