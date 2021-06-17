@@ -50,6 +50,7 @@ public class CosminConstants {
     public static final String ENABLE_STORE = "enable-store";
     public static final String SHOP_ITEM_LORE = "shop-item-lore";
     public static final String TOGGLE_ITEM_TOOLTIP = "toggle-item-tooltip.";
+    public static final String BLACKLIST_MATERIALS = "blacklist-materials";
 
 
     public static final String MESSAGE_NO_PERM = "messages.no-permission";

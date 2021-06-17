@@ -97,4 +97,8 @@ toggle-item-tooltip:
   LEGS: "&7[LEGS]"
   FEET: "&7[FEET]"
   OFFHAND: "&7[OFFHAND]"
+
+# list of materials that will not be displayed when equiped
+blacklist-materials:
+  - TRIDENT
   

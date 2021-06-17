@@ -7,15 +7,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.ArmorManager;
 import com.github.sachin.cosmin.armor.CosmeticSet;
 import com.github.sachin.cosmin.armor.CosminArmor;
+import com.github.sachin.cosmin.xseries.XMaterial;
 import com.google.common.base.Enums;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -32,6 +35,7 @@ public class ConfigUtils {
     private File itemsDirectory;
 
     private final Map<Integer,Boolean> externalArmorMap = new HashMap<>();
+    private final List<Material> blackListMaterials = new ArrayList<>();
     private final List<ClickType> hotKeysList = new ArrayList<>();
     private final List<ConfigurationSection> cosmeticSetSections = new ArrayList<>();
 
@@ -90,6 +94,10 @@ public class ConfigUtils {
         }
     }
 
+
+
+    
+
     public void reloadAllConfigs(){
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
@@ -97,6 +105,7 @@ public class ConfigUtils {
         cosmeticSetSections.clear();
         loadCosmeticItems();
         loadCosmeticSets();
+        blackListMaterials.clear();
         externalArmorMap.clear();
         hotKeysList.clear();
         
@@ -146,6 +155,22 @@ public class ConfigUtils {
 
     public boolean isMySQLEnabled(){
         return plugin.getConfig().getBoolean(CosminConstants.DB_ENABLED,false);
+    }
+
+    public List<Material> getBlackListMaterials(){
+        if(blackListMaterials.isEmpty()){
+            List<String> mats = plugin.getConfig().getStringList(CosminConstants.BLACKLIST_MATERIALS);
+            if(mats != null){
+                for (String name : mats) {
+                    Optional<XMaterial> xm = XMaterial.matchXMaterial(name);
+                    if(xm.isPresent()){
+                        Material m = xm.get().parseMaterial();
+                        blackListMaterials.add(m);
+                    }
+                }
+            }
+        }
+        return this.blackListMaterials;
     }
 
     public List<ClickType> getHotKeysList() {

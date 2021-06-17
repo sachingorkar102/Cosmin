@@ -37,6 +37,7 @@ public class CosminPlayer {
     private Map<CItemSlot,Boolean> orignalArmorMap = new HashMap<>();
     private Set<String> purchasedItems = new HashSet<>();
     private Set<String> purchasedSets = new HashSet<>();
+    private Cosmin plugin;
 
     private boolean hasInventoryOpen=false;
     private boolean preventPacketSending=false;
@@ -54,6 +55,7 @@ public class CosminPlayer {
     public CosminPlayer(UUID uuid,List<ItemStack> cosminInvContents){
         this.cosminInvContents = cosminInvContents;
         this.uuid = uuid;
+        this.plugin = Cosmin.getInstance();
         for(CItemSlot slot : CItemSlot.values()){
             orignalArmorMap.put(slot, false);
         }
@@ -223,7 +225,7 @@ public class CosminPlayer {
                     }
                     break;             
             }
-            if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor){
+            if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType())){
                 pairs.put(slot, armor);
                 orignalArmorMap.put(slot, false);
             }
@@ -241,7 +243,6 @@ public class CosminPlayer {
     public void fakeEquip(Player targetPlayer){
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
-        Cosmin plugin = Cosmin.getInstance();
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
         
         
@@ -279,7 +280,7 @@ public class CosminPlayer {
         preventEntityEquipPacket(true);
         if(targetPlayer.hasPermission(CosminConstants.PERM_REALARMOR)){
             Player player = getBukkitPlayer().get();
-            if(Cosmin.getInstance().postNetherUpdate){
+            if(plugin.postNetherUpdate){
                 List<Pair<ItemSlot,ItemStack>> pairs = new ArrayList<>();
                 for(CItemSlot slot:equipmentMap.keySet()){
                     pairs.add(new Pair<ItemSlot,ItemStack>(slot.getProtocolSlot(),player.getInventory().getItem(slot.getAltSlotId())));
@@ -293,7 +294,7 @@ public class CosminPlayer {
             }
         }
         try {
-            Cosmin.getInstance().getProtocolManager().sendServerPacket(targetPlayer, packet);
+            plugin.getProtocolManager().sendServerPacket(targetPlayer, packet);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -317,7 +318,6 @@ public class CosminPlayer {
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
         if(player.getGameMode() == GameMode.CREATIVE) return;
-        Cosmin plugin = Cosmin.getInstance();
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
         for (CItemSlot slot : equipmentMap.keySet()) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
@@ -336,7 +336,6 @@ public class CosminPlayer {
     public void equipOrignalArmor(){
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
-        Cosmin plugin = Cosmin.getInstance();
         for (CItemSlot slot : CItemSlot.values()) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
@@ -352,7 +351,6 @@ public class CosminPlayer {
     }
 
     public void clearNonExsistantArmorItems(){
-        Cosmin plugin = Cosmin.getInstance();
         for(int i = 11; i<16; i++){
             ItemStack item = cosminInvContents.get(i);
             if(!ItemBuilder.isHatItem(item) || ItemBuilder.isForcedItem(item)) continue;
@@ -374,7 +372,6 @@ public class CosminPlayer {
   
 
     public void updateArmorSets(String setName,boolean forceEquip){
-        Cosmin plugin = Cosmin.getInstance();
         if(!plugin.getArmorManager().getCosmeticSets().containsKey(setName)) return;
         CosmeticSet set = plugin.getArmorManager().getCosmeticSets().get(setName);
         for (CItemSlot slot : set.getArmorSet().keySet()) {
