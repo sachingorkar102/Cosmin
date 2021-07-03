@@ -3,6 +3,8 @@ package com.github.sachin.cosmin.gui;
 import java.util.Arrays;
 
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.armor.CosmeticSet;
+import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
@@ -151,10 +153,14 @@ public class GuiListener implements Listener{
         else if(e.getCurrentItem().isSimilar(plugin.miscItems.getConfirmButton())){
             CosminPlayer cPlayer = cHolder.getCosminPlayer();
             if(plugin.getArmorManager().containsArmor(name)){
+                CosminArmor armor = plugin.getArmorManager().getArmor(name);
+                plugin.getEconomy().withDraw(cHolder.getPlayer(), armor.getCost());
                 cPlayer.addPurchasedItem(name);
                 plugin.guiManager.showPagedGui(player, cHolder.getTargetPlayer(),cHolder.context);
             }
             else if(plugin.getArmorManager().containsSet(name)){
+                CosmeticSet set = plugin.getArmorManager().getSet(name);
+                plugin.getEconomy().withDraw(cHolder.getPlayer(), set.getCost());
                 cPlayer.addPurchasedSet(name);
                 plugin.guiManager.showCosmeticSetGui(player,cHolder.getTargetPlayer());
             }

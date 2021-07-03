@@ -19,7 +19,9 @@ import com.github.sachin.cosmin.commands.CosmeticCommand;
 import com.github.sachin.cosmin.commands.TabComplete;
 import com.github.sachin.cosmin.database.MySQL;
 import com.github.sachin.cosmin.database.PlayerData;
-import com.github.sachin.cosmin.economy.EconomyManager;
+import com.github.sachin.cosmin.economy.CosminEconomy;
+import com.github.sachin.cosmin.economy.PlayerPointsHook;
+import com.github.sachin.cosmin.economy.VaultHook;
 import com.github.sachin.cosmin.gui.GuiListener;
 import com.github.sachin.cosmin.gui.GuiManager;
 import com.github.sachin.cosmin.listener.PlayerListener;
@@ -62,12 +64,13 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     public boolean postNetherUpdate;
     private boolean papiEnabled;
+    public boolean isEconomyEnabled;
     public GuiManager guiManager;
     public MiscItems miscItems;
 
     private CommandManager commandManager;
     private ProtocolManager protocolManager;
-    private EconomyManager economyManager;
+    private CosminEconomy economy;
     private ArmorManager armorManager = new ArmorManager();
     private PlayerManager playerManager = new PlayerManager();
 
@@ -135,6 +138,21 @@ public final class Cosmin extends JavaPlugin implements Listener{
     public void onDisable() {
         if(pluginDisabled) return;
         savePlayerData();
+    }
+
+    public void enabledEconomy(){
+        if(getServer().getPluginManager().isPluginEnabled("Vault")){
+            getLogger().info("Found Vault, trying to initialize economy support..");
+            this.economy = new VaultHook(this);
+        }
+        else if(getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
+            getLogger().info("Found PlayerPoints, trying to initialize economy support");
+            this.economy = new PlayerPointsHook(this);
+        }
+        else{
+            this.isEconomyEnabled = false;
+            getLogger().info("No economy plugins found, disabling economy features");
+        }
     }
 
 
@@ -281,7 +299,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         this.miscItems = new MiscItems(this);
         this.miscItems.loadMiscItems();
         // setup vault
-        this.economyManager = new EconomyManager(this);
+        enabledEconomy();
         configUtils.reloadAllConfigs();
         if(configUtils.isMySQLEnabled()){
             this.mySQL = new MySQL(this);
@@ -333,16 +351,20 @@ public final class Cosmin extends JavaPlugin implements Listener{
         return configUtils;
     }
 
-    public EconomyManager getEconomyManager() {
-        return economyManager;
-    }
-
     public MySQL MySQL() {
         return mySQL;
     }
 
     public boolean isPAPIEnabled(){
         return papiEnabled;
+    }
+
+    public boolean isEconomyEnabled(){
+        return isEconomyEnabled && economy != null;
+    }
+
+    public CosminEconomy getEconomy() {
+        return economy;
     }
 
 

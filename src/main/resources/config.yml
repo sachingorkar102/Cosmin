@@ -43,7 +43,7 @@ database:
   username: ""
   password: ""
   name: "name of data base"
-  table-name: ""
+  table-name: cosmin_player_data
 
 # weather or not players are allowed to place there own armor items in fake armor slots
 # set all to false if using MySQL database

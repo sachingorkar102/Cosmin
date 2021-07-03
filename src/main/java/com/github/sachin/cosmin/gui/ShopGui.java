@@ -83,16 +83,17 @@ public class ShopGui extends PagedGui{
         handleMiscClicks(e);
         ItemStack clickedItem = e.getCurrentItem();
         if((e.getClickedInventory().getHolder() instanceof ShopGui) && CosminConstants.HAT_SLOTS.contains(e.getSlot())){
+            
             if(ItemBuilder.isCosmeticSetIcon(clickedItem)){
                 CosmeticSet set = plugin.getArmorManager().getSet(ItemBuilder.getCosmeticSetIconValue(clickedItem));
-                if(plugin.getEconomyManager().getBalance(getPlayer()) < set.getCost()){
+                if(plugin.getEconomy().getBalance(player) < set.getCost()){
                     plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_LESS_BALANCE);
                     return;
                 }  
             }
             else if (ItemBuilder.isHatItem(clickedItem)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(ItemBuilder.getArmorName(clickedItem));
-                if(plugin.getEconomyManager().getBalance(getPlayer()) < armor.getCost()){
+                if(plugin.getEconomy().getBalance(player) < armor.getCost()){
                     plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_LESS_BALANCE);
                     return;
                 }    

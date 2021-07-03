@@ -1,4 +1,9 @@
 <factorypath>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/codehaus/plexus/plexus-compiler-eclipse/2.8.8/plexus-compiler-eclipse-2.8.8.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/codehaus/plexus/plexus-utils/3.3.0/plexus-utils-3.3.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/eclipse/jdt/ecj/3.22.0/ecj-3.22.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/codehaus/plexus/plexus-component-annotations/2.1.0/plexus-component-annotations-2.1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/codehaus/plexus/plexus-compiler-api/2.8.8/plexus-compiler-api-2.8.8.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/spigotmc/spigot/1.16.5-R0.1-SNAPSHOT/spigot-1.16.5-R0.1-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="EXTJAR" id="/home/sachin/Documents/Backin plugin/Cosmin/lib/spigot-1.12.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="EXTJAR" id="/home/sachin/Documents/Backin plugin/Cosmin/lib/spigot-1.17.jar" enabled="true" runInBatchMode="false"/>
@@ -21,6 +26,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/guava/guava/21.0/guava-21.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/google/code/gson/gson/2.8.0/gson-2.8.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/yaml/snakeyaml/1.21/snakeyaml-1.21.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/black_ixx/playerpoints/3.0.3/playerpoints-3.0.3.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/slf4j-api/2.0.0-alpha1/slf4j-api-2.0.0-alpha1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/slf4j/slf4j-simple/2.0.0-alpha1/slf4j-simple-2.0.0-alpha1.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

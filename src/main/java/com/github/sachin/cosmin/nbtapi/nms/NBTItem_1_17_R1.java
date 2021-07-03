@@ -16,7 +16,6 @@ public class NBTItem_1_17_R1 extends NMSHelper{
         this.nmsItem = CraftItemStack.asNMSCopy(bukkitItem);
         this.compound = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
 
-
     }
 
 

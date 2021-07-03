@@ -64,9 +64,9 @@ public class BuyCommand extends SubCommands{
             cPlayer.getPurchasedSets().add(name);
         }
         if(takeMoney){
-            if(plugin.getEconomyManager().isVaultEnabled() && cost!=0){
-                if(plugin.getEconomyManager().getBalance(targetPlayer) >= cost){
-                    plugin.getEconomyManager().withdraw(targetPlayer, cost);
+            if(plugin.isEconomyEnabled() && cost != 0){
+                if(plugin.getEconomy().getBalance(targetPlayer) >= cost){
+                    plugin.getEconomy().withDraw(targetPlayer, cost);
                 }
             }
         }

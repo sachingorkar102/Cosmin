@@ -116,7 +116,7 @@ public class PagedGui extends GuiHolder {
         // if(items.isEmpty() || items == null) return;
         this.inventory = Bukkit.createInventory(this, 54,getTitle());
         setBorderItems();
-        if(plugin.getConfig().getBoolean(CosminConstants.ENABLE_STORE,true) && plugin.getEconomyManager().isVaultEnabled()){
+        if(plugin.getConfig().getBoolean(CosminConstants.ENABLE_STORE,true) && plugin.isEconomyEnabled()){
             inventory.setItem(50, miscItems.getShopButton());
         }
         player.openInventory(inventory); 
