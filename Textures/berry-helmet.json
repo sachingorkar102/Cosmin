@@ -1,0 +1,30 @@
+{
+	"credit": "Made with Blockbench",
+	"parent": "cherry-helmet",
+	"textures": {
+		"0": "textures/cherry-helmet"
+	},
+	"overrides":[
+
+		{
+			"predicate": {
+				"custom_model_data":1
+				}, 
+				"model":"item/custom/my_model"}
+	],
+	"elements": [
+		{
+			"from": [0, 0, 7],
+			"to": [16, 16, 8],
+			"rotation": {"angle": 0, "axis": "y", "origin": [5.5, 0.5, 7.5]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"east": {"uv": [0, 0, 1, 16], "texture": "#0"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#0"},
+				"west": {"uv": [0, 0, 1, 16], "texture": "#0"},
+				"up": {"uv": [0, 0, 16, 1], "texture": "#0"},
+				"down": {"uv": [0, 0, 16, 1], "texture": "#0"}
+			}
+		}
+	]
+}

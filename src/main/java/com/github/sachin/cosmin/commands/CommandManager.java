@@ -33,6 +33,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new DEquipCommand(plugin));
         subcommands.add(new TakeCommand(plugin));
         subcommands.add(new BuyCommand(plugin));
+        // subcommands.add(new GeneratePackCommand());
     }
 
 

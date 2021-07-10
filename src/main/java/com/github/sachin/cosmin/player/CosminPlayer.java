@@ -166,7 +166,9 @@ public class CosminPlayer {
     
 
     public void computeAndPutEquipmentPairList(){
+        if(!getBukkitPlayer().isPresent()) return;
         Player player = getBukkitPlayer().get();
+        
         if(!player.isOnline()) return;
         // clearNonExsistantArmorItems();
         Map<CItemSlot,ItemStack> pairs = new HashMap<>();
