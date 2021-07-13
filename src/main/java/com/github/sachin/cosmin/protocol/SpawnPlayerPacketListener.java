@@ -50,7 +50,7 @@ public class SpawnPlayerPacketListener extends PacketAdapter{
         new BukkitRunnable(){
             @Override
             public void run() {
-                if(cPlayer.getBukkitPlayer().get().isOnline()){
+                if(cPlayer.getBukkitPlayer().isPresent()){
                     cPlayer.sendPacketWithinRange(60);
                 }
             }

@@ -52,7 +52,7 @@ public class EquipCommand extends SubCommands{
             boolean invalidArmor = false;
             boolean isSet = false;
             boolean forceequip = false;
-            boolean replace = false;
+            boolean replace = true;
             if(plugin.getArmorManager().containsArmor(armorName)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(armorName);
 
@@ -96,9 +96,11 @@ public class EquipCommand extends SubCommands{
             }
             else{
                 ItemStack item = forceequip ? ItemBuilder.setForcedItem(cArmor.getItem(), false) : cArmor.getItem();
-                if(ItemBuilder.isHatItem(items.get(slotType.getFakeSlotId())) || replace){
-                    items.set(slotType.getFakeSlotId(), item);
-                    items.set(slotType.getToggleSlotId(), plugin.miscItems.getEnableItem());
+                if(replace){
+                    if(ItemBuilder.isHatItem(items.get(slotType.getFakeSlotId()))|| items.get(slotType.getFakeSlotId()) == null){
+                        items.set(slotType.getFakeSlotId(), item);
+                        items.set(slotType.getToggleSlotId(), plugin.miscItems.getEnableItem());
+                    }
                 }
             }
             cPlayer.computeAndPutEquipmentPairList();

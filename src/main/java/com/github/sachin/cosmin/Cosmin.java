@@ -178,6 +178,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         }
         try (FileReader reader = new FileReader(playerData)) {
             JsonObject object = gson.fromJson(reader, JsonObject.class);
+            if(object == null) return;
             getLogger().info("Loading player data from player-data.json...");
             playerManager.clear();
             for (Entry<String,JsonElement> element : object.entrySet()) {
@@ -270,6 +271,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
         return false;
     }
 
+    public boolean is1_17_1(){
+        return minecraftVersion.equals("v1_17_R1");
+    }
+
     public void registerCommands(){
         this.commandManager = new CommandManager(this);
         this.commandManager.registerSubCommands();
@@ -306,7 +311,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         }
         registerCommand("cosmetic", new CosmeticCommand(this));
         // registerCommands();
-        Bukkit.getOnlinePlayers().forEach(p -> p.updateCommands());
+        // Bukkit.getOnlinePlayers().forEach(p -> p.updateCommands());
         getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Config files successfully loaded"));
         getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Loaded &e"+getArmorManager().getAllArmor().size() +" &6items"));
         getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Loaded &e"+getArmorManager().getCosmeticSets().values().size()+" &6cosmetic sets"));

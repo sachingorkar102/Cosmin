@@ -247,6 +247,7 @@ public class CosminPlayer {
     // this is used when player closes cosmin inventory and CRAFTING inventory
     // for other players on server
     public void fakeEquip(Player targetPlayer){
+        if(!getBukkitPlayer().isPresent()) return;
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
@@ -285,6 +286,7 @@ public class CosminPlayer {
     private void sendPacket(PacketContainer packet,Player targetPlayer){
         preventEntityEquipPacket(true);
         if(targetPlayer.hasPermission(CosminConstants.PERM_REALARMOR)){
+            if(!getBukkitPlayer().isPresent()) return;
             Player player = getBukkitPlayer().get();
             if(plugin.postNetherUpdate){
                 List<Pair<ItemSlot,ItemStack>> pairs = new ArrayList<>();
@@ -316,11 +318,14 @@ public class CosminPlayer {
     }
 
     public void sendPacketWithinRange(int radius){
-        sendPacketWithinRange(radius, getBukkitPlayer().get());
+        if(!getBukkitPlayer().isPresent()) return;
+        Player player = getBukkitPlayer().get();
+        sendPacketWithinRange(radius, player);
     }
 
     // for target player itself
     public void setFakeSlotItems(){
+        if(!getBukkitPlayer().isPresent()) return;
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
         if(player.getGameMode() == GameMode.CREATIVE) return;
@@ -329,7 +334,7 @@ public class CosminPlayer {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
-            packet.getIntegers().write(1, slot.getEquipmentSlotId());
+            packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
             packet.getItemModifier().write(0, equipmentMap.get(slot));
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);
@@ -339,14 +344,19 @@ public class CosminPlayer {
         }
     }
 
+    public int getPacketInt(){
+        return plugin.is1_17_1() ? 2 : 1;
+    }
+
     public void equipOrignalArmor(){
+        if(!getBukkitPlayer().isPresent()) return;
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
         for (CItemSlot slot : CItemSlot.values()) {
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
-            packet.getIntegers().write(1, slot.getEquipmentSlotId());
+            packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
             packet.getItemModifier().write(0, player.getInventory().getItem(slot.getAltSlotId()));
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);

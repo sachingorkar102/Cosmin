@@ -41,6 +41,7 @@ public class EntityEquipmentPacketListener extends PacketAdapter{
 
             return;
         }
+
         CItemSlot affectedSlot;
         if(plugin.postNetherUpdate){
             List<Pair<ItemSlot,ItemStack>> newPairs = new ArrayList<>();

@@ -36,7 +36,7 @@ public class SetSlotPacketListener extends PacketAdapter{
         PacketContainer packet = e.getPacket();
         if(!plugin.getPlayerManager().containsPlayer(player) || packet.getIntegers().read(0) != 0) return;
         CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
-        int affectedSlot = packet.getIntegers().read(1);
+        int affectedSlot = packet.getIntegers().read(plugin.is1_17_1() ? 2 : 1);
         if(cosminPlayer.getInventoryOpen()) return;
         if(affectedSlot == 0 || affectedSlot == -1){
             cosminPlayer.setFakeSlotItems();

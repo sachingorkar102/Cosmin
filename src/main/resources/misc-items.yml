@@ -8,7 +8,7 @@ enable-item:
   display: "&aEnabled"
   show-tool-tip: true
   lore:
-    - "&7Left Click: &6to toggle the display"
+    - "&7Left Click: &6to toggle the visibility of orignal armor"
     - "&7Right Click: &6to open wardrobe gui"
     - "&7Drop Button: &6to clear the wardrobe item"
     - "&aHotKeys are changable in config.yml"
@@ -19,7 +19,7 @@ disable-item:
   display: "&cDisabled"
   show-tool-tip: true
   lore:
-    - "&7Left Click: &6to toggle the display"
+    - "&7Left Click: &6to toggle the visibility of orignal armor"
     - "&7Right Click: &6to open wardrobe gui"
     - "&7Drop Button: &6to clear the wardrobe item"
     - "&aHotKeys are changable in config.yml"

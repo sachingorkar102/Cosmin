@@ -19,7 +19,6 @@ public class NBTAPI {
 
     public boolean loadVersions(@NotNull JavaPlugin plugin){
         this.version = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-        System.out.println(version);
         if(version.equals("v1_12_R1")){
             NMSHelper = new NBTItem_1_12_R1(null);
             return true;

@@ -100,6 +100,45 @@ public class ItemBuilder {
             }
         }
 
+        if (section.contains("enchants")) {
+            ConfigurationSection enchants = section.getConfigurationSection("enchants");
+            for (String string : enchants.getKeys(false)) {
+                Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(string);
+                enchant.ifPresent(xEnchantment -> meta.addEnchant(xEnchantment.parseEnchantment(), enchants.getInt(string), true));
+            }
+        }
+
+        if(section.contains("flags")){
+            List<String> itemFlags = section.getStringList("flags").stream().map(m -> m.toUpperCase()).collect(Collectors.toList());
+            for(String str : itemFlags){
+                if(str.equals("ALL")){
+                    meta.addItemFlags(ItemFlag.values());
+                    break;
+                }
+                ItemFlag itemFlag = Enums.getIfPresent(ItemFlag.class, str).orNull();
+                if(itemFlag != null){
+                    meta.addItemFlags(itemFlag);
+                }
+            }
+        }
+        if((meta instanceof FireworkEffectMeta) && section.contains("firework")) {
+            FireworkEffectMeta firework = (FireworkEffectMeta) meta;
+            ConfigurationSection fireworkConfig = section.getConfigurationSection("firework");
+            if(fireworkConfig != null){
+
+                FireworkEffect.Builder builder = FireworkEffect.builder();
+                builder.with(Type.STAR);
+                List<String> strColors = fireworkConfig.getStringList("colors");
+                List<Color> colors = new ArrayList<>(strColors.size());
+                for (String str: strColors) {
+                    colors.add(parseColor(str));
+                }
+                builder.withColor(colors);
+                firework.setEffect(builder.build());
+            }
+        }
+          
+
         // check for extra options on item
         if(section.contains("options")){
             ConfigurationSection options = section.getConfigurationSection("options");
@@ -138,51 +177,10 @@ public class ItemBuilder {
             }
             if(options.contains("model")){
                 try {
-                    meta.setCustomModelData(options.getInt("model", 0));
-                } catch (IllegalArgumentException ex) {
-                    plugin.getLogger().warning("invalid options used in "+options.getParent().getName());
-                    plugin.getLogger().warning("Cant use CustomModelData on older minecraft versions");
+                    meta.setCustomModelData(options.getInt("model",0));
+                } catch (NoSuchMethodError e) {
+                    
                 }
-            }
-        }
-
-        // enchants
-        if (section.contains("enchants")) {
-            ConfigurationSection enchants = section.getConfigurationSection("enchants");
-            for (String string : enchants.getKeys(false)) {
-                Optional<XEnchantment> enchant = XEnchantment.matchXEnchantment(string);
-                enchant.ifPresent(xEnchantment -> meta.addEnchant(xEnchantment.parseEnchantment(), enchants.getInt(string), true));
-            }
-        }
-
-        // item flags
-        if(section.contains("flags")){
-            List<String> itemFlags = section.getStringList("flags").stream().map(m -> m.toUpperCase()).collect(Collectors.toList());
-            for(String str : itemFlags){
-                if(str.equals("ALL")){
-                    meta.addItemFlags(ItemFlag.values());
-                    break;
-                }
-                ItemFlag itemFlag = Enums.getIfPresent(ItemFlag.class, str).orNull();
-                if(itemFlag != null){
-                    meta.addItemFlags(itemFlag);
-                }
-            }
-        }
-        if((meta instanceof FireworkEffectMeta) && section.contains("firework")) {
-            FireworkEffectMeta firework = (FireworkEffectMeta) meta;
-            ConfigurationSection fireworkConfig = section.getConfigurationSection("firework");
-            if(fireworkConfig != null){
-
-                FireworkEffect.Builder builder = FireworkEffect.builder();
-                builder.with(Type.STAR);
-                List<String> strColors = fireworkConfig.getStringList("colors");
-                List<Color> colors = new ArrayList<>(strColors.size());
-                for (String str: strColors) {
-                    colors.add(parseColor(str));
-                }
-                builder.withColor(colors);
-                firework.setEffect(builder.build());
             }
         }
            
@@ -207,6 +205,7 @@ public class ItemBuilder {
     public static CosminArmor cosminArmorFromFile(ConfigurationSection section,String miscItemType,String armorName){
         ItemStack armorItem = itemFromFile(section, null);
         armorItem = setHatItem(armorItem,armorName);
+        NBTItem nbti = new NBTItem(armorItem);
         String perm = "none";
         if(section.contains("permission")){
             perm = section.getString("permission");

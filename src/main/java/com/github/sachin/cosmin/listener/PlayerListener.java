@@ -114,6 +114,7 @@ public class PlayerListener implements Listener{
                         cPlayer.setFakeSlotItems();
                     }
                 }.runTaskLater(plugin, 1);
+                break;
             }
         }
 
