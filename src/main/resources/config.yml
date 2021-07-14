@@ -54,6 +54,14 @@ allow-external-armor:
   FEET: true
   OFFHAND: true
 
+# weather or not players are allowed to hide there orignal armor by keeping the respective fake slot empty
+allow-empty-slots:
+  HEAD: true
+  CHEST: true
+  LEGS: true
+  FEET: true
+  OFFHAND: true
+
 # weather or not wardrobe is enabled for the specified slot
 wardrobe-enabled:
   HEAD: true

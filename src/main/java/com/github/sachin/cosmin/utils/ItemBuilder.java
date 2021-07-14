@@ -205,7 +205,6 @@ public class ItemBuilder {
     public static CosminArmor cosminArmorFromFile(ConfigurationSection section,String miscItemType,String armorName){
         ItemStack armorItem = itemFromFile(section, null);
         armorItem = setHatItem(armorItem,armorName);
-        NBTItem nbti = new NBTItem(armorItem);
         String perm = "none";
         if(section.contains("permission")){
             perm = section.getString("permission");
@@ -218,6 +217,9 @@ public class ItemBuilder {
         armor.setHide(section.getBoolean("hide",false));
         armor.setContext(context);
         armor.setSlot(slot);
+        if(section.contains("options.optifine")){
+            armor.setOptifineFile(section.getString("options.optifine"));
+        }
         return armor;
     }
 

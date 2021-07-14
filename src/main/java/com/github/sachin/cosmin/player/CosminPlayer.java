@@ -231,7 +231,7 @@ public class CosminPlayer {
             if(armor == null){
                 armor = new ItemStack(Material.AIR);
             }
-            if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType())){
+            if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType()) && plugin.getConfig().getBoolean("allow-empty-slots."+armor.getType(),true)){
                 pairs.put(slot, armor);
                 orignalArmorMap.put(slot, false);
             }

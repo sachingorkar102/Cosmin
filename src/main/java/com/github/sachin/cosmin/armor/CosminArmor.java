@@ -14,6 +14,7 @@ public class CosminArmor{
     private String permission;
     private boolean hide;
     private int cost = 0;
+    private String optifineFile;
 
     public CosminArmor(ItemStack item,String internalName){
         this.item = item;
@@ -50,6 +51,14 @@ public class CosminArmor{
 
     public void setItem(ItemStack item) {
         this.item = item;
+    }
+
+    public String getOptifineFile() {
+        return optifineFile;
+    }
+
+    public void setOptifineFile(String optifineFile) {
+        this.optifineFile = optifineFile;
     }
     
     public void setContext(GuiContext context) {

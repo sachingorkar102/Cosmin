@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FileUtils;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.FilenameUtils;
 import org.bukkit.inventory.ItemStack;
@@ -46,38 +48,166 @@ public class CPackGen {
 
         List<File> textureFiles = Arrays.asList(textures.listFiles());
         for (CosminArmor armor : plugin.getArmorManager().getAllArmor()) {
-            if(armor.getSlot() == CItemSlot.HEAD){
-                ItemStack item = armor.getItem();
+            ItemStack item = armor.getItem();
+            if(armor.getSlot() == CItemSlot.HEAD && armor.getOptifineFile() == null){
                 if(item.getItemMeta().hasCustomModelData()){
-                    // json = models/item/head
-                    // png = textures/item/head
-                    File pngFile = null;
-                    File jsonFile = null;
-                    for(File file: textureFiles){
-                        if(FilenameUtils.getExtension(file.getName()).equals("json") && file.getName().replace(".json", "").equals(armor.getInternalName())){
-                            jsonFile = file;
-                        }
-                        if(FilenameUtils.getExtension(file.getName()).equals("png") && file.getName().replace(".png", "").equals(armor.getInternalName())){
-                            pngFile = file;
+                    generateModels(modelFolder, textureFolder, textureFiles, armor, plugin, gson);
+                }
+            }
+            else if(armor.getSlot() == CItemSlot.CHEST || armor.getSlot() == CItemSlot.LEGS || armor.getSlot() == CItemSlot.FEET || armor.getSlot() == CItemSlot.HEAD){
+                String layer = null;
+                if(armor.getSlot() == CItemSlot.LEGS){
+                    layer = "2";
+                }
+                else{
+                    layer = "1";
+                }
+                if(item.getItemMeta().hasCustomModelData() && armor.getOptifineFile() != null){
+                    File optifineFolder = new File(resource,"optifine/cit");
+                    optifineFolder.mkdirs();
+                    File pngLayerFile = null;
+                    File pngIconFile = null;
+                    for(File file : textureFiles){
+                        if(FilenameUtils.getExtension(file.getName()).equals("png")){
+                            String fileName = file.getName().replace(".png", "");
+                            if(fileName.equals(armor.getOptifineFile())){
+                                pngLayerFile = file;
+                            }
+                            if(fileName.endsWith("-icon") && fileName.replace("-icon", "").equals(armor.getInternalName())){
+                                pngIconFile = file;
+                            }
                         }
                     }
-                    if(pngFile != null && jsonFile != null){
-                        File newItemModelFile = new File(modelFolder,jsonFile.getName());
-                        FileUtils.copyFile(jsonFile, newItemModelFile);
+                    if(pngIconFile != null && pngLayerFile != null){
+                        plugin.getLogger().info("Generating optifine files for "+armor.getInternalName());
+                        File newPropFile = new File(optifineFolder,"armor");
+                        File newItemFile = new File(optifineFolder,"items");
+                        newItemFile.mkdirs();
+                        newPropFile.mkdirs();
+                        FileUtils.copyFile(pngIconFile, new File(newItemFile,pngIconFile.getName()));
+                        FileUtils.copyFile(pngLayerFile, new File(newPropFile,pngLayerFile.getName()));
 
-
-                        createBaseItemFile(modelFolder,gson,armor);
-                        redirectTexturesPath(modelFolder, armor, gson);
-
-
-                        File newItemPngFile = new File(textureFolder,pngFile.getName());
-                        FileUtils.copyFile(pngFile, newItemPngFile);
+                        createLayerPropFile(newPropFile, armor, pngLayerFile.getName(), layer);
+                        createIconPropFile(newItemFile, armor, pngIconFile.getName());
                     }
+                }
+            }
+            else if(armor.getSlot() == CItemSlot.OFFHAND){
+                if(item.getItemMeta().hasCustomModelData()){
+                    if(item.getType() == Material.SHIELD){
+                        File pngFile = null;
+                        for(File file : textureFiles){
+                            if(FilenameUtils.getExtension(file.getName()).equals("png")){
+                                if(file.getName().replace(".png", "").equals(armor.getInternalName())){
+                                    pngFile = file;
+                                    break;
+                                }
+                            }
+                        }
+                        if(pngFile != null){
+                            plugin.getLogger().info("Generating optifine files for "+armor.getInternalName());
+                            File optifineShieldFolder = new File(resource,"optifine/cit/shields/"+armor.getInternalName());
+                            optifineShieldFolder.mkdirs();
+                            JsonObject shieldObj = gson.fromJson(new InputStreamReader(plugin.getResource("shields/shield.json")), JsonObject.class);
+                            JsonObject shieldBlockObj = gson.fromJson(new InputStreamReader(plugin.getResource("shields/shield_block.json")), JsonObject.class);
+                            FileUtils.copyFile(pngFile, new File(optifineShieldFolder,"shield.png"));
+                            File newShieldFile = new File(optifineShieldFolder,"shield.json");
+                            File newShieldBlockFile = new File(optifineShieldFolder,"shield_block.json");
+                            newShieldFile.createNewFile();
+                            newShieldBlockFile.createNewFile();
+                            FileWriter writer1 = new FileWriter(newShieldFile);
+                            gson.toJson(shieldObj, writer1);
+                            writer1.close();
+                            FileWriter writer2 = new FileWriter(newShieldBlockFile);
+                            gson.toJson(shieldBlockObj, writer2);
+                            writer2.close();
+    
+                            // creating properties file
+                            File newPropFile = new File(optifineShieldFolder,"shield.properties");
+                            newPropFile.createNewFile();
+                            FileWriter writer = new FileWriter(newPropFile);
+                            writer.write("type=item\nitems=shield\n");
+                            writer.write("model=shield\nmodel.shield_blocking=shield_block\n");
+                            writer.write("nbt.CustomModelData="+item.getItemMeta().getCustomModelData());
+                            writer.close();
+                        }
+                    }
+                    else{
+                        generateModels(modelFolder, textureFolder, textureFiles, armor, plugin, gson);
+                    }
+
                 }
             }
                 
         }
         plugin.getLogger().info(packname+" generated");    
+    }
+
+    private static void generateModels(File modelFolder,File textureFolder,List<File> textureFiles,CosminArmor armor,Cosmin plugin,Gson gson) throws IOException{
+        File pngFile = null;
+        File jsonFile = null;
+        for(File file: textureFiles){
+            if(FilenameUtils.getExtension(file.getName()).equals("json") && file.getName().replace(".json", "").equals(armor.getInternalName())){
+                jsonFile = file;
+            }
+            if(FilenameUtils.getExtension(file.getName()).equals("png") && file.getName().replace(".png", "").equals(armor.getInternalName())){
+                pngFile = file;
+            }
+        }
+        if(pngFile != null && jsonFile != null){
+            plugin.getLogger().info("Generating files for "+armor.getInternalName());
+            File newItemModelFile = new File(modelFolder,jsonFile.getName());
+            FileUtils.copyFile(jsonFile, newItemModelFile);
+
+
+            createBaseItemFile(modelFolder,gson,armor);
+            redirectTexturesPath(modelFolder, armor, gson);
+
+
+            File newItemPngFile = new File(textureFolder,pngFile.getName());
+            FileUtils.copyFile(pngFile, newItemPngFile);
+        }
+    }
+    
+
+    private static void createLayerPropFile(File folder,CosminArmor armor,String pngFile,String layer) throws IOException{
+        File file = new File(folder,armor.getInternalName()+".properties");
+        file.createNewFile();
+        String itemType = armor.getItem().getType().toString().toLowerCase();
+        FileWriter writer = new FileWriter(file);
+        writer.write("type=armor\n");
+        writer.write("items="+itemType+"\n");
+        writer.write("texture."+getArmorMaterial(itemType)+"_layer_"+layer+"="+pngFile+"\n");
+        writer.write("nbt.CustomModelData="+armor.getItem().getItemMeta().getCustomModelData());
+        writer.close();
+    }
+
+    private static void createIconPropFile(File folder,CosminArmor armor,String pngFile) throws IOException{
+        File file = new File(folder,armor.getInternalName()+".properties");
+        file.createNewFile();
+        String itemType = armor.getItem().getType().toString().toLowerCase();
+        FileWriter writer = new FileWriter(file);
+        writer.write("type=item\n");
+        writer.write("matchItems="+itemType+"\n");
+        writer.write("texture="+pngFile+"\n");
+        writer.write("nbt.CustomModelData="+armor.getItem().getItemMeta().getCustomModelData());
+        writer.close();
+    }
+
+    private static String getArmorMaterial(String itemType){
+        if(itemType.endsWith("_chestplate")){
+            return itemType.replace("_chestplate","");
+        }
+        else if(itemType.endsWith("_helmet")){
+            return itemType.replace("_helmet", "");
+        }
+        else if(itemType.endsWith("_leggings")){
+            return itemType.replace("_leggings", "");
+        }
+        else if(itemType.endsWith("_boots")){
+            return itemType.replace("_boots", "");
+        }
+        return null;
     }
 
     private static void redirectTexturesPath(File folder,CosminArmor armor,Gson gson) throws IOException{
