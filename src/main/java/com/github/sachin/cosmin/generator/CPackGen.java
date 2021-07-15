@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
@@ -90,6 +93,12 @@ public class CPackGen {
                         createLayerPropFile(newPropFile, armor, pngLayerFile.getName(), layer);
                         createIconPropFile(newItemFile, armor, pngIconFile.getName());
                     }
+                    if(pngIconFile == null){
+                        plugin.getLogger().warning("Could not find "+armor.getInternalName()+"-icon.png file in textures folder");
+                    }
+                    if(pngLayerFile == null){
+                        plugin.getLogger().warning("Could not fine "+armor.getOptifineFile()+".png file in textures folder");
+                    }
                 }
             }
             else if(armor.getSlot() == CItemSlot.OFFHAND){
@@ -140,7 +149,34 @@ public class CPackGen {
             }
                 
         }
+        plugin.getLogger().info("Generating pack.mcmeta");
+        generateMcMeta(new File(plugin.getDataFolder(),"resource-packs/"+packname), plugin.getMinecraftVersion());
         plugin.getLogger().info(packname+" generated");    
+    }
+
+    private static void generateMcMeta(File resource,String mcVersion) throws IOException{
+        
+        File file = new File(resource,"pack.mcmeta");
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file);
+        String packFormat = "7";
+        if(mcVersion.equals("v1_17_R1")){
+            packFormat = "7";
+        }
+        else if(Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3").contains(mcVersion)){
+            packFormat = "6";
+        }
+        else if(mcVersion.equals("v1_14_R1")){
+            packFormat = "4";
+        }
+        else if(mcVersion.equals("v1_15_R1")){
+            packFormat = "5";
+        }
+        else if(Arrays.asList("v1_13_R1","v1_13_R2").contains(mcVersion)){
+            packFormat = "3";
+        }
+        writer.write("{\"pack\":{\"pack_format\":"+packFormat+",\"description\":\"Resource Pack For Cosmin\"}}");
+        writer.close();
     }
 
     private static void generateModels(File modelFolder,File textureFolder,List<File> textureFiles,CosminArmor armor,Cosmin plugin,Gson gson) throws IOException{
@@ -166,6 +202,12 @@ public class CPackGen {
 
             File newItemPngFile = new File(textureFolder,pngFile.getName());
             FileUtils.copyFile(pngFile, newItemPngFile);
+        }
+        if(pngFile == null){
+            plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".png file in textures folder");
+        }
+        if(jsonFile == null){
+            plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".json file in textures folder");
         }
     }
     
@@ -260,7 +302,16 @@ public class CPackGen {
                 overides.add(el);
             }
         }
-        obj.add("overrides", overides);
+        JsonArray sortedOverides = new JsonArray();
+        Map<Integer,JsonElement> map = new HashMap<>();
+        for(JsonElement o : overides){
+            map.put(o.getAsJsonObject().get("predicate").getAsJsonObject().get("custom_model_data").getAsInt(), o);
+        }
+        TreeMap<Integer,JsonElement> tree = new TreeMap<>(map);
+        for(JsonElement o : tree.values()){
+            sortedOverides.add(o);
+        }
+        obj.add("overrides", sortedOverides);
         gson.toJson(obj, writer);
 
         writer.close();

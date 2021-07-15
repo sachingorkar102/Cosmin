@@ -40,6 +40,11 @@ public class GiveCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 3;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         // if(!(sender instanceof Player)) return;
         // Player player = (Player) sender;

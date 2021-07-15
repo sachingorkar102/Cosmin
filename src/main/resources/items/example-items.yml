@@ -13,6 +13,10 @@ Radioactive-set:
     FEET: RA-boots
     OFFHAND: Fger-Shield
 
+item-name:
+  item: sda
+  type: asda    
+
 RA-helmet:
   id: NETHERITE_HELMET
   # hide: true

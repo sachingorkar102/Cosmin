@@ -8,7 +8,7 @@ import com.github.sachin.cosmin.xseries.XEnchantment;
 import com.github.sachin.cosmin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-
+import com.google.gson.Gson;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.google.common.base.Enums;
@@ -203,7 +203,13 @@ public class ItemBuilder {
 
 
     public static CosminArmor cosminArmorFromFile(ConfigurationSection section,String miscItemType,String armorName){
-        ItemStack armorItem = itemFromFile(section, null);
+        ItemStack armorItem = null;
+        if(section.contains("item")){
+            armorItem = section.getItemStack("item");
+        }
+        else{
+            armorItem = itemFromFile(section, null);
+        }
         armorItem = setHatItem(armorItem,armorName);
         String perm = "none";
         if(section.contains("permission")){

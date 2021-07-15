@@ -40,6 +40,11 @@ public class DEquipCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 3;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length >= 3){
             String slotName = args[1];

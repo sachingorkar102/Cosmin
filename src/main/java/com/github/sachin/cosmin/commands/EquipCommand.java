@@ -46,6 +46,11 @@ public class EquipCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 4;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length >= 4){
             String armorName = args[2];

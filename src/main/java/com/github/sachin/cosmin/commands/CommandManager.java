@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.utils.CosminConstants;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -34,6 +35,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new TakeCommand(plugin));
         subcommands.add(new BuyCommand(plugin));
         subcommands.add(new GeneratePackCommand());
+        subcommands.add(new ImportItemCommand());
     }
 
 
@@ -43,7 +45,11 @@ public class CommandManager implements CommandExecutor {
             for (int i = 0; i < getSubcommands().size(); i++){
                 if(!args[0].equals(getSubcommands().get(i).getName())) continue;
                 SubCommands sub = getSubcommands().get(i);
-                if((sender instanceof Player)){
+                if(sub.getMaxArgs() > args.length){
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', sub.getUsage()));
+                    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', sub.getDescription()));
+                }
+                else if((sender instanceof Player)){
                     Player p = (Player) sender;
                     if(p.hasPermission(sub.getPermission()) || p.hasPermission(CosminConstants.PERM_COMMAND_ALL)){
                         sub.perform(sender, args);

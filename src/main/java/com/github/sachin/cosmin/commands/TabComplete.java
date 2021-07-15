@@ -37,7 +37,7 @@ public class TabComplete implements TabCompleter {
                 plugin.getArmorManager().getInternalNames().forEach(s -> arguments.add(s));
                 return getBetterArgs(arguments, args[1]);
             }
-            if(args[0].equalsIgnoreCase("equip") || args[0].equalsIgnoreCase("dequip")){
+            if(args[0].equalsIgnoreCase("equip") || args[0].equalsIgnoreCase("dequip") || args[0].equalsIgnoreCase("import")){
                 Arrays.asList(CItemSlot.values()).forEach(s -> arguments.add(s.toString()));
                 if(args[0].equalsIgnoreCase("dequip")){
                     arguments.add("ALL");

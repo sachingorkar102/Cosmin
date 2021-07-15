@@ -41,6 +41,11 @@ public class BuyCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 3;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length < 3) return;
         boolean takeMoney = args.length == 4 ? Boolean.parseBoolean(args[3]) : false;

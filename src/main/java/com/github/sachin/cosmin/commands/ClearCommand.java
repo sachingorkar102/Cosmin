@@ -39,6 +39,11 @@ public class ClearCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 2;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length > 1){
             String playerName = args[1];

@@ -30,6 +30,11 @@ public class ReloadCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 1;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         Cosmin.getInstance().reloadAllConfigs();
         if(sender instanceof Player){

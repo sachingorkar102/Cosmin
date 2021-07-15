@@ -20,12 +20,17 @@ public class GeneratePackCommand extends SubCommands{
 
     @Override
     public String getUsage() {
-        return "/cosmin generate [pack-name]";
+        return "&3/cosmin &fgenerate &9[pack-name]";
     }
 
     @Override
     public String getDescription() {
         return "generates a resource pack";
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return 2;
     }
 
     @Override

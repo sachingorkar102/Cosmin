@@ -37,6 +37,11 @@ public class HelpCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 1;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         List<SubCommands> list = plugin.getCommandManager().getSubcommands();
         StringBuffer buffer = new StringBuffer();

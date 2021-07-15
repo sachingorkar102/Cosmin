@@ -38,6 +38,11 @@ public class TakeCommand extends SubCommands{
     }
 
     @Override
+    public int getMaxArgs() {
+        return 3;
+    }
+
+    @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length < 3) return;
         Player targetPlayer = Bukkit.getPlayerExact(args[1]);
