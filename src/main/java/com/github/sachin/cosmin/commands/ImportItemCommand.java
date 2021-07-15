@@ -3,6 +3,7 @@ package com.github.sachin.cosmin.commands;
 import java.io.File;
 import java.io.IOException;
 
+import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.InventoryUtils;
 
@@ -34,7 +35,7 @@ public class ImportItemCommand extends SubCommands
 
     @Override
     public String getDescription() {
-        return "Imports the item player is holding in main hand as a cosmin item in imported-items.yml";
+        return "Imports the item player is holding in main hand as a cosmin item in imported-items.yml.";
     }
     
     @Override
@@ -73,13 +74,16 @@ public class ImportItemCommand extends SubCommands
             config.options().copyDefaults(true);
             config.addDefault(itemName+".item", item);
             config.addDefault(itemName+".type", slot.toString());
+            
             try {
                 config.save(file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            player.sendMessage(itemName+" saved successfully..");
-            player.sendMessage("do not change the item option under "+itemName+" in imported-items.yml");
+            CosminArmor armor = new CosminArmor(item,itemName,slot);
+            plugin.getArmorManager().addArmor(armor);
+            player.sendMessage(ChatColor.YELLOW+itemName+ChatColor.GOLD+" saved successfully..");
+            player.sendMessage(ChatColor.GOLD+"do not alter/change the item option under "+ChatColor.YELLOW+itemName+ChatColor.GOLD+" in imported-items.yml");
             
 
         }

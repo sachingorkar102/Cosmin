@@ -24,6 +24,13 @@ public class CosminArmor{
         
     }
 
+    public CosminArmor(ItemStack item,String internalName,CItemSlot slot){
+        this.item = item;
+        this.internalName = internalName;
+        this.slot = slot;
+        this.context = slot.getContext();
+    }
+
     public CosminArmor(ItemStack item,String internalName,String permission){
         this.item = item;
         this.permission = permission;

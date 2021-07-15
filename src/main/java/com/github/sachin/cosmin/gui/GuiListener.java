@@ -135,7 +135,6 @@ public class GuiListener implements Listener{
                     onToggleSlotsClickEvent(e, player, holder);
                 }
                 else if(CosminConstants.FILLAR_SLOTS.contains(e.getSlot())){
-                    
                     e.setCancelled(true);
                 } 
             }

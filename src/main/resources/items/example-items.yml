@@ -13,53 +13,44 @@ Radioactive-set:
     FEET: RA-boots
     OFFHAND: Fger-Shield
 
-item-name:
-  item: sda
-  type: asda    
 
 RA-helmet:
-  id: NETHERITE_HELMET
+  id: DIAMOND_HELMET
+  type: HEAD
   # hide: true
   flags:
     - ALL
   display: "&aRadioactive Helmet"
-  options:
-    model: 5
 
 RA-chestplate:
-  id: NETHERITE_CHESTPLATE
+  id: DIAMOND_CHESTPLATE
+  type: CHEST
   # hide: true
   flags:
     - ALL
   display: "&aRadioactive Chestplate"
-  options: 
-    model: 5
   
 RA-leggings:
-  id: NETHERITE_LEGGINGS
+  id: DIAMOND_LEGGINGS
+  type: LEGS
   # hide: true
   flags:
     - ALL
   display: "&aRadioactive Leggings"
-  options: 
-    model: 5
 
 RA-boots:
-  id: NETHERITE_BOOTS
+  id: DIAMOND_BOOTS
+  type: FEET
   # hide: true
   flags:
     - ALL
   display: "&aRadioactive Boots"
-  options: 
-    model: 5
 
 Fger-Shield:
   id: SHIELD
+  type: OFFHAND
   # hide: true
   display: "&7Grey Shield"
-  options: 
-    model: 14
-
 
 RA-set-icon:
   id: FIREWORK_STAR
