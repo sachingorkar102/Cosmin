@@ -117,6 +117,10 @@ public class CosminPlayer {
         return this.preventEntityEquipPacket;
     }
 
+    public void removeItem(int index){
+        this.cosminInvContents.set(index, null);
+    }
+
     public UUID getUuid() {
         return uuid;
     }

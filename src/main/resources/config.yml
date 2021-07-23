@@ -109,4 +109,8 @@ toggle-item-tooltip:
 # list of materials that will not be displayed when equiped
 blacklist-materials:
   - TRIDENT
+
+# weather or not player should drop there items present in cosmin gui on death
+# Bypass permission: cosmin.deathdrops.bypass
+drop-items-on-death: true  
   

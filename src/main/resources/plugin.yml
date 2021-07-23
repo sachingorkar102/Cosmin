@@ -39,6 +39,9 @@ permissions:
   cosmin.cosmeticset:
     description: allows to see the cosmetic set button
     default: true
+  cosmin.deathdrops.bypass:
+    description: bypass permission for drop items on death option
+    default: op  
   cosmin.command.*:
     children:
       - cosmin.command.help

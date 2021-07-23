@@ -6,12 +6,15 @@ import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.database.PlayerData;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
+import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.InventoryUtils;
+import com.github.sachin.cosmin.utils.ItemBuilder;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,6 +64,29 @@ public class PlayerListener implements Listener{
                 }
             }
         }.runTaskLater(plugin, 40);
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent e){
+        Player player = e.getEntity();
+        if(!plugin.getConfig().getBoolean("drop-items-on-death",true)) return;
+        if(player.hasPermission("cosmin.deathdrops.bypass")) return;
+        if(plugin.getPlayerManager().containsPlayer(player)){
+            CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+            for(int i = 0; i< cPlayer.getCosminInvContents().size();i++){
+                if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(i)){
+                    ItemStack item = cPlayer.getCosminInvContents().get(i);
+                    if(item == null) continue;
+                    if(!ItemBuilder.isHatItem(item)){
+                        e.getDrops().add(item);
+                        cPlayer.removeItem(i);
+                    }
+                }
+            }
+            cPlayer.computeAndPutEquipmentPairList();
+            cPlayer.sendPacketWithinRange(60);
+            cPlayer.setFakeSlotItems();
+        }
     }
 
     @EventHandler
