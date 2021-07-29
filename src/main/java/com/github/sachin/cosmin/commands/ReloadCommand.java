@@ -37,10 +37,7 @@ public class ReloadCommand extends SubCommands{
     @Override
     public void perform(CommandSender sender, String[] args) {
         Cosmin.getInstance().reloadAllConfigs();
-        if(sender instanceof Player){
-            Player p = (Player) sender;
-            p.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Config files successfully loaded"));
-       }
+        plugin.getMessageManager().sendMessage(CosminConstants.M_RELOADED, sender);
         
     }
     

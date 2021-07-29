@@ -47,7 +47,7 @@ public class ViewCommand  extends SubCommands{
         Player player = (Player) sender;
         if(args.length > 1){
             if(Bukkit.getPlayer(args[1]) == null){
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Player dosn't exsist or is offline"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, player);
                 return;
             }
             Player tarPlayer = Bukkit.getPlayer(args[1]);

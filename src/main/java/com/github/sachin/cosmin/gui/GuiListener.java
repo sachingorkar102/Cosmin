@@ -2,6 +2,7 @@ package com.github.sachin.cosmin.gui;
 
 import java.util.Arrays;
 
+import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosmeticSet;
 import com.github.sachin.cosmin.armor.CosminArmor;
@@ -193,7 +194,7 @@ public class GuiListener implements Listener{
         int clickedSlot = e.getSlot();
         // on left click(on toggle visibility)
         if(ItemBuilder.isForcedItem(e.getClickedInventory().getItem(clickedSlot+9)) && !player.hasPermission(CosminConstants.PERM_FORCEEQUIP_REMOVE)){
-            plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_CANT_DEEQUIP);
+            plugin.getMessageManager().sendMessage(CosminConstants.M_CANT_DEQUIP, player);
         }
         else if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(0)){
             

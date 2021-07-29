@@ -51,7 +51,7 @@ public class BuyCommand extends SubCommands{
         boolean takeMoney = args.length == 4 ? Boolean.parseBoolean(args[3]) : false;
         Player targetPlayer = Bukkit.getPlayerExact(args[1]);
         if(targetPlayer == null){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"player dosn't exsist or is offline"));
+            plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
             return;
         }
         String name = args[2];

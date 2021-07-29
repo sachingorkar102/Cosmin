@@ -34,6 +34,7 @@ import com.github.sachin.cosmin.protocol.SpawnPlayerPacketListener;
 import com.github.sachin.cosmin.utils.ConfigUtils;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.InventoryUtils;
+import com.github.sachin.cosmin.utils.Message;
 import com.github.sachin.cosmin.utils.MiscItems;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -73,6 +74,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private CosminEconomy economy;
     private ArmorManager armorManager = new ArmorManager();
     private PlayerManager playerManager = new PlayerManager();
+    private Message messageManager;
 
 
     private ConfigUtils configUtils;
@@ -303,18 +305,24 @@ public final class Cosmin extends JavaPlugin implements Listener{
         this.configUtils = new ConfigUtils(this);
         this.miscItems = new MiscItems(this);
         this.miscItems.loadMiscItems();
+        this.messageManager = new Message(this);
         // setup vault
         enabledEconomy();
         configUtils.reloadAllConfigs();
         if(configUtils.isMySQLEnabled()){
             this.mySQL = new MySQL(this);
         }
+        File textureFolder = new File(getDataFolder(),"textures");
+        
+        if(!textureFolder.exists()) textureFolder.mkdir();
+        File resourceFolder = new File(getDataFolder(),"resource-packs");
+        if(!resourceFolder.exists()) resourceFolder.mkdir();
         registerCommand("cosmetic", new CosmeticCommand(this));
         // registerCommands();
         // Bukkit.getOnlinePlayers().forEach(p -> p.updateCommands());
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Config files successfully loaded"));
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Loaded &e"+getArmorManager().getAllArmor().size() +" &6items"));
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Loaded &e"+getArmorManager().getCosmeticSets().values().size()+" &6cosmetic sets"));
+        getServer().getConsoleSender().sendMessage(messageManager.getMessage(CosminConstants.M_RELOADED));
+        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage(CosminConstants.M_PREFIX)+"&6Loaded &e"+getArmorManager().getAllArmor().size() +" &6items"));
+        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage(CosminConstants.M_PREFIX)+"&6Loaded &e"+getArmorManager().getCosmeticSets().values().size()+" &6cosmetic sets"));
     }
 
     public void saveDefaultPlayerData(){
@@ -322,6 +330,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
             getLogger().info("Could not find player-data.json, generating one...");
             this.saveResource(CosminConstants.PLAYER_DATA_FILE, false);
         }
+    }
+
+    public Message getMessageManager() {
+        return messageManager;
     }
 
     public static Cosmin getInstance(){

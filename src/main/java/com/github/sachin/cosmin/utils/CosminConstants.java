@@ -52,12 +52,17 @@ public class CosminConstants {
     public static final String TOGGLE_ITEM_TOOLTIP = "toggle-item-tooltip.";
     public static final String BLACKLIST_MATERIALS = "blacklist-materials";
 
-
-    public static final String MESSAGE_NO_PERM = "messages.no-permission";
-    public static final String MESSAGE_CANT_DEEQUIP = "messages.cant-deequip";
-    public static final String MESSAGE_LESS_BALANCE = "messages.less-balance";
-
-    public static final String MESSAGE_PREFIX = "&7[Cosmin] ";
+    // messages
+    public static final String M_PREFIX = "prefix";
+    public static final String M_NO_PERM = "no-permission";
+    public static final String M_NOT_ENOUGH_BALANCE = "not-enough-balance";
+    public static final String M_CANT_DEQUIP = "cant-deequip";
+    public static final String M_OFFLINE_PLAYER = "offline-player";
+    public static final String M_INVALID_SLOT = "invalid-slot";
+    public static final String M_INVALID_ITEM = "invalid-item";
+    public static final String M_RELOADED = "reloaded";
+    public static final String M_GAVE_ITEM = "gave-item";
+    public static final String M_DATA_CLEARED = "data-cleared";
 
     // hotkey config
     public static final String HOTKEY_TOGGLE_DISPLAY = "hot-keys.toggle-display";

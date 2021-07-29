@@ -45,10 +45,11 @@ public class ClearCommand extends SubCommands{
 
     @Override
     public void perform(CommandSender sender, String[] args) {
+        
         if(args.length > 1){
             String playerName = args[1];
             if(Bukkit.getServer().getPlayer(playerName) == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6player dosn't exists or is offline"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
                 return;
             }
             Player player = Bukkit.getServer().getPlayer(playerName);
@@ -67,7 +68,7 @@ public class ClearCommand extends SubCommands{
                         }
                     }
                 }
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6player data removed successfully"));
+                sender.sendMessage(plugin.getMessageManager().getMessage(CosminConstants.M_DATA_CLEARED).replace("%player%", playerName));
             }
 
         }

@@ -82,15 +82,15 @@ public class EquipCommand extends SubCommands{
                 }   
             }
             if(player == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"player is offline or dosnt exists"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
                 return;
             }
             if(invalidArmor){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"valid item or set should be specified"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_INVALID_ITEM, sender);
                 return;
             }
             if(slotType == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"valid slot type should be specified"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_INVALID_SLOT, sender);
                 return;
             }
             CosminPlayer cPlayer = plugin.getPlayerManager().containsPlayer(player) ? plugin.getPlayerManager().getPlayer(player) : plugin.getPlayerManager().createCosminPlayer(player);

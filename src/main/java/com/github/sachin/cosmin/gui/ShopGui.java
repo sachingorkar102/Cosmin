@@ -87,14 +87,14 @@ public class ShopGui extends PagedGui{
             if(ItemBuilder.isCosmeticSetIcon(clickedItem)){
                 CosmeticSet set = plugin.getArmorManager().getSet(ItemBuilder.getCosmeticSetIconValue(clickedItem));
                 if(plugin.getEconomy().getBalance(player) < set.getCost()){
-                    plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_LESS_BALANCE);
+                    plugin.getMessageManager().sendMessage(CosminConstants.M_NOT_ENOUGH_BALANCE, player);
                     return;
                 }  
             }
             else if (ItemBuilder.isHatItem(clickedItem)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(ItemBuilder.getArmorName(clickedItem));
                 if(plugin.getEconomy().getBalance(player) < armor.getCost()){
-                    plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_LESS_BALANCE);
+                    plugin.getMessageManager().sendMessage(CosminConstants.M_NOT_ENOUGH_BALANCE, player);
                     return;
                 }    
             }

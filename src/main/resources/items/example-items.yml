@@ -3,62 +3,10 @@
 # You can create as many files as you desire to make wardrobe items under the items folder.
 # Visit https://github.com/sachingorkar102/Cosmin/wiki/Creating-Cosmin-Item to know about every option available
 
-Radioactive-set:
-  type: SET
-  icon: RA-set-icon
-  items:
-    HEAD: RA-helmet
-    CHEST: RA-chestplate
-    LEGS: RA-leggings
-    FEET: RA-boots
-    OFFHAND: Fger-Shield
 
-
-RA-helmet:
-  id: DIAMOND_HELMET
+Red-Helmet:
+  id: LEATHER_HELMET
+  display: "&cRed Helmet"
   type: HEAD
-  # hide: true
-  flags:
-    - ALL
-  display: "&aRadioactive Helmet"
-
-RA-chestplate:
-  id: DIAMOND_CHESTPLATE
-  type: CHEST
-  # hide: true
-  flags:
-    - ALL
-  display: "&aRadioactive Chestplate"
-  
-RA-leggings:
-  id: DIAMOND_LEGGINGS
-  type: LEGS
-  # hide: true
-  flags:
-    - ALL
-  display: "&aRadioactive Leggings"
-
-RA-boots:
-  id: DIAMOND_BOOTS
-  type: FEET
-  # hide: true
-  flags:
-    - ALL
-  display: "&aRadioactive Boots"
-
-Fger-Shield:
-  id: SHIELD
-  type: OFFHAND
-  # hide: true
-  display: "&7Grey Shield"
-
-RA-set-icon:
-  id: FIREWORK_STAR
-  display: "&cRed Set"
-  hide: true
-  firework:
-    colors:
-      - GREEN
-  options:
-    enchanted: true    
-
+  lore:
+    - "&cthis is a red helmet"

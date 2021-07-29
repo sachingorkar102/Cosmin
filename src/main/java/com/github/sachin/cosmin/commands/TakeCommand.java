@@ -47,7 +47,7 @@ public class TakeCommand extends SubCommands{
         if(args.length < 3) return;
         Player targetPlayer = Bukkit.getPlayerExact(args[1]);
         if(targetPlayer == null){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"player dosn't exsist or is offline"));
+            plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
             return;
         }
         String name = args[2];

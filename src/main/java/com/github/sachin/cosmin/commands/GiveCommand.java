@@ -52,17 +52,16 @@ public class GiveCommand extends SubCommands{
             String playerName = args[2];
             String itemName = args[1];
             if(Bukkit.getPlayer(playerName) == null){
-
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Player dosnt exsist"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
                 return;
             }
             Player targetPlayer = Bukkit.getPlayer(playerName);
             if(plugin.getArmorManager().getInternalNames().contains(itemName) && targetPlayer.isOnline()){
                 targetPlayer.getInventory().addItem(plugin.getArmorManager().getArmor(itemName).getItem());
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Given "+itemName+" to "+targetPlayer.getName()));
+                sender.sendMessage(plugin.getMessageManager().getMessage(CosminConstants.M_GAVE_ITEM).replace("%item%", itemName).replace("%player%", targetPlayer.getName()));
             }
             else{
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Armor piece could not be found"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_INVALID_ITEM, sender);
             }
             
         }
@@ -70,7 +69,7 @@ public class GiveCommand extends SubCommands{
             Player player = (Player) sender;
             if(plugin.getArmorManager().getInternalNames().contains(args[1])){
                 player.getInventory().addItem(plugin.getArmorManager().getArmor(args[1]).getItem());
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"&6Given "+args[1]+" to "+player.getName()));
+                sender.sendMessage(plugin.getMessageManager().getMessage(CosminConstants.M_GAVE_ITEM).replace("%item%", args[1]).replace("%player%", player.getName()));
             }
         }
         

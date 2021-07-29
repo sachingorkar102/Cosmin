@@ -55,7 +55,7 @@ public class CommandManager implements CommandExecutor {
                         sub.perform(sender, args);
                     }
                     else{
-                        plugin.getConfigUtils().sendMessage(p, CosminConstants.MESSAGE_NO_PERM);
+                        plugin.getMessageManager().sendMessage(CosminConstants.M_NO_PERM, p);
                     }
                 }
                 else{

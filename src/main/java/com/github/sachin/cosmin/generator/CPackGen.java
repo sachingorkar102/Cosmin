@@ -32,6 +32,11 @@ public class CPackGen {
 
     public static void createPack(String packname) throws IOException{
         Cosmin plugin = Cosmin.getInstance();
+        if(plugin.getMinecraftVersion().equals("v1_12_R1")){
+            plugin.getLogger().info("Running older version then 1.14, using legacy pack generation");
+            CPackGen1_12.generatePack(packname, plugin);
+            return;
+        }
         Gson gson = new Gson();
         File resource = new File(plugin.getDataFolder(),"resource-packs/"+packname+"/assets/minecraft");
         File textures = new File(plugin.getDataFolder(),"textures");

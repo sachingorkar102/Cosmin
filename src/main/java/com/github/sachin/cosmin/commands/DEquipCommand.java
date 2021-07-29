@@ -51,11 +51,11 @@ public class DEquipCommand extends SubCommands{
             CItemSlot slotType = Enums.getIfPresent(CItemSlot.class, slotName).orNull();
             Player player = Bukkit.getPlayer(args[2]);
             if(player == null){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"player is offline or dosnt exists"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_OFFLINE_PLAYER, sender);
                 return;
             }
             if(slotType == null && !slotName.equalsIgnoreCase("ALL")){
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', CosminConstants.MESSAGE_PREFIX+"valid slot type should be specified"));
+                plugin.getMessageManager().sendMessage(CosminConstants.M_INVALID_SLOT, sender);
                 return;
             }
 

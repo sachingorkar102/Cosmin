@@ -8,11 +8,6 @@
 # For feature requests or bug reports contact me on discord https://discord.gg/VdfqQZjHrJ or pm me directly at sachin#8481
 
 
-# Messages
-messages:
-  no-permission: "&7[Cosmin] &eYou dont have permission to run the command"
-  cant-deequip: "&7[Cosmin] &eThe armor is forced equiped cant remove it"
-  less-balance: "&7[Cosmin] &eYou dont have enough balance for purchase"
 
 # Aliases for command used to open cosmin GUI
 # restart/reload may require for this option to apply changes
@@ -64,11 +59,11 @@ allow-empty-slots:
 
 # weather or not wardrobe is enabled for the specified slot
 wardrobe-enabled:
-  HEAD: true
-  CHEST: true
-  LEGS: true
-  FEET: true
-  OFFHAND: true 
+  HEAD: false
+  CHEST: false
+  LEGS: false
+  FEET: false
+  OFFHAND: false 
 
 # inventory short cuts used to do certain actions ONLY in cosmetic GUI
 # toggle-display = on clicked it will toggle the display of armor present in respective fake equipment slot
@@ -85,11 +80,11 @@ hot-keys:
 
 # weather or not to enable cosmetic sets
 # this can be toggled per player too with cosmin.cosmeticset permission, players without this permission will not able to see the cosmetic sets button
-enable-cosmetic-set: true
+enable-cosmetic-set: false
 
 # weather or not to enable stores where player can buy items/sets 
 # requires economy plugin like essentials/cmi and vault
-enable-store: true
+enable-store: false
 
 # this is used to display item/set cost present in store
 shop-item-lore:

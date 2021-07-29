@@ -2,6 +2,7 @@ package com.github.sachin.cosmin.utils;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -100,6 +101,11 @@ public class ConfigUtils {
 
     public void reloadAllConfigs(){
         plugin.saveDefaultConfig();
+        try {
+            ConfigUpdater.update(plugin, "config.yml", new File(plugin.getDataFolder(),"config.yml"), new ArrayList<>());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         plugin.reloadConfig();
         plugin.getArmorManager().clearArmorMap();
         cosmeticSetSections.clear();

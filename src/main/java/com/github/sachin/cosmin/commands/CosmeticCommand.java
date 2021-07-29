@@ -26,7 +26,7 @@ public class CosmeticCommand extends BukkitCommand{
             if(player.hasPermission(CosminConstants.PERM_COMMAND_COSMETICS)){
                 plugin.guiManager.showFakeGui(player,null);
             }else{
-                plugin.getConfigUtils().sendMessage(player, CosminConstants.MESSAGE_NO_PERM);
+                plugin.getMessageManager().sendMessage(CosminConstants.M_NO_PERM, player);
             }
         }
         return true;
