@@ -33,7 +33,7 @@ public class GuiListener implements Listener{
 
 
     
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiCloseEvent(InventoryCloseEvent e){
         Player player = (Player) e.getPlayer();
         if(e.getInventory().getHolder() instanceof GuiHolder){
@@ -64,8 +64,13 @@ public class GuiListener implements Listener{
             cosminPlayer.clearNonExsistantArmorItems();
             cosminPlayer.computeAndPutEquipmentPairList();
             cosminPlayer.sendPacketWithinRange(60, player);
-            cosminPlayer.setFakeSlotItems();
-            cosminPlayer.setInventoryOpen(false);
+            new BukkitRunnable(){
+                public void run() {
+                    cosminPlayer.setFakeSlotItems();
+                    cosminPlayer.setInventoryOpen(false);
+                    
+                };
+            }.runTaskLater(plugin, 5);
         }
     }
 
