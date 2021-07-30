@@ -14,11 +14,13 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -144,6 +146,21 @@ public class PlayerListener implements Listener{
             }
         }
 
+    }
+
+
+    @EventHandler
+    public void onDimensionChange(PlayerPortalEvent e){
+        Player player = e.getPlayer();
+        
+        CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+        if(cPlayer != null && player.getGameMode() != GameMode.CREATIVE){
+            new BukkitRunnable(){
+                
+                public void run() {cPlayer.computeAndPutEquipmentPairList();cPlayer.setFakeSlotItems();};
+            }.runTaskLater(plugin, 10);
+        }
+        
     }
 
     @EventHandler

@@ -59,5 +59,9 @@ public class Message {
     public void sendMessage(String key,CommandSender sender){
         sender.sendMessage(getMessage(key));
     }
+
+    public String getPrefix(){
+        return messageConfig.getString("prefix");
+    }
     
 }

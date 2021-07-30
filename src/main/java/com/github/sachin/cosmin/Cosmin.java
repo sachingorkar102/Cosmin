@@ -321,8 +321,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
         // registerCommands();
         // Bukkit.getOnlinePlayers().forEach(p -> p.updateCommands());
         getServer().getConsoleSender().sendMessage(messageManager.getMessage(CosminConstants.M_RELOADED));
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage(CosminConstants.M_PREFIX)+"&6Loaded &e"+getArmorManager().getAllArmor().size() +" &6items"));
-        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getMessage(CosminConstants.M_PREFIX)+"&6Loaded &e"+getArmorManager().getCosmeticSets().values().size()+" &6cosmetic sets"));
+        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getPrefix()+"&6Loaded &e"+getArmorManager().getAllArmor().size() +" &6items"));
+        getServer().getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', messageManager.getPrefix()+"&6Loaded &e"+getArmorManager().getCosmeticSets().values().size()+" &6cosmetic sets"));
     }
 
     public void saveDefaultPlayerData(){
