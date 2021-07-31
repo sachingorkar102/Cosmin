@@ -140,8 +140,12 @@ public class ConfigUtils {
                 if(armor == null){
                     armor = nullArmor;   
                 }else{
+                    if(!armor.getConfig().contains("hide")){
+                        armor.setHide(true);
+                    }
                     armor = armor.clone();
                 }
+                
                 armor.setItem(ItemBuilder.setCosmeticSetArmorName(armor.getItem(), section.getName()));
                 set.setArmorSlot(armor, slot);
             }

@@ -64,13 +64,8 @@ public class GuiListener implements Listener{
             cosminPlayer.clearNonExsistantArmorItems();
             cosminPlayer.computeAndPutEquipmentPairList();
             cosminPlayer.sendPacketWithinRange(60, player);
-            new BukkitRunnable(){
-                public void run() {
-                    cosminPlayer.setFakeSlotItems();
-                    cosminPlayer.setInventoryOpen(false);
-                    
-                };
-            }.runTaskLater(plugin, 5);
+            cosminPlayer.setFakeSlotItems();
+            cosminPlayer.setInventoryOpen(false);
         }
     }
 

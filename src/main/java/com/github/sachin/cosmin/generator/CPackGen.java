@@ -81,7 +81,7 @@ public class CPackGen {
                             if(fileName.equals(armor.getOptifineFile())){
                                 pngLayerFile = file;
                             }
-                            if(fileName.endsWith("-icon") && fileName.replace("-icon", "").equals(armor.getInternalName())){
+                            if(fileName.equals(armor.getInternalName()) ){
                                 pngIconFile = file;
                             }
                         }

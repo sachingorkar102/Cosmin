@@ -218,11 +218,23 @@ public class ItemBuilder {
         
         CosminArmor armor = new CosminArmor(armorItem,armorName,perm);
         CItemSlot slot = Enums.getIfPresent(CItemSlot.class, section.getString("type","HEAD")).or(CItemSlot.HEAD);
+        armor.setSlot(slot);
+        if(!section.contains("type") && armorItem != null){
+            if(armorItem.getType().toString().endsWith("CHESTPLATE")){
+                armor.setSlot(CItemSlot.CHEST);
+            }
+            else if(armorItem.getType().toString().endsWith("LEGGINGS")){
+                armor.setSlot(CItemSlot.LEGS);
+            }
+            else if(armorItem.getType().toString().endsWith("BOOTS")){
+                armor.setSlot(CItemSlot.FEET);
+            }
+        }
         GuiContext context = slot.getContext();
         armor.setCost(section.getInt("cost",0));
         armor.setHide(section.getBoolean("hide",false));
         armor.setContext(context);
-        armor.setSlot(slot);
+        armor.setConfig(section);
         if(section.contains("options.optifine")){
             armor.setOptifineFile(section.getString("options.optifine"));
         }

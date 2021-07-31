@@ -3,10 +3,12 @@ package com.github.sachin.cosmin.armor;
 import com.github.sachin.cosmin.gui.GuiContext;
 import com.github.sachin.cosmin.utils.CItemSlot;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
 public class CosminArmor{
 
+    private ConfigurationSection config;
     private ItemStack item;
     private GuiContext context;
     private String internalName;
@@ -37,6 +39,14 @@ public class CosminArmor{
         this.internalName = internalName;
         this.context = GuiContext.HELMET_PAGE;
         this.hide = false;
+    }
+
+    public ConfigurationSection getConfig() {
+        return config;
+    }
+
+    public void setConfig(ConfigurationSection config) {
+        this.config = config;
     }
 
 
@@ -104,6 +114,7 @@ public class CosminArmor{
         armor.setHide(this.hide);
         armor.setContext(this.context);
         armor.setSlot(this.slot);
+        armor.setConfig(this.config);
         return armor;
     }
     
