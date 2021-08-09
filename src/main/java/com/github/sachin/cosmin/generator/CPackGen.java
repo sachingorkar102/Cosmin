@@ -62,6 +62,45 @@ public class CPackGen {
                     generateModels(modelFolder, textureFolder, textureFiles, armor, plugin, gson);
                 }
             }
+            else if(armor.getSlot() == CItemSlot.CHEST && item.getType()== Material.ELYTRA){
+                if(item.getItemMeta().hasCustomModelData()){
+                    File optifineFolder = new File(resource,"optifine/cit");
+                    optifineFolder.mkdirs();
+                    File pngDisplayFile = null;
+                    File pngIconFile = null;
+                    for(File file : textureFiles){
+                        if(FilenameUtils.getExtension(file.getName()).equals("png")){
+                            String fileName = file.getName().replace(".png", "");
+                            if(fileName.equals(armor.getInternalName())){
+                                pngDisplayFile = file;
+                                
+                            }
+                            if(fileName.endsWith("-icon") && fileName.replace("-icon", "").equals(armor.getInternalName())){
+                                pngIconFile = file;
+                            }
+                        }
+                    }
+                    if(pngIconFile != null && pngDisplayFile != null){
+                        plugin.getLogger().info("Generating optifine files for "+armor.getInternalName());
+                        File newPropFile = new File(optifineFolder,"armor");
+                        File newItemFile = new File(optifineFolder,"items");
+                        newItemFile.mkdirs();
+                        newPropFile.mkdirs();
+                        FileUtils.copyFile(pngIconFile, new File(newItemFile,pngIconFile.getName()));
+                        FileUtils.copyFile(pngDisplayFile, new File(newPropFile,pngDisplayFile.getName()));
+                        createIconPropFile(newItemFile, armor, pngIconFile.getName());
+                        createElytraPropFile(newPropFile, armor, pngDisplayFile.getName());
+
+                    }
+                    if(pngIconFile == null){
+                        plugin.getLogger().warning("Could not find "+armor.getInternalName()+"-icon.png file in textures folder(icon file)");
+                    }
+                    if(pngDisplayFile == null){
+                        plugin.getLogger().warning("Could not fine "+armor.getOptifineFile()+".png file in textures folder");
+                    }
+
+                }
+            }
             else if(armor.getSlot() == CItemSlot.CHEST || armor.getSlot() == CItemSlot.LEGS || armor.getSlot() == CItemSlot.FEET || armor.getSlot() == CItemSlot.HEAD){
                 String layer = null;
                 if(armor.getSlot() == CItemSlot.LEGS){
@@ -99,10 +138,10 @@ public class CPackGen {
                         createIconPropFile(newItemFile, armor, pngIconFile.getName());
                     }
                     if(pngIconFile == null){
-                        plugin.getLogger().warning("Could not find "+armor.getInternalName()+"-icon.png file in textures folder");
+                        plugin.getLogger().warning("Could not find "+armor.getInternalName()+".png file in textures folder(icon file)");
                     }
                     if(pngLayerFile == null){
-                        plugin.getLogger().warning("Could not fine "+armor.getOptifineFile()+".png file in textures folder");
+                        plugin.getLogger().warning("Could not fine "+armor.getOptifineFile()+".png file in textures folder(layer file)");
                     }
                 }
             }
@@ -241,6 +280,17 @@ public class CPackGen {
         writer.close();
     }
 
+    private static void createElytraPropFile(File folder,CosminArmor armor,String pngFile) throws IOException{
+        File file = new File(folder,armor.getInternalName()+".properties");
+        file.createNewFile();
+        FileWriter writer = new FileWriter(file);
+        writer.write("type=elytra\n");
+        writer.write("elytra\n");
+        writer.write("texture="+pngFile+"\n");
+        writer.write("nbt.CustomModelData="+armor.getItem().getItemMeta().getCustomModelData());
+        writer.close();
+    }
+
     private static String getArmorMaterial(String itemType){
         if(itemType.endsWith("_chestplate")){
             return itemType.replace("_chestplate","");
@@ -290,8 +340,12 @@ public class CPackGen {
             reader.close();
         }
         FileWriter writer = new FileWriter(baseItemJson);
-        
-        obj.addProperty("parent", "item/handheld_rod");
+        if(armor.getConfig().contains("option.parent")){
+            obj.addProperty("parent", "item/"+armor.getConfig().getString("options.parent","handheld_rod"));;
+        }
+        else{
+            obj.addProperty("parent", "item/handheld_rod");
+        }
         JsonObject texturesobj = new JsonObject();
         texturesobj.addProperty("layer0", "minecraft:item/"+itemName);
         obj.add("textures",texturesobj);

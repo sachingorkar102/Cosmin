@@ -232,6 +232,7 @@ public class ItemBuilder {
         }
         GuiContext context = slot.getContext();
         armor.setCost(section.getInt("cost",0));
+        armor.setPlayerPoints(section.getInt("points",0));
         armor.setHide(section.getBoolean("hide",false));
         armor.setContext(context);
         armor.setConfig(section);
@@ -348,13 +349,15 @@ public class ItemBuilder {
         
     }
 
-    public static ItemStack updateItemLore(ItemStack i, int cost){
+    public static ItemStack updateItemLore(ItemStack i, int cost,int points){
         // ItemStack i = item;
+        Cosmin plugin = Cosmin.getInstance();
         ItemMeta meta = i.getItemMeta();
         List<String> lore = new ArrayList<>();
-        Cosmin.getInstance().getConfig().getStringList(CosminConstants.SHOP_ITEM_LORE).forEach(l -> {
-            lore.add(ChatColor.translateAlternateColorCodes('&', l.replace("%cost%", String.valueOf(cost))));
-        });
+        for(String l : plugin.getConfig().getStringList(CosminConstants.SHOP_ITEM_LORE)){
+            String s = l.replace("%cost%", String.valueOf(cost)).replace("%points%", String.valueOf(points));
+            lore.add(ChatColor.translateAlternateColorCodes('&', s));
+        }
         if(meta.hasLore()){
             lore.addAll(meta.getLore());
         }

@@ -63,6 +63,8 @@ public class CosminPlayer {
         // computeAndPutEquipmentPairList();
     }
 
+
+
     public List<ItemStack> getCosminInvContents() {
         return cosminInvContents;
     }

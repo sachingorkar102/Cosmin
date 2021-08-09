@@ -154,13 +154,23 @@ public class GuiListener implements Listener{
             CosminPlayer cPlayer = cHolder.getCosminPlayer();
             if(plugin.getArmorManager().containsArmor(name)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(name);
-                plugin.getEconomy().withDraw(cHolder.getPlayer(), armor.getCost());
+                if(plugin.getVaultEco() != null && armor.getCost() != 0){
+                    plugin.getVaultEco().withDraw(player, armor.getCost());
+                }
+                if(plugin.getPlayerPointsEco() != null && armor.getPlayerPoints() != 0){
+                    plugin.getPlayerPointsEco().withDraw(player, armor.getPlayerPoints());
+                }
                 cPlayer.addPurchasedItem(name);
                 plugin.guiManager.showPagedGui(player, cHolder.getTargetPlayer(),cHolder.context);
             }
             else if(plugin.getArmorManager().containsSet(name)){
                 CosmeticSet set = plugin.getArmorManager().getSet(name);
-                plugin.getEconomy().withDraw(cHolder.getPlayer(), set.getCost());
+                if(plugin.getVaultEco() != null && set.getCost() != 0){
+                    plugin.getVaultEco().withDraw(player, set.getCost());
+                }
+                if(plugin.getPlayerPointsEco() != null && set.getPlayerPoints() != 0){
+                    plugin.getPlayerPointsEco().withDraw(player, set.getPlayerPoints());
+                }
                 cPlayer.addPurchasedSet(name);
                 plugin.guiManager.showCosmeticSetGui(player,cHolder.getTargetPlayer());
             }

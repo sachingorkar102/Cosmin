@@ -38,5 +38,4 @@ confirm-button:
   display: "&aConfirm"
 cancel-button:
   id: RED_WOOL
-  display: "&cCancel"      
-
+  display: "&cCancel"  

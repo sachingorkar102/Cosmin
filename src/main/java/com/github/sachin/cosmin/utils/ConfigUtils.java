@@ -133,6 +133,7 @@ public class ConfigUtils {
             iconArmor.setItem(ItemBuilder.setCosmeticSetIconValue(iconArmor.getItem(), section.getName()));
             set.setIcon(iconArmor);
             set.setCost(section.getInt("cost",0));
+            set.setPlayerPoints(section.getInt("points",0));
             for(String slotKey:section.getConfigurationSection("items").getKeys(false)){
                 CItemSlot slot = CItemSlot.valueOf(slotKey);
                 if(slot == null) continue;
@@ -145,7 +146,6 @@ public class ConfigUtils {
                     }
                     armor = armor.clone();
                 }
-                
                 armor.setItem(ItemBuilder.setCosmeticSetArmorName(armor.getItem(), section.getName()));
                 set.setArmorSlot(armor, slot);
             }

@@ -60,7 +60,9 @@ public class PagedGui extends GuiHolder {
                         continue;
                     }
                 }
-                if(a.getCost() != 0 && !getCosminPlayer().getPurchasedItems().contains(a.getInternalName())) continue;
+                if(a.getCost() != 0 || a.getPlayerPoints() != 0){
+                    if(!getCosminPlayer().getPurchasedItems().contains(a.getInternalName())) continue;
+                }
                 this.items.add(a.getItem());
             }
         }

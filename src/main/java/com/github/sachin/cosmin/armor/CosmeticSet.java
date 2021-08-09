@@ -13,6 +13,7 @@ public class CosmeticSet {
     private String internalName;
     private String permission;
     private int cost;
+    private int points;
 
     public CosmeticSet(Map<CItemSlot,CosminArmor> armorSet,CosminArmor icon,String internalName){
         this.icon = icon;
@@ -40,6 +41,14 @@ public class CosmeticSet {
 
     public void setArmorSet(Map<CItemSlot, CosminArmor> armorSet) {
         this.armorSet = armorSet;
+    }
+
+    public int getPlayerPoints() {
+        return points;
+    }
+
+    public void setPlayerPoints(int points) {
+        this.points = points;
     }
 
     public void setArmorSlot(CosminArmor cosminArmor,CItemSlot slot){

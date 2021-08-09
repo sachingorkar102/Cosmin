@@ -1,6 +1,8 @@
 package com.github.sachin.cosmin.economy;
 
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.armor.CosmeticSet;
+import com.github.sachin.cosmin.armor.CosminArmor;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -37,5 +39,7 @@ public class VaultHook implements CosminEconomy{
         economy.depositPlayer(player,amount);
     }
 
+
+  
     
 }

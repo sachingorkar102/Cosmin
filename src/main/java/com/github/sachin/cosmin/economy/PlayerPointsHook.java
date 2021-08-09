@@ -3,6 +3,8 @@ package com.github.sachin.cosmin.economy;
 import java.util.concurrent.ExecutionException;
 
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.armor.CosmeticSet;
+import com.github.sachin.cosmin.armor.CosminArmor;
 
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
@@ -11,9 +13,10 @@ import org.bukkit.entity.Player;
 public class PlayerPointsHook implements CosminEconomy{
 
     private PlayerPointsAPI ppa;
+    private Cosmin plugin;
 
     public PlayerPointsHook(Cosmin plugin){
-        
+        this.plugin = plugin;
         ppa = PlayerPoints.getInstance().getAPI();
         if(ppa != null){
             plugin.isEconomyEnabled = true;
@@ -41,5 +44,7 @@ public class PlayerPointsHook implements CosminEconomy{
     public void deposit(Player player, int amount) {
         ppa.giveAsync(player.getUniqueId(), amount);
     }
+
+    
     
 }

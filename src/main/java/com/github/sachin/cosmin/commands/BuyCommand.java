@@ -58,21 +58,24 @@ public class BuyCommand extends SubCommands{
         if(!plugin.getPlayerManager().containsPlayer(targetPlayer)) return;
         CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(targetPlayer);
         int cost=0;
+        int playerPoints = 0;
         if(plugin.getArmorManager().containsArmor(name) && !cPlayer.getPurchasedItems().contains(name)){
             CosminArmor armor = plugin.getArmorManager().getArmor(name);
             cost = armor.getCost();
+            playerPoints = armor.getPlayerPoints();
             cPlayer.getPurchasedItems().add(name);
             
         }else if(plugin.getArmorManager().containsSet(name) && !cPlayer.getPurchasedSets().contains(name)){
             CosmeticSet set = plugin.getArmorManager().getSet(name);
             cost = set.getCost();
+            playerPoints = set.getPlayerPoints();
             cPlayer.getPurchasedSets().add(name);
         }
         if(takeMoney){
-            if(plugin.isEconomyEnabled() && cost != 0){
-                if(plugin.getEconomy().getBalance(targetPlayer) >= cost){
-                    plugin.getEconomy().withDraw(targetPlayer, cost);
-                }
+            if(plugin.isEconomyEnabled()){
+                // if(cost != 0 && plugin.getVaultEco() != null){
+                //     plugin.getVaultEco().withDraw(targetPlayer, );
+                // }
             }
         }
         

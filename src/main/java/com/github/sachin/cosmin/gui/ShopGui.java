@@ -33,9 +33,12 @@ public class ShopGui extends PagedGui{
                 if(!perm.equals("none")){
                     if(!getPlayer().hasPermission(perm)) continue;
                 }
-                if(s.getCost() == 0 || getCosminPlayer().getPurchasedSets().contains(s.getInternalName())) continue;
-                ItemStack item = ItemBuilder.updateItemLore(s.getIcon().getItem().clone(),s.getCost()); 
-                this.items.add(item);
+                if(getCosminPlayer().getPurchasedItems().contains(s.getInternalName())) continue;
+                if(s.getCost() != 0 || s.getPlayerPoints() != 0){
+                    
+                    ItemStack item = ItemBuilder.updateItemLore(s.getIcon().getItem().clone(), s.getCost(),s.getPlayerPoints());
+                    this.items.add(item);
+                }
             }
         }
         else{
@@ -48,9 +51,12 @@ public class ShopGui extends PagedGui{
                             continue;
                         }
                     }
-                    if(a.getCost() == 0 || getCosminPlayer().getPurchasedItems().contains(a.getInternalName())) continue;
-                    ItemStack item = ItemBuilder.updateItemLore(a.getItem().clone(), a.getCost());
-                    this.items.add(item);
+                    if(getCosminPlayer().getPurchasedItems().contains(a.getInternalName())) continue;
+                    if(a.getCost() != 0 || a.getPlayerPoints() != 0){
+
+                        ItemStack item = ItemBuilder.updateItemLore(a.getItem().clone(), a.getCost(),a.getPlayerPoints());
+                        this.items.add(item);
+                    }
                 }
             }   
         }
@@ -76,6 +82,36 @@ public class ShopGui extends PagedGui{
         return ChatColor.translateAlternateColorCodes('&', title);
     }
 
+    private boolean canBuy(Player player,CosminArmor armor){
+        boolean vaultBool = false;
+        boolean pointsBool = false;
+        if(plugin.getVaultEco() != null && armor.getCost() != 0){
+            vaultBool = plugin.getVaultEco().getBalance(player) < armor.getCost();
+        }
+        else{
+            vaultBool = true;
+        }
+        if(plugin.getPlayerPointsEco() != null && armor.getPlayerPoints() != 0){
+            pointsBool = plugin.getPlayerPointsEco().getBalance(player) < armor.getPlayerPoints();
+        }
+        else{
+            pointsBool = true;
+        }
+        return vaultBool && pointsBool;
+    }
+
+    private boolean canBuy(Player player,CosmeticSet set){
+        boolean vaultBool = false;
+        boolean pointsBool = false;
+        if(plugin.getVaultEco() != null && set.getCost() != 0){
+            vaultBool = plugin.getVaultEco().getBalance(player) < set.getCost();
+        }
+        if(plugin.getPlayerPointsEco() != null && set.getPlayerPoints() != 0){
+            pointsBool = plugin.getPlayerPointsEco().getBalance(player) < set.getPlayerPoints();
+        }
+        return vaultBool && pointsBool;
+    }
+
     @Override
     public void handlePageClicks(InventoryClickEvent e) {
         e.setCancelled(true);
@@ -86,14 +122,14 @@ public class ShopGui extends PagedGui{
             
             if(ItemBuilder.isCosmeticSetIcon(clickedItem)){
                 CosmeticSet set = plugin.getArmorManager().getSet(ItemBuilder.getCosmeticSetIconValue(clickedItem));
-                if(plugin.getEconomy().getBalance(player) < set.getCost()){
+                if(canBuy(player,set)){
                     plugin.getMessageManager().sendMessage(CosminConstants.M_NOT_ENOUGH_BALANCE, player);
                     return;
                 }  
             }
             else if (ItemBuilder.isHatItem(clickedItem)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(ItemBuilder.getArmorName(clickedItem));
-                if(plugin.getEconomy().getBalance(player) < armor.getCost()){
+                if(canBuy(player,armor)){
                     plugin.getMessageManager().sendMessage(CosminConstants.M_NOT_ENOUGH_BALANCE, player);
                     return;
                 }    

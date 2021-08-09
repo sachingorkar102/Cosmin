@@ -12,7 +12,6 @@ import java.util.Map.Entry;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketAdapter;
 import com.github.sachin.cosmin.armor.ArmorManager;
 import com.github.sachin.cosmin.commands.CommandManager;
 import com.github.sachin.cosmin.commands.CosmeticCommand;
@@ -71,7 +70,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     private CommandManager commandManager;
     private ProtocolManager protocolManager;
-    private CosminEconomy economy;
+    private VaultHook vaultEco;
+    private PlayerPointsHook playerPointsEco;
     private ArmorManager armorManager = new ArmorManager();
     private PlayerManager playerManager = new PlayerManager();
     private Message messageManager;
@@ -145,15 +145,18 @@ public final class Cosmin extends JavaPlugin implements Listener{
     public void enabledEconomy(){
         if(getServer().getPluginManager().isPluginEnabled("Vault")){
             getLogger().info("Found Vault, trying to initialize economy support..");
-            this.economy = new VaultHook(this);
+            this.vaultEco = new VaultHook(this); 
         }
-        else if(getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
-            getLogger().info("Found PlayerPoints, trying to initialize economy support");
-            this.economy = new PlayerPointsHook(this);
+        if(getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
+            getLogger().info("Found PlayerPoints, trying to initialize economy support..");
+            this.playerPointsEco = new PlayerPointsHook(this);
         }
         else{
             this.isEconomyEnabled = false;
             getLogger().info("No economy plugins found, disabling economy features");
+        }
+        if(vaultEco != null || playerPointsEco != null){
+            this.isEconomyEnabled = true;
         }
     }
 
@@ -377,11 +380,16 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public boolean isEconomyEnabled(){
-        return isEconomyEnabled && economy != null;
+        return isEconomyEnabled;
     }
 
-    public CosminEconomy getEconomy() {
-        return economy;
+
+    public VaultHook getVaultEco() {
+        return vaultEco;
+    }
+
+    public PlayerPointsHook getPlayerPointsEco() {
+        return playerPointsEco;
     }
 
 

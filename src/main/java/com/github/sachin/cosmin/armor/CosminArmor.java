@@ -17,6 +17,7 @@ public class CosminArmor{
     private boolean hide;
     private int cost = 0;
     private String optifineFile;
+    private int points;
 
     public CosminArmor(ItemStack item,String internalName){
         this.item = item;
@@ -68,6 +69,14 @@ public class CosminArmor{
 
     public void setItem(ItemStack item) {
         this.item = item;
+    }
+
+    public int getPlayerPoints() {
+        return points;
+    }
+
+    public void setPlayerPoints(int points) {
+        this.points = points;
     }
 
     public String getOptifineFile() {
