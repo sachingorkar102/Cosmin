@@ -237,9 +237,10 @@ public class CosminPlayer {
             if(armor == null){
                 armor = new ItemStack(Material.AIR);
             }
-            if(!plugin.getConfig().getBoolean("allow-empty-slots."+slot,true) && armor.getType() == Material.AIR){
+            if(armor.getType() == Material.AIR && !hasAirEquipPerms(player,slot) || !plugin.getConfig().getBoolean("allow-empty-slots."+slot.toString(),true)){
                 pairs.put(slot, orignalArmor);
                 orignalArmorMap.put(slot, true);
+                
             }
             else if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType())){
                 pairs.put(slot, armor);
@@ -253,6 +254,10 @@ public class CosminPlayer {
         }
         this.equipmentMap = pairs;
         
+    }
+
+    private boolean hasAirEquipPerms(Player player,CItemSlot slot){
+        return player.hasPermission("cosmin.hidearmor"+slot.toString().toLowerCase());
     }
 
     // this is used when player closes cosmin inventory and CRAFTING inventory

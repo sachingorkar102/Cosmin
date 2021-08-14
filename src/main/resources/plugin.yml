@@ -14,7 +14,7 @@ commands:
 permissions:
   cosmin.realarmor:
     description: allows to see other players real armor
-    default: op
+    default: false
   cosmin.forceequip.remove:
     description: allows to remove forcefully equiped armor
     default: op
@@ -42,11 +42,20 @@ permissions:
   cosmin.deathdrops.bypass:
     description: bypass permission for drop items on death option
     default: op  
-  cosmin.command.*:
+  cosmin.hidearmor.*:
+    default: true
     children:
-      - cosmin.command.help
-      - cosmin.command.reload
-      - cosmin.command.view
-      - cosmin.command.give
-      - cosmin.command.clear
-      - cosmin.command.cosmetics
+      cosmin.hidearmorhead: true
+      cosmin.hidearmorchest: true
+      cosmin.hidearmorlegs: true
+      cosmin.hidearmorfeet: true
+      cosmin.hidearmoroffhand: true
+  cosmin.command.*:
+    default: op
+    children:
+      cosmin.command.help: true
+      cosmin.command.reload: true
+      cosmin.command.view: true
+      cosmin.command.give: true
+      cosmin.command.clear: true
+      cosmin.command.cosmetics: true
