@@ -24,11 +24,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class TestClass {
     public static void main(String[] args) {
-        try {
-            generatePack();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        System.out.println(3*100/4);
     }
 
     public static void generatePack() throws IOException{

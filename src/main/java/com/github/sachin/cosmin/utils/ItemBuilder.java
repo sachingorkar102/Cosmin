@@ -355,11 +355,13 @@ public class ItemBuilder {
         ItemMeta meta = i.getItemMeta();
         List<String> lore = new ArrayList<>();
         for(String l : plugin.getConfig().getStringList(CosminConstants.SHOP_ITEM_LORE)){
-            String s = l.replace("%cost%", String.valueOf(cost)).replace("%points%", String.valueOf(points));
-            lore.add(ChatColor.translateAlternateColorCodes('&', s));
-        }
-        if(meta.hasLore()){
-            lore.addAll(meta.getLore());
+            if(l.equals("%lore%")){
+                lore.addAll(meta.getLore());
+            }
+            else{
+                String s = l.replace("%cost%", String.valueOf(cost)).replace("%points%", String.valueOf(points));
+                lore.add(ChatColor.translateAlternateColorCodes('&', s));
+            }
         }
         meta.setLore(lore);
         i.setItemMeta(meta);

@@ -59,7 +59,7 @@ public class GuiListener implements Listener{
                 }.runTaskLater(plugin, 2);
             }
         }
-        else if(e.getInventory().getType() == InventoryType.CRAFTING && plugin.getPlayerManager().containsPlayer(player)){
+        else if(e.getView().getTopInventory().getType() == InventoryType.CRAFTING && plugin.getPlayerManager().containsPlayer(player)){
             CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
             cosminPlayer.clearNonExsistantArmorItems();
             cosminPlayer.computeAndPutEquipmentPairList();

@@ -50,7 +50,7 @@ allow-external-armor:
   OFFHAND: true
 
 # weather or not players are allowed to hide there orignal armor by keeping the respective fake slot empty
-# this can changed for invdividual players too with cosmin.hidearmor.[slotname] or use cosmin.hidearmor.* to take all slots into account
+# this can changed for invdividual players too with cosmin.hidearmor[slotname] or use cosmin.hidearmor.* to take all slots into account
 allow-empty-slots:
   HEAD: true
   CHEST: true

@@ -13,6 +13,7 @@ import com.github.sachin.cosmin.utils.ItemBuilder;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -104,7 +105,7 @@ public class PlayerListener implements Listener{
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void playerSwapItemEvent(PlayerSwapHandItemsEvent e){
         Player player = e.getPlayer();
         if(plugin.getPlayerManager().containsPlayer(player)){
