@@ -23,6 +23,7 @@ import com.github.sachin.cosmin.economy.PlayerPointsHook;
 import com.github.sachin.cosmin.economy.VaultHook;
 import com.github.sachin.cosmin.gui.GuiListener;
 import com.github.sachin.cosmin.gui.GuiManager;
+import com.github.sachin.cosmin.integration.CosminPAPIExpansion;
 import com.github.sachin.cosmin.listener.PlayerListener;
 import com.github.sachin.cosmin.nbtapi.NBTAPI;
 import com.github.sachin.cosmin.player.CosminPlayer;
@@ -64,6 +65,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     public boolean postNetherUpdate;
     private boolean papiEnabled;
+    private CosminPAPIExpansion papiExpansion;
     public boolean isEconomyEnabled;
     public GuiManager guiManager;
     public MiscItems miscItems;
@@ -117,7 +119,14 @@ public final class Cosmin extends JavaPlugin implements Listener{
         PluginManager pm = this.getServer().getPluginManager();
         pm.registerEvents(new GuiListener(this), this);
         pm.registerEvents(new PlayerListener(this), this);
-        this.papiEnabled = pm.isPluginEnabled("PlaceHolderAPI");
+        this.papiEnabled = false;
+        if(pm.isPluginEnabled("PlaceHolderAPI")){
+            getLogger().info("Found PlaceHolderAPI registering the expansion...");
+            this.papiEnabled = true;
+            this.papiExpansion = new CosminPAPIExpansion(this);
+            papiExpansion.register();
+            
+        }
 
         
         reloadAllConfigs();
