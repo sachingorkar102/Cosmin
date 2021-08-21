@@ -237,16 +237,18 @@ public class CosminPlayer {
             if(armor == null){
                 armor = new ItemStack(Material.AIR);
             }
-            if(armor.getType() == Material.AIR && !hasAirEquipPerms(player,slot) || !plugin.getConfig().getBoolean("allow-empty-slots."+slot.toString(),true)){
+            if(armor.getType() == Material.AIR && (!hasAirEquipPerms(player,slot) || !plugin.getConfig().getBoolean("allow-empty-slots."+slot.toString(),true))){
                 pairs.put(slot, orignalArmor);
                 orignalArmorMap.put(slot, true);
-                
             }
-            else if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor && !plugin.getConfigUtils().getBlackListMaterials().contains(armor.getType())){
+            else if(!player.hasPermission("cosmin.equip.nonmodelitems") && !hasCustomModel(armor) && armor.getType() != Material.AIR){
+                pairs.put(slot, orignalArmor);
+                orignalArmorMap.put(slot, true);
+            }
+            else if(ItemBuilder.isEnableItem(toggleItem) && isValidArmor){
                 pairs.put(slot, armor);
                 orignalArmorMap.put(slot, false);
             }
-
             else{
                 pairs.put(slot, orignalArmor);
                 orignalArmorMap.put(slot, true);
@@ -254,6 +256,11 @@ public class CosminPlayer {
         }
         this.equipmentMap = pairs;
         
+    }
+
+    private boolean hasCustomModel(ItemStack item){
+        if(!item.hasItemMeta()) return false;
+        return item.getItemMeta().hasCustomModelData();
     }
 
     private boolean hasAirEquipPerms(Player player,CItemSlot slot){

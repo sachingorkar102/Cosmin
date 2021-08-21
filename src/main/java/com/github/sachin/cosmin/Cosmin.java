@@ -137,7 +137,6 @@ public final class Cosmin extends JavaPlugin implements Listener{
         this.protocolManager.addPacketListener(new EntityEquipmentPacketListener(this));
         this.protocolManager.addPacketListener(new SetSlotPacketListener(this));
         this.protocolManager.addPacketListener(new SpawnPlayerPacketListener(this));
-
         Bukkit.getOnlinePlayers().forEach(p -> {entityIdMap.put(p.getEntityId(), p);});
 
         loadPlayerData();

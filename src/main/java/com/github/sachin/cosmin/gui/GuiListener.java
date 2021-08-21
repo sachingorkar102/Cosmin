@@ -1,6 +1,8 @@
 package com.github.sachin.cosmin.gui;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.github.sachin.cosmin.Cosmin;
@@ -15,23 +17,28 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GuiListener implements Listener{
 
     private Cosmin plugin;
+    private Map<Integer,CItemSlot> equipSlotMap = new HashMap<>();
 
     public GuiListener(Cosmin cosmin) {
         this.plugin = cosmin;
+        equipSlotMap.clear();
+        for(CItemSlot cSlot:CItemSlot.values()){
+            equipSlotMap.put(cSlot.getFakeSlotId(), cSlot);
+        }
     }
-
-
     
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiCloseEvent(InventoryCloseEvent e){
@@ -71,8 +78,21 @@ public class GuiListener implements Listener{
 
     @EventHandler
     public void cosminGuiDragEvent(InventoryDragEvent e){
-        if(e.getInventory().getHolder() instanceof GuiHolder){
+        
+        if(e.getInventory().getHolder() instanceof PagedGui){
             e.setCancelled(true);
+        }
+        if(e.getInventory().getHolder() instanceof GuiHolder){
+            GuiHolder holder = (GuiHolder) e.getInventory().getHolder();
+            if(holder.getContext() == GuiContext.COSMIN_INVENTORY){
+                for(int s : e.getInventorySlots()){
+                    if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(s)){
+                        if(plugin.getConfigUtils().matchBlackListMaterial(e.getOldCursor().getType(), equipSlotMap.get(s))){
+                            e.setCancelled(true);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -81,31 +101,67 @@ public class GuiListener implements Listener{
     @EventHandler
     public void cosminGuiClickEvent(InventoryClickEvent e){
         Player player = (Player) e.getWhoClicked();
-        if(e.getClickedInventory() == null) return;
-        if(e.getView().getTopInventory().getHolder() instanceof GuiHolder){
-            if(e.getClick() == ClickType.SHIFT_LEFT || e.getClick() == ClickType.SHIFT_RIGHT){
+        Inventory clickedInv = e.getClickedInventory();
+        if(clickedInv == null) return;
+        
+        if(clickedInv.getHolder() instanceof GuiHolder){
+            if(e.getClick()==ClickType.SHIFT_LEFT||e.getClick()==ClickType.SHIFT_RIGHT) {
                 e.setCancelled(true);
+                return;
             }
-        }
-        if(e.getInventory().getType() == InventoryType.CRAFTING){
-            if(plugin.getPlayerManager().containsPlayer(player)){
-                CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
-                cosminPlayer.setInventoryOpen(true);
+            GuiHolder holder = (GuiHolder) clickedInv.getHolder();
+            ItemStack clickedItem = e.getCurrentItem();
+            int clickedSlot = e.getSlot();
+            if(holder.getContext()== GuiContext.COSMIN_INVENTORY){
+
+                if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(clickedSlot)){
+                    if(e.getCursor() != null && plugin.getConfigUtils().matchBlackListMaterial(e.getCursor().getType(), equipSlotMap.get(e.getSlot()))) e.setCancelled(true);
+                    else if(!plugin.getConfigUtils().getExternalArmorMap().get(e.getSlot()) || ItemBuilder.isHatItem(clickedItem)){
+                        e.setCancelled(true);
+                    }
+                }
+                else if(clickedItem != null && clickedItem.isSimilar(plugin.miscItems.getCosmeticSetButton())){
+                    onCosmeticSetClickEvent(e, player,holder);
+                }
+                else if(CosminConstants.TOGGLABLE_SLOTS.contains(clickedSlot)){
+                    onToggleSlotsClickEvent(e, player, holder);
+                }
+                else if(CosminConstants.FILLAR_SLOTS.contains(clickedSlot)){
+                    e.setCancelled(true);
+                }
+            }
+            // check for paged gui
+            else if(clickedInv.getHolder() instanceof PagedGui){
+                PagedGui hGui = (PagedGui) e.getInventory().getHolder();
+                hGui.handlePageClicks(e);
+                return;
+            }
+            // check for cosmetic set gui
+            else if(clickedInv.getHolder() instanceof CosmeticSetGui){
+                CosmeticSetGui cGui = (CosmeticSetGui) e.getInventory().getHolder();
+                cGui.handlePageClicks(e);
+                return;
+            }
+            else if(clickedInv.getHolder() instanceof ConfirmGui){
+                onConfirmGuiClickEvent(e);
                 return;
             }
         }
+        else if(e.getView().getTopInventory().getType() == InventoryType.CRAFTING){
+            if(plugin.getPlayerManager().containsPlayer(player)){
+                CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+                cosminPlayer.setInventoryOpen(true);
+            }
+        }
+        
+        /*
+        
         
         ItemStack clickedItem = e.getCurrentItem();
 
         
         
         if(e.getClickedInventory().getHolder() instanceof GuiHolder){
-            // check for paged gui
-            if(e.getInventory().getHolder() instanceof PagedGui){
-                PagedGui hGui = (PagedGui) e.getInventory().getHolder();
-                hGui.handlePageClicks(e);
-                return;
-            }
             // check for cosmetic set gui
             else if(e.getInventory().getHolder() instanceof CosmeticSetGui){
                 CosmeticSetGui cGui = (CosmeticSetGui) e.getInventory().getHolder();
@@ -140,6 +196,7 @@ public class GuiListener implements Listener{
                 } 
             }
         }
+        */
     }
 
     private void onConfirmGuiClickEvent(InventoryClickEvent e){

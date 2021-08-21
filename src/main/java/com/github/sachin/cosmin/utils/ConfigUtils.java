@@ -36,7 +36,7 @@ public class ConfigUtils {
     private File itemsDirectory;
 
     private final Map<Integer,Boolean> externalArmorMap = new HashMap<>();
-    private final List<Material> blackListMaterials = new ArrayList<>();
+    private final Map<CItemSlot,List<String>> blackListMaterials = new HashMap<>();
     private final List<ClickType> hotKeysList = new ArrayList<>();
     private final List<ConfigurationSection> cosmeticSetSections = new ArrayList<>();
 
@@ -167,20 +167,29 @@ public class ConfigUtils {
         return plugin.getConfig().getBoolean(CosminConstants.DB_ENABLED,false);
     }
 
-    public List<Material> getBlackListMaterials(){
+    public Map<CItemSlot, List<String>> getBlackListMaterials() {
         if(blackListMaterials.isEmpty()){
-            List<String> mats = plugin.getConfig().getStringList(CosminConstants.BLACKLIST_MATERIALS);
-            if(mats != null){
-                for (String name : mats) {
-                    Optional<XMaterial> xm = XMaterial.matchXMaterial(name);
-                    if(xm.isPresent()){
-                        Material m = xm.get().parseMaterial();
-                        blackListMaterials.add(m);
-                    }
-                }
+            for(CItemSlot slot : CItemSlot.values()){
+                blackListMaterials.put(slot, plugin.getConfig().getStringList("blacklist-materials."+slot.toString()));
+                
             }
         }
-        return this.blackListMaterials;
+        return blackListMaterials;
+    }
+
+    public boolean matchBlackListMaterial(Material mat,CItemSlot slot){
+        String str = mat.toString();
+        for(String s : getBlackListMaterials().get(slot)){
+            if(s.startsWith("^") && str.startsWith(s.replace("^", ""))){
+                return true;
+            }
+            if(s.endsWith("$") && str.endsWith(s.replace("$", ""))){
+                return true;
+            }
+            if(str.equals(s)) return true;
+
+        }
+        return false;
     }
 
     public List<ClickType> getHotKeysList() {
