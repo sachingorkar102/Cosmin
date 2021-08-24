@@ -397,10 +397,11 @@ public class CosminPlayer {
             if(armor == null) {
                 cosminInvContents.set(i, null);
             }
-            else if(ItemBuilder.isCosmeticSetArmor(item)){
+            else if(plugin.getConfig().getBoolean(CosminConstants.ENABLE_COSMETIC_SET) &&ItemBuilder.isCosmeticSetArmor(item)){
                 CosmeticSet set = plugin.getArmorManager().getSet(ItemBuilder.getCosmeticSetArmorName(item));
-                if(set.getCost() != 0 && !getPurchasedSets().contains(set.getInternalName())){
+                if( set != null && set.getCost() != 0 && !getPurchasedSets().contains(set.getInternalName())){
                     cosminInvContents.set(i, null);
+
                 }
             }
             else if(armor.getCost() != 0 && !getPurchasedItems().contains(armor.getInternalName()) && !armor.hide()){
