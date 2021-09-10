@@ -143,8 +143,11 @@ public class GuiManager {
         Inventory inventory = Bukkit.createInventory(cHolder,27, getTitle(player, CosminConstants.CONFIRM_PAGE));
         cHolder.setInventory(inventory);
         inventory.setItem(13, item);
-        inventory.setItem(20, plugin.miscItems.getConfirmButton());
-        inventory.setItem(24, plugin.miscItems.getCancelButton());
+        inventory.setItem(15, plugin.miscItems.getConfirmButton());
+        inventory.setItem(11, plugin.miscItems.getCancelButton());
+        for(int i : Arrays.asList(0,1,2,3,4,5,6,7,8,9,10,12,14,16,17,18,19,20,21,22,23,24,25,26)){
+            inventory.setItem(i, plugin.miscItems.getFillerGlass());
+        }
         player.openInventory(inventory);
 
     }
