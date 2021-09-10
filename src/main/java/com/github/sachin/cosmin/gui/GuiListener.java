@@ -204,10 +204,12 @@ public class GuiListener implements Listener{
         ConfirmGui cHolder = (ConfirmGui) e.getInventory().getHolder();
         String name = cHolder.getItemName();
         Player player = (Player) e.getWhoClicked();
-        if(e.getCurrentItem().isSimilar(plugin.miscItems.getCancelButton())){
+        ItemStack clickedItem = e.getCurrentItem();
+        if(clickedItem == null) return;
+        if(clickedItem.isSimilar(plugin.miscItems.getCancelButton())){
             player.closeInventory();
         }
-        else if(e.getCurrentItem().isSimilar(plugin.miscItems.getConfirmButton())){
+        else if(clickedItem.isSimilar(plugin.miscItems.getConfirmButton())){
             CosminPlayer cPlayer = cHolder.getCosminPlayer();
             if(plugin.getArmorManager().containsArmor(name)){
                 CosminArmor armor = plugin.getArmorManager().getArmor(name);

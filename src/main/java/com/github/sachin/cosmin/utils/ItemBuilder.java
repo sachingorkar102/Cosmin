@@ -15,7 +15,6 @@ import com.google.common.base.Enums;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
@@ -50,6 +49,8 @@ import java.util.stream.Collectors;
 
 public class ItemBuilder {
 
+    private static final Cosmin plugin = Cosmin.getInstance();
+
     public ItemBuilder(){ }
 
 
@@ -59,7 +60,6 @@ public class ItemBuilder {
     public static ItemStack itemFromFile(ConfigurationSection section,String miscItemType){
         Preconditions.checkNotNull(section, "item cant be null");
         Preconditions.checkArgument(section.contains("id"), "item should atleast contain id");
-        Cosmin plugin = Cosmin.getInstance();
         ItemStack item = XMaterial.matchXMaterial(section.getString("id")).get().parseItem();
         
         // check if section has amount
@@ -75,14 +75,14 @@ public class ItemBuilder {
 
         // check for display name
         if(section.contains("display")){
-            meta.setDisplayName(ChatColor.translateAlternateColorCodes('&',section.getString("display")));
+            meta.setDisplayName(ColorUtils.applyColor(section.getString("display")));
         }
 
         // check for lore
         if(section.contains("lore")){
             List<String> lore = new ArrayList<>();
             section.getStringList("lore").forEach(s -> {
-                lore.add(ChatColor.translateAlternateColorCodes('&', s));
+                lore.add(ColorUtils.applyColor(s));
             });
             meta.setLore(lore);
         }
@@ -355,12 +355,13 @@ public class ItemBuilder {
         ItemMeta meta = i.getItemMeta();
         List<String> lore = new ArrayList<>();
         for(String l : plugin.getConfig().getStringList(CosminConstants.SHOP_ITEM_LORE)){
-            if(l.equals("%lore%")){
+            if(l.equals("%lore%") && meta.hasLore()){
                 lore.addAll(meta.getLore());
             }
             else{
                 String s = l.replace("%cost%", String.valueOf(cost)).replace("%points%", String.valueOf(points));
-                lore.add(ChatColor.translateAlternateColorCodes('&', s));
+                
+                lore.add(ColorUtils.applyColor(s));
             }
         }
         meta.setLore(lore);
