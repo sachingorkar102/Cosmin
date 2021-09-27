@@ -6,13 +6,11 @@ import java.util.ArrayList;
 
 import com.github.sachin.cosmin.Cosmin;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Message {
 
@@ -38,7 +36,8 @@ public class Message {
 
 
     public String getMessage(String key){
-        String message = ChatColor.translateAlternateColorCodes('&', messageConfig.getString("prefix")+messageConfig.getString(key));
+        String str = messageConfig.getString("prefix")+messageConfig.getString(key);
+        String message = ColorUtils.applyColor(str);
         return message;
     }
 
@@ -46,7 +45,7 @@ public class Message {
     public String getMessage(String key,Player player){
         String message = getMessage(key);
         if(plugin.isPAPIEnabled()){
-           message = PlaceholderAPI.setBracketPlaceholders(player, message);
+           message = me.clip.placeholderapi.PlaceholderAPI.setBracketPlaceholders(player, message);
         }
         return message;
     }

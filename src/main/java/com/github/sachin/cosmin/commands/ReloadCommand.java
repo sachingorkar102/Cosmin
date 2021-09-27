@@ -38,7 +38,6 @@ public class ReloadCommand extends SubCommands{
     public void perform(CommandSender sender, String[] args) {
         Cosmin.getInstance().reloadAllConfigs();
         plugin.getMessageManager().sendMessage(CosminConstants.M_RELOADED, sender);
-        
     }
     
 }

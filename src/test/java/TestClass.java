@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
+import com.github.sachin.cosmin.utils.ColorUtils;
 import com.github.sachin.cosmin.utils.CosminConstants;
+import com.github.sachin.cosmin.utils.HexColor;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -21,10 +24,17 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import net.md_5.bungee.api.ChatColor;
+
 
 public class TestClass {
     public static void main(String[] args) {
-        System.out.println(3*100/4);
+        String str = "{#ff9a9e}Config files reloaded successfully{#/fecfef}";
+        String str1 = "Hthis is a test..... {2F329F}Hello this {2F329F}is {2F329F}text";
+        // String str2 = "Hthis is a test..... {2F329F}Hello this {2F329F}is text";
+        System.out.println(ColorUtils.applyColor(str));
+        System.out.println(ColorUtils.applyColor(str1));
+        
     }
 
     public static void generatePack() throws IOException{
