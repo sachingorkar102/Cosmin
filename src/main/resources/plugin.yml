@@ -18,24 +18,24 @@ permissions:
   cosmin.forceequip.remove:
     description: allows to remove forcefully equiped armor
     default: op
-  cosmin.command.help:
-    description: allows use of help command
-    default: op
-  cosmin.command.reload:
-    description: allows to use reload command
-    default: op
-  cosmin.command.view:
-    description: allows to use view command
-    default: op
-  cosmin.command.give:
-    description: allows to use give command
-    default: op
-  cosmin.command.clear:
-    description: allows to use clear command
-    default: op
-  cosmin.command.cosmetics:
-    description: allows to open cosmetic gui
-    default: true
+  # cosmin.command.help:
+  #   description: allows use of help command
+  #   default: op
+  # cosmin.command.reload:
+  #   description: allows to use reload command
+  #   default: op
+  # cosmin.command.view:
+  #   description: allows to use view command
+  #   default: op
+  # cosmin.command.give:
+  #   description: allows to use give command
+  #   default: op
+  # cosmin.command.clear:
+  #   description: allows to use clear command
+  #   default: op
+  # cosmin.command.cosmetics:
+  #   description: allows to open cosmetic gui
+  #   default: true
   cosmin.cosmeticset:
     description: allows to see the cosmetic set button
     default: true
@@ -59,5 +59,6 @@ permissions:
       cosmin.command.give: true
       cosmin.command.clear: true
       cosmin.command.cosmetics: true
+      cosmin.command.openwardrobe: true
   cosmin.equip.nonmodelitems:
     default: true

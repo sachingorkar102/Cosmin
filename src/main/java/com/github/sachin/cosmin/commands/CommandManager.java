@@ -36,6 +36,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new BuyCommand(plugin));
         subcommands.add(new GeneratePackCommand());
         subcommands.add(new ImportItemCommand());
+        subcommands.add(new OpenWardrobeCommand());
     }
 
 
