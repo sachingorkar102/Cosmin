@@ -125,7 +125,11 @@ public class PagedGui extends GuiHolder {
     }
 
     public void revertToFakeGui(){
-        plugin.guiManager.showFakeGui(player, targetPlayer);
+        if(plugin.getConfig().getBoolean(CosminConstants.OPEN_COSMETIC_GUI_ON_WB_CLOSE)){
+            plugin.guiManager.showFakeGui(player, targetPlayer);
+        }else{
+            getPlayer().closeInventory();
+        }
     }
 
 

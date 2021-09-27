@@ -42,6 +42,7 @@ public class CosminConstants {
     public static final String DB_PASSWORD = "database.password";
     public static final String DB_NAME = "database.name";
     public static final String DB_TABLE_NAME = "database.table-name";
+    public static final String DB_TYPE = "database.type";
 
     // config key for prevent external slots
     public static final String ALLOW_EXTERNAL_ARMOR = "allow-external-armor";
@@ -51,6 +52,7 @@ public class CosminConstants {
     public static final String SHOP_ITEM_LORE = "shop-item-lore";
     public static final String TOGGLE_ITEM_TOOLTIP = "toggle-item-tooltip.";
     public static final String BLACKLIST_MATERIALS = "blacklist-materials";
+    public static final String OPEN_COSMETIC_GUI_ON_WB_CLOSE = "open-cosmetic-gui-on-wardrobe-close";
 
     // messages
     public static final String M_PREFIX = "prefix";

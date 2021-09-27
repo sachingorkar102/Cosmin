@@ -43,6 +43,7 @@ public class GuiListener implements Listener{
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiCloseEvent(InventoryCloseEvent e){
         Player player = (Player) e.getPlayer();
+        
         if(e.getInventory().getHolder() instanceof GuiHolder){
             
             GuiHolder holder = (GuiHolder) e.getInventory().getHolder();
@@ -98,25 +99,25 @@ public class GuiListener implements Listener{
 
    
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiClickEvent(InventoryClickEvent e){
         Player player = (Player) e.getWhoClicked();
         Inventory clickedInv = e.getClickedInventory();
         if(clickedInv == null) return;
         
+        int clickedSlot = e.getSlot();
         if(clickedInv.getHolder() instanceof GuiHolder){
-            if(e.getClick()==ClickType.SHIFT_LEFT||e.getClick()==ClickType.SHIFT_RIGHT) {
+            if((e.getClick()==ClickType.SHIFT_LEFT||e.getClick()==ClickType.SHIFT_RIGHT) && !CosminConstants.COSMIN_ARMOR_SLOTS.contains(clickedSlot)) {
                 e.setCancelled(true);
                 return;
             }
             GuiHolder holder = (GuiHolder) clickedInv.getHolder();
             ItemStack clickedItem = e.getCurrentItem();
-            int clickedSlot = e.getSlot();
             if(holder.getContext()== GuiContext.COSMIN_INVENTORY){
 
                 if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(clickedSlot)){
                     if(e.getCursor() != null && plugin.getConfigUtils().matchBlackListMaterial(e.getCursor().getType(), equipSlotMap.get(e.getSlot()))) e.setCancelled(true);
-                    else if(!plugin.getConfigUtils().getExternalArmorMap().get(e.getSlot()) || ItemBuilder.isHatItem(clickedItem)){
+                    else if(!plugin.getConfigUtils().getExternalArmorMap().get(clickedSlot) || ItemBuilder.isHatItem(clickedItem)){
                         e.setCancelled(true);
                     }
                 }
