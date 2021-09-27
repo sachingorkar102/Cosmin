@@ -169,18 +169,20 @@ public class PlayerListener implements Listener{
         Player player = e.getPlayer();
         if(!plugin.getPlayerManager().containsPlayer(player)) return;
         CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
-        if(e.getNewGameMode() == GameMode.CREATIVE) {
+        GameMode oldgm = player.getGameMode();
+        GameMode newgm = e.getNewGameMode();
+        if(oldgm == GameMode.SURVIVAL && (newgm == GameMode.CREATIVE || newgm == GameMode.SPECTATOR)){
             cPlayer.equipOrignalArmor();
         }
-        else{
+        else if((oldgm == GameMode.CREATIVE || oldgm == GameMode.SPECTATOR) && newgm == GameMode.SURVIVAL){
             new BukkitRunnable(){
-                @Override
                 public void run() {
                     cPlayer.computeAndPutEquipmentPairList();
                     cPlayer.setFakeSlotItems();
-                }
-            }.runTaskLater(plugin, 1);
+                };
+            }.runTaskLater(plugin, 2);
         }
+
     }
 
    
