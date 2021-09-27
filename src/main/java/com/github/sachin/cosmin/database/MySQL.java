@@ -22,15 +22,17 @@ public class MySQL {
 
     public MySQL(Cosmin plugin){
         this.plugin = plugin;
-        String host,port,username,password,database;
+        String host,port,username,password,database,type;
         host = plugin.getConfig().getString(CosminConstants.DB_HOST);
         port = plugin.getConfig().getString(CosminConstants.DB_PORT);
         username = plugin.getConfig().getString(CosminConstants.DB_USERNAME);
         password = plugin.getConfig().getString(CosminConstants.DB_PASSWORD);
         database = plugin.getConfig().getString(CosminConstants.DB_NAME);
+        type = plugin.getConfig().getString(CosminConstants.DB_TYPE,"mysql");
         this.table = plugin.getConfig().getString(CosminConstants.DB_TABLE_NAME,"cosmin_player_data");
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(String.format("jdbc:mysql://%s:%s/%s",host,port,database));
+        hikariConfig.setJdbcUrl(String.format("jdbc:%s://%s:%s/%s",type,host,port,database));
+        
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
         hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
