@@ -16,6 +16,7 @@ public class MySQL {
     private Cosmin plugin;
 
     private Connection conn = null;
+    private boolean validConnection = false;
     private HikariDataSource dataSource;
     private String table;
     
@@ -48,8 +49,10 @@ public class MySQL {
             conn = dataSource.getConnection();
             createTable();
             plugin.getLogger().info("Connected to MySQL database..");
+            validConnection = true;
         } catch (SQLException e) {
             plugin.getLogger().warning("Error occured while connecting to database");
+            validConnection = false;
             e.printStackTrace();
         }
     }
@@ -70,6 +73,9 @@ public class MySQL {
     }
 
     public Connection getConnection() {
+        if(conn == null && validConnection){
+            connect();
+        }
         return conn;
     }
 
