@@ -6,6 +6,7 @@ import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -37,6 +38,7 @@ public class CosminPAPIExpansion extends PlaceholderExpansion{
     public String onPlaceholderRequest(Player player, @NotNull String params) {
         if(plugin.getPlayerManager().containsPlayer(player)){
             CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+            
             if(params.equalsIgnoreCase("purchased_items_total")){
                 return String.valueOf(cPlayer.getPurchasedItems().size());
             }
@@ -66,6 +68,21 @@ public class CosminPAPIExpansion extends PlaceholderExpansion{
             else if(params.equalsIgnoreCase("purchased_items_offhand")){
                 return getPurchasedItemAmount(cPlayer, CItemSlot.OFFHAND);
             }
+            else if(params.equalsIgnoreCase("armor_head_name")){
+                return getArmorName(cPlayer, CItemSlot.HEAD);
+            }
+            else if(params.equalsIgnoreCase("armor_chest_name")){
+                return getArmorName(cPlayer, CItemSlot.CHEST);
+            }
+            else if(params.equalsIgnoreCase("armor_legs_name")){
+                return getArmorName(cPlayer, CItemSlot.LEGS);
+            }
+            else if(params.equalsIgnoreCase("armor_feet_name")){
+                return getArmorName(cPlayer, CItemSlot.FEET);
+            }
+            else if(params.equalsIgnoreCase("armor_offhand_name")){
+                return getArmorName(cPlayer, CItemSlot.OFFHAND);
+            }
             
         }
         return null;
@@ -80,6 +97,14 @@ public class CosminPAPIExpansion extends PlaceholderExpansion{
             }
         }
         return String.valueOf(a);
+    }
+
+    private String getArmorName(CosminPlayer player,CItemSlot slot){
+        ItemStack item = player.getSlotItem(slot);
+        if(item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()){
+            return item.getItemMeta().getDisplayName();
+        }
+        return null;
     }
     
 }
