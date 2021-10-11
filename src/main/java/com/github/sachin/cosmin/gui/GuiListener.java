@@ -50,20 +50,18 @@ public class GuiListener implements Listener{
             // CosminPlayer cosminPlayer = new CosminPlayer(player,Arrays.asList(holder.getInventory().getContents()));
             if(holder.getContext() == GuiContext.COSMIN_INVENTORY){
 
+                CosminPlayer cosminPlayer = holder.getCosminPlayer();
+                cosminPlayer.setCosminInvContents(Arrays.asList(holder.getInventory().getContents()));
+                cosminPlayer.clearNonExsistantArmorItems();
+                cosminPlayer.computeAndPutEquipmentPairList();
+                plugin.getPlayerManager().addPlayer(cosminPlayer);
                 new BukkitRunnable(){
-                    @Override
                     public void run() {
-                        CosminPlayer cosminPlayer = holder.getCosminPlayer();
-                        cosminPlayer.setCosminInvContents(Arrays.asList(holder.getInventory().getContents()));
-                        cosminPlayer.clearNonExsistantArmorItems();
-                        cosminPlayer.computeAndPutEquipmentPairList();
-                        plugin.getPlayerManager().addPlayer(cosminPlayer);
-                         
-                        if(!(player.getOpenInventory().getTopInventory().getHolder() instanceof PagedGui)){
+                        if(player.isOnline() && !(player.getOpenInventory().getTopInventory().getHolder() instanceof PagedGui)){
                             cosminPlayer.sendPacketWithinRange(60);
                             cosminPlayer.setFakeSlotItems();
                         }
-                    }
+                    };
                 }.runTaskLater(plugin, 2);
             }
         }
@@ -154,50 +152,6 @@ public class GuiListener implements Listener{
                 cosminPlayer.setInventoryOpen(true);
             }
         }
-        
-        /*
-        
-        
-        ItemStack clickedItem = e.getCurrentItem();
-
-        
-        
-        if(e.getClickedInventory().getHolder() instanceof GuiHolder){
-            // check for cosmetic set gui
-            else if(e.getInventory().getHolder() instanceof CosmeticSetGui){
-                CosmeticSetGui cGui = (CosmeticSetGui) e.getInventory().getHolder();
-                cGui.handlePageClicks(e);
-                return;
-            }
-            else if(e.getInventory().getHolder() instanceof ConfirmGui){
-                onConfirmGuiClickEvent(e);
-                return;
-            }
-            GuiHolder holder = (GuiHolder) e.getClickedInventory().getHolder();
-            if(ItemBuilder.isHatItem(clickedItem)){
-                e.setCancelled(true);
-            }
-
-            // check for main inventory
-            if(holder.getContext() == GuiContext.COSMIN_INVENTORY){
-                if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(e.getSlot())){
-                    if(!plugin.getConfigUtils().getExternalArmorMap().get(e.getSlot())){
-                        e.setCancelled(true);
-                    }
-                }
-                else if(e.getCurrentItem().isSimilar(plugin.miscItems.getCosmeticSetButton()) && plugin.getConfigUtils().isCosmeticSetEnabled()){
-                    onCosmeticSetClickEvent(e, player,holder);
-
-                }
-                else if(CosminConstants.TOGGLABLE_SLOTS.contains(e.getSlot())){
-                    onToggleSlotsClickEvent(e, player, holder);
-                }
-                else if(CosminConstants.FILLAR_SLOTS.contains(e.getSlot())){
-                    e.setCancelled(true);
-                } 
-            }
-        }
-        */
     }
 
     private void onConfirmGuiClickEvent(InventoryClickEvent e){
