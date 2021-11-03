@@ -85,7 +85,7 @@ public class CosminPAPIExpansion extends PlaceholderExpansion{
             }
             
         }
-        return null;
+        return "";
     }
 
 
@@ -104,7 +104,7 @@ public class CosminPAPIExpansion extends PlaceholderExpansion{
         if(item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()){
             return item.getItemMeta().getDisplayName();
         }
-        return null;
+        return "";
     }
     
 }

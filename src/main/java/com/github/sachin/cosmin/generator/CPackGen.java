@@ -315,7 +315,7 @@ public class CPackGen {
         FileReader reader = new FileReader(file);
         JsonObject obj = gson.fromJson(reader, JsonObject.class);
         JsonObject textureObj = new JsonObject();
-        textureObj.addProperty("0", "item/"+armor.getInternalName());
+        textureObj.addProperty("layer0", "item/"+armor.getInternalName());
         obj.add("textures", textureObj);
         FileWriter writer = new FileWriter(file);
         gson.toJson(obj, writer);
@@ -340,12 +340,7 @@ public class CPackGen {
             reader.close();
         }
         FileWriter writer = new FileWriter(baseItemJson);
-        if(armor.getConfig().contains("option.parent")){
-            obj.addProperty("parent", "item/"+armor.getConfig().getString("options.parent","handheld_rod"));;
-        }
-        else{
-            obj.addProperty("parent", "item/handheld_rod");
-        }
+        obj.addProperty("parent", "item/"+armor.getConfig().getString("options.parent","handheld_rod"));
         JsonObject texturesobj = new JsonObject();
         texturesobj.addProperty("layer0", "minecraft:item/"+itemName);
         obj.add("textures",texturesobj);
