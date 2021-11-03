@@ -6,7 +6,7 @@
 
     <groupId>com.github.sachin.cosmin</groupId>
     <artifactId>Cosmin</artifactId>
-    <version>1.9</version>
+    <version>2.0</version>
     <packaging>jar</packaging>
 
     <name>Cosmin</name>
@@ -56,7 +56,7 @@
                   <relocations>
                     <relocation>
                       <pattern>com.zaxxer.hikari</pattern>
-                      <shadedPattern>com.github.sachin.cosmin</shadedPattern>
+                      <shadedPattern>com.github.sachin.cosmin.hikaricp</shadedPattern>
                     </relocation>
                   </relocations>
                 </configuration>
