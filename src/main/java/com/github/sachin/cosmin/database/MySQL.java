@@ -23,6 +23,7 @@ public class MySQL {
 
     public MySQL(Cosmin plugin){
         this.plugin = plugin;
+        
         String host,port,username,password,database,type;
         host = plugin.getConfig().getString(CosminConstants.DB_HOST);
         port = plugin.getConfig().getString(CosminConstants.DB_PORT);
@@ -76,7 +77,18 @@ public class MySQL {
         if(conn == null && validConnection){
             connect();
         }
+        if(isClosed() && validConnection){
+            connect();
+        }
         return conn;
+    }
+
+    public boolean isClosed(){
+        try {
+            return conn != null && conn.isClosed();
+        } catch (SQLException e) {
+            return true;
+        }
     }
 
     public void createTable(){
