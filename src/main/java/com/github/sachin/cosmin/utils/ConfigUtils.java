@@ -134,6 +134,7 @@ public class ConfigUtils {
             set.setIcon(iconArmor);
             set.setCost(section.getInt("cost",0));
             set.setPlayerPoints(section.getInt("points",0));
+            set.setAllowCrossMatch(section.getBoolean("allow-cross-match",true));
             for(String slotKey:section.getConfigurationSection("items").getKeys(false)){
                 CItemSlot slot = CItemSlot.valueOf(slotKey);
                 if(slot == null) continue;

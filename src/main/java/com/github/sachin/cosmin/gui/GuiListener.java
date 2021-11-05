@@ -216,8 +216,9 @@ public class GuiListener implements Listener{
     private void onToggleSlotsClickEvent(InventoryClickEvent e,Player player,GuiHolder holder){
         ItemStack clickedItem = e.getCurrentItem();
         int clickedSlot = e.getSlot();
+        ItemStack armor = e.getClickedInventory().getItem(clickedSlot+9);
         // on left click(on toggle visibility)
-        if(ItemBuilder.isForcedItem(e.getClickedInventory().getItem(clickedSlot+9)) && !player.hasPermission(CosminConstants.PERM_FORCEEQUIP_REMOVE)){
+        if(ItemBuilder.isForcedItem(armor) && !player.hasPermission(CosminConstants.PERM_FORCEEQUIP_REMOVE)){
             plugin.getMessageManager().sendMessage(CosminConstants.M_CANT_DEQUIP, player);
         }
         else if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(0)){
@@ -242,7 +243,7 @@ public class GuiListener implements Listener{
         }
         // on drop
         else if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(2)){
-            if(ItemBuilder.isHatItem(e.getClickedInventory().getItem(clickedSlot+9))){
+            if(ItemBuilder.isHatItem(armor) && ItemBuilder.isCrossMatchAllowed(armor)){
                 e.getClickedInventory().setItem(clickedSlot+9, null);
             }
         }   

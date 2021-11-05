@@ -14,6 +14,7 @@ public class CosmeticSet {
     private String permission;
     private int cost;
     private int points;
+    private boolean allowCrossMatch=true;
 
     public CosmeticSet(Map<CItemSlot,CosminArmor> armorSet,CosminArmor icon,String internalName){
         this.icon = icon;
@@ -76,6 +77,15 @@ public class CosmeticSet {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+
+    public boolean allowCrossMatch(){
+        return allowCrossMatch;
+    }
+
+    public void setAllowCrossMatch(boolean value){
+        this.allowCrossMatch = value;
     }
 
     

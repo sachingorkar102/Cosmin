@@ -255,6 +255,19 @@ public class ItemBuilder {
         return nbti.getString("cosmin:forced-item").equals("forcedItem");
     }
 
+    public static boolean isCrossMatchAllowed(ItemStack item){
+        if(item == null) return true;
+        NBTItem nbti = new NBTItem(item);
+        return nbti.hasKey("allow-cross-match") ? nbti.getBoolean("allow-cross-match") : true;
+    }
+
+    public static ItemStack setCrossMatchAllowed(ItemStack item,boolean value){
+        if(item == null) return item;
+        NBTItem nbti = new NBTItem(item);
+        nbti.setBoolean("allow-cross-match", value);
+        return nbti.getItem();
+    }
+
     public static ItemStack setForcedItem(ItemStack item,boolean remove){
         if(item == null || item.getType() == Material.AIR) return item;
         NBTItem nbti = new NBTItem(item);

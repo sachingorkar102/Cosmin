@@ -419,6 +419,7 @@ public class CosminPlayer {
             if(ItemBuilder.isForcedItem(replaceItem) && !forceEquip) continue;
 
             ItemStack item = set.getArmor(slot).getItem();
+            item = ItemBuilder.setCrossMatchAllowed(item,set.allowCrossMatch());
             if(forceEquip){
                 cosminInvContents.set(slot.getToggleSlotId(), plugin.miscItems.getEnableItem());
                 item = ItemBuilder.setForcedItem(item, false);
