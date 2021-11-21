@@ -20,6 +20,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -123,6 +124,21 @@ public class PlayerListener implements Listener{
         if(plugin.getPlayerManager().containsPlayer(player)){
             CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
             cosminPlayer.setFakeSlotItems();
+        }
+    }
+
+    @EventHandler
+    public void onEat(PlayerItemConsumeEvent e){
+        Player player = e.getPlayer();
+        if(plugin.getPlayerManager().containsPlayer(player)){
+            new BukkitRunnable(){
+                public void run() {
+                    if(player.isOnline()){
+                        CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+                        cosminPlayer.setFakeSlotItems();
+                    }
+                };
+            }.runTaskLater(plugin, 1);
         }
     }
 
