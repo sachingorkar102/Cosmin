@@ -1,5 +1,17 @@
 package com.github.sachin.cosmin.generator;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.utils.CItemSlot;
@@ -7,14 +19,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.io.*;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class CPackGen {
     
@@ -196,6 +205,9 @@ public class CPackGen {
         if(mcVersion.equals("v1_17_R1")){
             packFormat = "7";
         }
+        else if(mcVersion.equals("v1_18_R1")){
+            packFormat = "8";
+        }
         else if(Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3").contains(mcVersion)){
             packFormat = "6";
         }
@@ -306,14 +318,7 @@ public class CPackGen {
         JsonObject textureObj = new JsonObject();
         JsonObject oldTextureObj = obj.get("textures").getAsJsonObject();
         for(Entry<String,JsonElement> entry : oldTextureObj.entrySet()){
-            if(entry.getKey().equalsIgnoreCase("0")){
-                textureObj.addProperty("0", "item/"+armor.getInternalName());
-                break;
-            }
-            else if(entry.getKey().equalsIgnoreCase("layer0")){
-                textureObj.addProperty("layer0", "item/"+armor.getInternalName());   
-                break;
-            }
+            textureObj.addProperty(entry.getKey(), "item/"+armor.getInternalName());
         }
         obj.add("textures", textureObj);
         FileWriter writer = new FileWriter(file);
