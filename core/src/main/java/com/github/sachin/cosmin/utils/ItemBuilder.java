@@ -1,5 +1,15 @@
 package com.github.sachin.cosmin.utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.gui.GuiContext;
@@ -11,6 +21,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Color;
@@ -26,13 +37,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 
 public class ItemBuilder {
@@ -356,8 +368,11 @@ public class ItemBuilder {
         ItemMeta meta = i.getItemMeta();
         List<String> lore = new ArrayList<>();
         for(String l : plugin.getConfig().getStringList(CosminConstants.SHOP_ITEM_LORE)){
-            if(l.equals("%lore%") && meta.hasLore()){
-                lore.addAll(meta.getLore());
+            if(l.equals("%lore%")){
+                if(meta.hasLore()){
+                    lore.addAll(meta.getLore());
+                }
+                continue;
             }
             else{
                 String s = l.replace("%cost%", String.valueOf(cost)).replace("%points%", String.valueOf(points));
