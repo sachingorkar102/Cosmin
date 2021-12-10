@@ -1,5 +1,5 @@
 name: Cosmin
-version: 2.6
+version: 2.8
 main: com.github.sachin.cosmin.Cosmin
 api-version: 1.13
 depend: [ProtocolLib]
