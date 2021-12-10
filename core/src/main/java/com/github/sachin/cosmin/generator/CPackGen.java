@@ -235,21 +235,22 @@ public class CPackGen {
                 pngFile = file;
             }
         }
-        if(pngFile != null && jsonFile != null){
+        if(jsonFile != null){
             plugin.getLogger().info("Generating files for "+armor.getInternalName());
             File newItemModelFile = new File(modelFolder,jsonFile.getName());
             FileUtils.copyFile(jsonFile, newItemModelFile);
 
 
             createBaseItemFile(modelFolder,gson,armor);
-            redirectTexturesPath(modelFolder, armor, gson);
-
-
-            File newItemPngFile = new File(textureFolder,pngFile.getName());
-            FileUtils.copyFile(pngFile, newItemPngFile);
+            if(pngFile != null){
+                redirectTexturesPath(modelFolder, armor, gson);
+    
+                File newItemPngFile = new File(textureFolder,pngFile.getName());
+                FileUtils.copyFile(pngFile, newItemPngFile);
+            }
         }
         if(pngFile == null){
-            plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".png file in textures folder");
+            plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".png file in textures folder, generating model file anyways");
         }
         if(jsonFile == null){
             plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".json file in textures folder");
