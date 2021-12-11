@@ -1,15 +1,16 @@
 package com.github.sachin.cosmin.commands;
 
-import com.github.sachin.cosmin.Cosmin;
-import com.github.sachin.cosmin.utils.CItemSlot;
-import com.github.sachin.cosmin.utils.CosminConstants;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.utils.CItemSlot;
+import com.github.sachin.cosmin.utils.CosminConstants;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 
 
 public class TabComplete implements TabCompleter {
@@ -49,6 +50,9 @@ public class TabComplete implements TabCompleter {
                 plugin.getArmorManager().getInternalNames().forEach(s -> arguments.add(s));
                 plugin.getArmorManager().getCosmeticSets().keySet().forEach(s -> arguments.add(s));
                 return getBetterArgs(arguments, args[2]);
+            }
+            if(args[0].equalsIgnoreCase("generate")){
+                return getBetterArgs(new ArrayList<>(Arrays.asList("true","false")), args[2]);
             }
         }
         return null;

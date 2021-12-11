@@ -1,9 +1,10 @@
 package com.github.sachin.cosmin.commands;
 
-import com.github.sachin.cosmin.generator.CPackGen;
-import org.bukkit.command.CommandSender;
-
 import java.io.IOException;
+
+import com.github.sachin.cosmin.generator.CPackGen;
+
+import org.bukkit.command.CommandSender;
 
 public class GeneratePackCommand extends SubCommands{
 
@@ -19,7 +20,7 @@ public class GeneratePackCommand extends SubCommands{
 
     @Override
     public String getUsage() {
-        return "&3/cosmin &fgenerate &9[pack-name]";
+        return "&3/cosmin &fgenerate &9[pack-name] (should-zip)";
     }
 
     @Override
@@ -34,10 +35,14 @@ public class GeneratePackCommand extends SubCommands{
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if(args.length != 2) return;
+        if(args.length < 2) return;
         String packname = args[1];
+        boolean shouldZip = false;
+        if(args.length>2){
+            shouldZip = Boolean.parseBoolean(args[2]);
+        }
         try {
-            CPackGen.createPack(packname);
+            CPackGen.createPack(packname,shouldZip);
         } catch (IOException e) {
             e.printStackTrace();
         }

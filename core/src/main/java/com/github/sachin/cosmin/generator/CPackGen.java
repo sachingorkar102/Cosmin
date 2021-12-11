@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +26,21 @@ import org.apache.commons.io.FilenameUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import net.lingala.zip4j.ZipFile;
+
 public class CPackGen {
     
+    public static void delete(File file){
+        for(File subFile : file.listFiles()){
+            if(subFile.isDirectory()){
+                delete(subFile);
+            }
+            subFile.delete();
+        }
+        file.delete();
+    }
 
-    public static void createPack(String packname) throws IOException{
+    public static void createPack(String packname,boolean shouldZip) throws IOException{
         Cosmin plugin = Cosmin.getInstance();
         if(plugin.getMinecraftVersion().equals("v1_12_R1")){
             plugin.getLogger().info("Running older version then 1.14, using legacy pack generation");
@@ -36,7 +48,15 @@ public class CPackGen {
             return;
         }
         Gson gson = new Gson();
-        File resource = new File(plugin.getDataFolder(),"resource-packs/"+packname+"/assets/minecraft");
+        File folder = new File(plugin.getDataFolder(),"resource-packs/"+packname);
+        if(folder.exists()){
+            delete(folder);
+            plugin.getLogger().info("Folder "+packname+" exsists deleting it...");
+        }
+        else{
+            folder.mkdirs();
+        }
+        File resource = new File(folder,"assets/minecraft");
         File textures = new File(plugin.getDataFolder(),"textures");
         File modelFolder = new File(resource,"models/item");
         File textureFolder = new File(resource,"textures/item");
@@ -192,11 +212,22 @@ public class CPackGen {
                 
         }
         plugin.getLogger().info("Generating pack.mcmeta");
-        generateMcMeta(new File(plugin.getDataFolder(),"resource-packs/"+packname), plugin.getMinecraftVersion());
+        File packmcMeta = generateMcMeta(new File(plugin.getDataFolder(),"resource-packs/"+packname), plugin.getMinecraftVersion());
+        if(shouldZip){
+            plugin.getLogger().info("Generating zip file...");
+            File zipFile = new File(plugin.getDataFolder(),"resource-packs/"+packname+".zip");
+            File assets = new File(folder,"assets");
+            ZipFile zip = new ZipFile(zipFile.getAbsolutePath());
+
+            zip.addFile(packmcMeta);
+            zip.addFolder(assets);
+            zip.close();
+            delete(folder);
+        }
         plugin.getLogger().info(packname+" generated");    
     }
 
-    private static void generateMcMeta(File resource,String mcVersion) throws IOException{
+    private static File generateMcMeta(File resource,String mcVersion) throws IOException{
         
         File file = new File(resource,"pack.mcmeta");
         file.createNewFile();
@@ -222,36 +253,83 @@ public class CPackGen {
         }
         writer.write("{\"pack\":{\"pack_format\":"+packFormat+",\"description\":\"Resource Pack For Cosmin\"}}");
         writer.close();
+        return file;
     }
 
     private static void generateModels(File modelFolder,File textureFolder,List<File> textureFiles,CosminArmor armor,Cosmin plugin,Gson gson) throws IOException{
         File pngFile = null;
+        List<File> pngFiles = new ArrayList<>();
         File jsonFile = null;
+        String path = armor.getConfig().contains("options.path") ? armor.getConfig().getString("options.path") : null;
+        File newModelFolder = null;
+        File newTextureFolder = null;
+        if(path != null){
+            newModelFolder = new File(modelFolder,path);
+            newTextureFolder = new File(textureFolder,path);
+            newModelFolder.mkdirs();
+            newTextureFolder.mkdirs();
+        }
+        else{
+            newModelFolder = modelFolder;
+            newTextureFolder = textureFolder;
+        }
         for(File file: textureFiles){
             if(FilenameUtils.getExtension(file.getName()).equals("json") && file.getName().replace(".json", "").equals(armor.getInternalName())){
                 jsonFile = file;
             }
-            if(FilenameUtils.getExtension(file.getName()).equals("png") && file.getName().replace(".png", "").equals(armor.getInternalName())){
-                pngFile = file;
+            if(FilenameUtils.getExtension(file.getName()).equals("png")){
+                pngFiles.add(file);
             }
         }
         if(jsonFile != null){
             plugin.getLogger().info("Generating files for "+armor.getInternalName());
-            File newItemModelFile = new File(modelFolder,jsonFile.getName());
+            File newItemModelFile = new File(newModelFolder,jsonFile.getName());
             FileUtils.copyFile(jsonFile, newItemModelFile);
 
 
-            createBaseItemFile(modelFolder,gson,armor);
-            if(pngFile != null){
-                redirectTexturesPath(modelFolder, armor, gson);
-    
-                File newItemPngFile = new File(textureFolder,pngFile.getName());
-                FileUtils.copyFile(pngFile, newItemPngFile);
+            createBaseItemFile(modelFolder,gson,armor,path);
+            if(!pngFiles.isEmpty()){
+                Map<String,File> pngMap = new HashMap<>();
+                for(File file : pngFiles){
+                    pngMap.put(file.getName().replace(".png", ""), file);
+                }
+                // redirectTexturesPath(newModelFolder, pngFiles, armor, gson);
+                FileReader reader = new FileReader(newItemModelFile);
+                JsonObject obj = gson.fromJson(reader, JsonObject.class);   
+                JsonObject oldTexturesObj = obj.get("textures").getAsJsonObject();
+                JsonObject texturesObj = new JsonObject();
+                for(Entry<String,JsonElement>  entry : oldTexturesObj.entrySet()){
+                    String value = entry.getValue().getAsString();
+                    String pngFileName = value.substring(value.lastIndexOf("/")+1);
+                    File file = pngMap.get(pngFileName);
+                    if(file != null){
+                        File newItemPngFile = new File(newTextureFolder,file.getName());
+                        FileUtils.copyFile(file, newItemPngFile);
+                        
+                        texturesObj.addProperty(entry.getKey(), "item/"+path+"/"+pngFileName);
+                    }
+                    else{
+                        texturesObj.addProperty(entry.getKey(), entry.getValue().getAsString());
+                    }
+                    
+                }
+                obj.add("textures", texturesObj);
+                FileWriter writer = new FileWriter(newItemModelFile);
+                gson.toJson(obj, writer);
+                writer.close();
+                reader.close();
+
             }
+            // if(pngFile != null){
+            //     redirectTexturesPath(modelFolder, armor, gson);
+    
+            //     File newItemPngFile = new File(textureFolder,pngFile.getName());
+            //     FileUtils.copyFile(pngFile, newItemPngFile);
+            // }
         }
-        if(pngFile == null){
-            plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".png file in textures folder, generating model file anyways");
-        }
+        // if(pngFile == null){
+        //     plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".png file in textures folder, generating model file anyways");
+        // }
         if(jsonFile == null){
             plugin.getLogger().warning("Could not find the "+armor.getInternalName()+".json file in textures folder");
         }
@@ -309,26 +387,27 @@ public class CPackGen {
         return null;
     }
 
-    private static void redirectTexturesPath(File folder,CosminArmor armor,Gson gson) throws IOException{
-        File file = new File(folder,armor.getInternalName()+".json");
-        if(!file.exists()){
-            return;
-        }
-        FileReader reader = new FileReader(file);
-        JsonObject obj = gson.fromJson(reader, JsonObject.class);
-        JsonObject textureObj = new JsonObject();
-        JsonObject oldTextureObj = obj.get("textures").getAsJsonObject();
-        for(Entry<String,JsonElement> entry : oldTextureObj.entrySet()){
-            textureObj.addProperty(entry.getKey(), "item/"+armor.getInternalName());
-        }
-        obj.add("textures", textureObj);
-        FileWriter writer = new FileWriter(file);
-        gson.toJson(obj, writer);
-        writer.close();
-        reader.close();
-    }
+    // UNUSED
+    // private static void redirectTexturesPath(File folder,List<File> pngFiles,CosminArmor armor,Gson gson) throws IOException{
+    //     File file = new File(folder,armor.getInternalName()+".json");
+    //     if(!file.exists()){
+    //         return;
+    //     }
+    //     FileReader reader = new FileReader(file);
+    //     JsonObject obj = gson.fromJson(reader, JsonObject.class);
+    //     JsonObject textureObj = new JsonObject();
+    //     JsonObject oldTextureObj = obj.get("textures").getAsJsonObject();
+    //     for(Entry<String,JsonElement> entry : oldTextureObj.entrySet()){
+    //         textureObj.addProperty(entry.getKey(), "item/"+armor.getInternalName());
+    //     }
+    //     obj.add("textures", textureObj);
+    //     FileWriter writer = new FileWriter(file);
+    //     gson.toJson(obj, writer);
+    //     writer.close();
+    //     reader.close();
+    // }
 
-    private static void createBaseItemFile(File folder,Gson gson,CosminArmor armor) throws IOException{
+    private static void createBaseItemFile(File folder,Gson gson,CosminArmor armor,String path) throws IOException{
         String itemName = armor.getItem().getType().toString().toLowerCase();
         File baseItemJson = new File(folder,itemName+".json");
         JsonObject obj = new JsonObject();
@@ -353,7 +432,7 @@ public class CPackGen {
         model.addProperty("custom_model_data", armor.getItem().getItemMeta().getCustomModelData());
         JsonObject predicate = new JsonObject();
         predicate.add("predicate", model);
-        predicate.addProperty("model", "item/"+armor.getInternalName());
+        predicate.addProperty("model", "item/"+path+"/"+armor.getInternalName());
         JsonArray overides = new JsonArray();
         overides.add(predicate);
         if(oldOverides != null){
