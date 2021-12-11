@@ -1,5 +1,16 @@
 package com.github.sachin.cosmin;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.github.sachin.cosmin.armor.ArmorManager;
@@ -20,11 +31,16 @@ import com.github.sachin.cosmin.player.PlayerManager;
 import com.github.sachin.cosmin.protocol.EntityEquipmentPacketListener;
 import com.github.sachin.cosmin.protocol.SetSlotPacketListener;
 import com.github.sachin.cosmin.protocol.SpawnPlayerPacketListener;
-import com.github.sachin.cosmin.utils.*;
+import com.github.sachin.cosmin.utils.ConfigUtils;
+import com.github.sachin.cosmin.utils.CosminConstants;
+import com.github.sachin.cosmin.utils.InventoryUtils;
+import com.github.sachin.cosmin.utils.Message;
+import com.github.sachin.cosmin.utils.MiscItems;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandMap;
@@ -34,13 +50,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.Map.Entry;
 
 
 public final class Cosmin extends JavaPlugin implements Listener{
@@ -72,11 +81,20 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private MySQL mySQL;
     private Map<Integer,Player> entityIdMap = new HashMap<>();
 
+    public static void main(String[] args) {
+        String test = "custom/items/testarmor";
+        System.out.println(test.substring(test.lastIndexOf("/",1)));
+    }
 
     @Override
     public void onEnable() {
         this.pluginDisabled = false;
         instance = this;
+        if(CosminConstants.ISDEMO){
+            getServer().getConsoleSender().sendMessage(ChatColor.YELLOW+""+ChatColor.BOLD+"Running a demo version of cosmin...");
+            getServer().getConsoleSender().sendMessage(ChatColor.YELLOW+""+ChatColor.BOLD+"Only op players can use /cosmetics,/cos command");
+            getServer().getConsoleSender().sendMessage(ChatColor.YELLOW+""+ChatColor.BOLD+"Consider getting cosmin here: https://www.spigotmc.org/resources/92427/");
+        }
         if(!getServer().getPluginManager().isPluginEnabled("ProtocolLib")){
             getLogger().warning("Could not find ProtocolLib which is a required dependency, stopping cosmin");
             this.pluginDisabled = true;

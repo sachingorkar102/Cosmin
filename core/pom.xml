@@ -47,9 +47,17 @@
                 <configuration>
                     <minimizeJar>true</minimizeJar>
                     <relocations>
-                        <relocation>
+                        <!-- <relocation>
                             <pattern>org.apache.commons.io</pattern>
-                            <shadedPattern>com.github.sachin.cosmin.org.apache.commons.io</shadedPattern>
+                            <shadedPattern>com.github.sachin.cosmin</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.lingala.zip4j</pattern>
+                            <shadedPattern>com.github.sachin.cosmin</shadedPattern>
+                        </relocation> -->
+                        <relocation>
+                            <pattern>com.zaxxer.hikari</pattern>
+                            <shadedPattern>com.github.sachin.cosmin.com.zaxxer.hikari</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -62,40 +70,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-<!--            <plugin>-->
-<!--                <groupId>net.md-5</groupId>-->
-<!--                <artifactId>specialsource-maven-plugin</artifactId>-->
-<!--                <version>1.2.3</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>remap</goal>-->
-<!--                        </goals>-->
-<!--                        <id>remap-obf</id>-->
-<!--                        <configuration>-->
-<!--                            <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:txt:maps-mojang</srgIn>-->
-<!--                            <reverse>true</reverse>-->
-<!--                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-mojang</remappedDependencies>-->
-<!--                            <remappedArtifactAttached>true</remappedArtifactAttached>-->
-<!--                            <remappedClassifierName>remapped-obf</remappedClassifierName>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>remap</goal>-->
-<!--                        </goals>-->
-<!--                        <id>remap-spigot</id>-->
-<!--                        <configuration>-->
-<!--                            <inputFile>${project.build.directory}/${project.artifactId}-${project.version}-remapped-obf.jar</inputFile>-->
-<!--                            <srgIn>org.spigotmc:minecraft-server:1.18-R0.1-SNAPSHOT:csrg:maps-spigot</srgIn>-->
-<!--                            <remappedDependencies>org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:jar:remapped-obf</remappedDependencies>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
 
         </plugins>
         <resources>
@@ -154,66 +128,12 @@
             <version>2.11.0</version>
             <scope>compile</scope>
         </dependency>
-
-
-        <!--        <dependency>-->
-<!--            <groupId>Spigot-1.12.2</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.12.2</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.12.2.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.17</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.17</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.17.jar</systemPath>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.16.5</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.16.5</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.16.5.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.16.1</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.16.1</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.16.1.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.16.3</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.16.3</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.16.3.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.14.4</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.14.4</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/lib/spigot-1.14.4.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>Spigot-1.15.2</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.15.2</version>-->
-<!--            <scope>provided</scope>-->
-<!--            <systemPath>${project.basedir}/lib/spigot-1.15.2.jar</systemPath>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.spigotmc</groupId>-->
-<!--            <artifactId>spigot</artifactId>-->
-<!--            <version>1.18-R0.1-SNAPSHOT</version>-->
-<!--            <classifier>remapped-mojang</classifier>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-
+        <dependency>
+            <groupId>net.lingala.zip4j</groupId>
+            <artifactId>zip4j</artifactId>
+            <version>2.9.1</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- HikariCP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -221,14 +141,6 @@
             <version>4.0.3</version>
             <scope>compile</scope>
         </dependency>
-
-        <!-- NBTApi -->
-        <!-- <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.7.1</version>
-            <scope>compile</scope>
-        </dependency> -->
 
         <!-- Protocol Lib -->
         <dependency>

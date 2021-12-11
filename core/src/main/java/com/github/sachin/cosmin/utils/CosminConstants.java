@@ -88,6 +88,8 @@ public class CosminConstants {
     public static final List<String> COMPATIBLE_VERSIONS_PRE_NETHER_UPDATE = Arrays.asList("v1_12_R1","v1_13_R1","v1_13_R2","v1_14_R1","v1_15_R1");
     public static final List<String> COMPATIBLE_VERSIONS_POST_NETHER_UPDATE = Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3","v1_17_R1","v1_18_R1");
 
+    public static final boolean ISDEMO  = false;
+
 
 
     // permissions

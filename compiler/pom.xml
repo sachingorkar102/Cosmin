@@ -23,7 +23,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <finalName>Cosmin-2.8</finalName>
+                    <finalName>Cosmin-2.9</finalName>
                 </configuration>
             </plugin>
             <plugin>
@@ -48,24 +48,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
-                        <id>shade</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>com.github.sachin.cosmin.hikaricp</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
             </plugin>
 
         </plugins>

@@ -1,11 +1,20 @@
 package com.github.sachin.cosmin.utils;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.ArmorManager;
 import com.github.sachin.cosmin.armor.CosmeticSet;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.google.common.base.Enums;
-import me.clip.placeholderapi.PlaceholderAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,10 +23,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
+import me.clip.placeholderapi.PlaceholderAPI;
 
 
 public class ConfigUtils {
@@ -56,11 +62,17 @@ public class ConfigUtils {
 
     private void loadItemsFromFolder(File itemDirectory){
         boolean isCosmeticSetEnabled = isCosmeticSetEnabled();
+        int registeredItems = 0;
         for(File itemFile : itemsDirectory.listFiles(file -> file.isDirectory() || file.getName().endsWith(".yml"))){
             if(itemFile.isDirectory()){
                 loadItemsFromFolder(itemFile);
                 continue;
             }
+            // if(CosminConstants.ISDEMO && registeredItems>5){
+            //     plugin.getLogger().warning("This is a demo version of cosmin, can't register more then 5 items");
+            //     plugin.getLogger().fine("Consider getting cosmin here: https://www.spigotmc.org/resources/92427/");
+            //     break;
+            // }
             try (FileReader reader = new FileReader(itemFile)) {
                 YamlConfiguration yml = new YamlConfiguration();
                 yml.load(reader);
@@ -74,6 +86,7 @@ public class ConfigUtils {
                             }
                         }
                         CosminArmor armor = ItemBuilder.cosminArmorFromFile(section, null, key);
+                        registeredItems++;
                         plugin.getArmorManager().addArmor(armor);
                     } catch (Exception e) {
                         Bukkit.getConsoleSender().sendMessage(ChatColor.RED+"Error occured while loading item named "+ChatColor.YELLOW+key);
@@ -82,8 +95,10 @@ public class ConfigUtils {
                 reader.close();
             } catch (Exception ex) {
                 plugin.getLogger().warning("Error while loading item from "+itemFile.getName());
+                ex.printStackTrace();
                 
             }
+            
         }
     }
 
