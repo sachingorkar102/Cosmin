@@ -1,15 +1,16 @@
 package com.github.sachin.cosmin.commands;
 
 
+import java.util.ArrayList;
+
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.utils.CosminConstants;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
 
 
 public class CommandManager implements CommandExecutor {
@@ -36,6 +37,7 @@ public class CommandManager implements CommandExecutor {
         subcommands.add(new GeneratePackCommand());
         subcommands.add(new ImportItemCommand());
         subcommands.add(new OpenWardrobeCommand());
+        subcommands.add(new OpenStoreCommand());
     }
 
 

@@ -160,7 +160,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
             getLogger().info("Found Vault, trying to initialize economy support..");
             this.vaultEco = new VaultHook(this); 
         }
-        if(getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
+        else if(getServer().getPluginManager().isPluginEnabled("PlayerPoints")){
             getLogger().info("Found PlayerPoints, trying to initialize economy support..");
             this.playerPointsEco = new PlayerPointsHook(this);
         }
@@ -168,6 +168,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
             this.isEconomyEnabled = false;
             getLogger().info("No economy plugins found, disabling economy features");
         }
+
+        
         if(vaultEco != null || playerPointsEco != null){
             this.isEconomyEnabled = true;
         }

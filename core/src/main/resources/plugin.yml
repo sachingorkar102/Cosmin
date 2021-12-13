@@ -1,5 +1,5 @@
 name: Cosmin
-version: 2.9
+version: 3.0
 main: com.github.sachin.cosmin.Cosmin
 api-version: 1.13
 depend: [ProtocolLib]
@@ -60,5 +60,6 @@ permissions:
       cosmin.command.clear: true
       cosmin.command.cosmetics: true
       cosmin.command.openwardrobe: true
+      cosmin.command.openstore: true
   cosmin.equip.nonmodelitems:
     default: true
