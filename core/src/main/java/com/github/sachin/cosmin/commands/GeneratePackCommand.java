@@ -1,6 +1,7 @@
 package com.github.sachin.cosmin.commands;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import com.github.sachin.cosmin.generator.CPackGen;
 
@@ -36,16 +37,19 @@ public class GeneratePackCommand extends SubCommands{
     @Override
     public void perform(CommandSender sender, String[] args) {
         if(args.length < 2) return;
-        String packname = args[1];
+        final String packname = args[1];
         boolean shouldZip = false;
         if(args.length>2){
             shouldZip = Boolean.parseBoolean(args[2]);
         }
-        try {
-            CPackGen.createPack(packname,shouldZip);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        final boolean shouldzip = shouldZip;
+        CompletableFuture.runAsync(() -> {
+            try {
+                CPackGen.createPack(packname,shouldzip);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
     
 }
