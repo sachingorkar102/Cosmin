@@ -23,7 +23,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <finalName>Cosmin-3.0</finalName>
+                    <finalName>Cosmin-3.2</finalName>
                 </configuration>
             </plugin>
             <plugin>

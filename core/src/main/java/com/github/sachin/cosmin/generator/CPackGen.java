@@ -30,7 +30,7 @@ import net.lingala.zip4j.ZipFile;
 
 public class CPackGen {
     
-    public static void delete(File file){
+    private static void delete(File file){
         for(File subFile : file.listFiles()){
             if(subFile.isDirectory()){
                 delete(subFile);
@@ -38,6 +38,17 @@ public class CPackGen {
             subFile.delete();
         }
         file.delete();
+    }
+
+    private static List<File> getTexureFiles(File folder,List<File> list){
+        for(File f : folder.listFiles()){
+            if(f.isDirectory()){
+                getTexureFiles(f, list);
+            }
+            list.add(f);
+            
+        }
+        return list;
     }
 
     public static void createPack(String packname,boolean shouldZip) throws IOException{
@@ -72,7 +83,7 @@ public class CPackGen {
             new File(resource,"textures").mkdir();
         }
 
-        List<File> textureFiles = Arrays.asList(textures.listFiles());
+        List<File> textureFiles = getTexureFiles(textures, new ArrayList<>());
         for (CosminArmor armor : plugin.getArmorManager().getAllArmor()) {
             ItemStack item = armor.getItem();
             if(armor.getSlot() == CItemSlot.HEAD && armor.getOptifineFile() == null){
@@ -257,7 +268,6 @@ public class CPackGen {
     }
 
     private static void generateModels(File modelFolder,File textureFolder,List<File> textureFiles,CosminArmor armor,Cosmin plugin,Gson gson) throws IOException{
-        File pngFile = null;
         List<File> pngFiles = new ArrayList<>();
         Map<String,File> mcMetas = new HashMap<>();
         File jsonFile = null;

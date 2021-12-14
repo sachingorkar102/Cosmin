@@ -81,11 +81,6 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private MySQL mySQL;
     private Map<Integer,Player> entityIdMap = new HashMap<>();
 
-    public static void main(String[] args) {
-        String test = "custom/items/testarmor";
-        System.out.println(test.substring(test.lastIndexOf("/",1)));
-    }
-
     @Override
     public void onEnable() {
         this.pluginDisabled = false;
