@@ -287,7 +287,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public boolean is1_17_1(){
-        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1");
+        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_19_R1");
     }
 
     public void registerCommands(){

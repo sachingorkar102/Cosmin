@@ -13,6 +13,7 @@
         <module>compiler</module>
         <module>nms1_17</module>
         <module>nms1_16</module>
+        <module>nms1_19</module>
     </modules>
     <packaging>pom</packaging>
 
