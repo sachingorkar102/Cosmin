@@ -29,6 +29,7 @@ import com.github.sachin.cosmin.nbtapi.NBTAPI;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.player.PlayerManager;
 import com.github.sachin.cosmin.protocol.EntityEquipmentPacketListener;
+import com.github.sachin.cosmin.protocol.PlayerUseItemPacketListener;
 import com.github.sachin.cosmin.protocol.SetSlotPacketListener;
 import com.github.sachin.cosmin.protocol.SpawnPlayerPacketListener;
 import com.github.sachin.cosmin.utils.ConfigUtils;
@@ -137,6 +138,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         this.protocolManager.addPacketListener(new EntityEquipmentPacketListener(this));
         this.protocolManager.addPacketListener(new SetSlotPacketListener(this));
         this.protocolManager.addPacketListener(new SpawnPlayerPacketListener(this));
+        this.protocolManager.addPacketListener(new PlayerUseItemPacketListener(this));
         Bukkit.getOnlinePlayers().forEach(p -> {entityIdMap.put(p.getEntityId(), p);});
 
         loadPlayerData();
@@ -287,7 +289,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public boolean is1_17_1(){
-        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_19_R1");
+        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1").contains(minecraftVersion);
+//        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_18_R2")|| minecraftVersion.equals("v1_19_R1");
     }
 
     public void registerCommands(){
