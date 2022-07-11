@@ -82,6 +82,11 @@
         </dependency>
         <dependency>
             <groupId>com.github.sachin.cosmin</groupId>
+            <artifactId>nms1_18_2</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sachin.cosmin</groupId>
             <artifactId>nms1_18</artifactId>
             <version>2.4</version>
         </dependency>
