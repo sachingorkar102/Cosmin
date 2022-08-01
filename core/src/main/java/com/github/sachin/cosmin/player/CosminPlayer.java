@@ -150,7 +150,19 @@ public class CosminPlayer {
     }
 
     public ItemStack getSlotItem(CItemSlot slot){
-       return equipmentMap.get(slot);
+        ItemStack item = equipmentMap.get(slot);
+        if(plugin.getMcVersion().equals("1.19.1") && item == null){
+            return new ItemStack(Material.AIR);
+        }
+       return item;
+    }
+
+    public ItemStack getOrignalItem(CItemSlot slot){
+        ItemStack item = getBukkitPlayer().get().getInventory().getItem(slot.getAltSlotId());
+        if(plugin.getMcVersion().equals("1.19.1") && item == null){
+            return new ItemStack(Material.AIR);
+        }
+        return item;
     }
 
     public void setSlotItem(CItemSlot slot,ItemStack item){
@@ -350,7 +362,7 @@ public class CosminPlayer {
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
             packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
-            packet.getItemModifier().write(0, equipmentMap.get(slot));
+            packet.getItemModifier().write(0, getSlotItem(slot));
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);
             } catch (InvocationTargetException e) {
@@ -372,7 +384,7 @@ public class CosminPlayer {
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
             packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
-            packet.getItemModifier().write(0, player.getInventory().getItem(slot.getAltSlotId()));
+            packet.getItemModifier().write(0, getOrignalItem(slot));
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);
             } catch (InvocationTargetException e) {

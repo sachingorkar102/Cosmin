@@ -58,6 +58,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private static final Gson gson = new Gson();
     private static Cosmin instance;
     private String minecraftVersion;
+
+    private String mcVersion;
     private boolean pluginDisabled;
 
     public boolean postNetherUpdate;
@@ -86,6 +88,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
     public void onEnable() {
         this.pluginDisabled = false;
         instance = this;
+
         if(CosminConstants.ISDEMO){
             getServer().getConsoleSender().sendMessage(ChatColor.YELLOW+""+ChatColor.BOLD+"Running a demo version of cosmin...");
             getServer().getConsoleSender().sendMessage(ChatColor.YELLOW+""+ChatColor.BOLD+"Only op players can use /cosmetics,/cos command");
@@ -101,7 +104,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
             return;
         }
         NBTAPI nbt = new NBTAPI();
-        if(!nbt.loadVersions(this)){
+        if(!nbt.loadVersions(this,mcVersion)){
             getLogger().warning("Running incompatiable minecraft version, stopping cosmin");
             this.pluginDisabled = true;
             return;
@@ -269,12 +272,19 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
 
     private boolean setupVersion(){
+        int currentMajor = Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[0]);
+        int currentMinor = Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[1].split("-")[0]);
+        int currentPatch = Bukkit.getBukkitVersion().chars().filter(ch -> ch == '.').count() == 2 ? 0 : Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[2].split("-")[0]);
+        mcVersion = currentMajor+"."+currentMinor;
+        if(currentPatch>0){
+            mcVersion = mcVersion+"."+currentPatch;
+        }
         try {
             this.minecraftVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         } catch (ArrayIndexOutOfBoundsException e) {
             return false;
         }
-        getLogger().info("Running "+minecraftVersion+" minecraft version");
+        getLogger().info("Running "+mcVersion+" minecraft version");
         if(CosminConstants.COMPATIBLE_VERSIONS_PRE_NETHER_UPDATE.contains(minecraftVersion)){
             postNetherUpdate = false;
             getLogger().info("Running pre nether update");
@@ -382,6 +392,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     public ConfigUtils getConfigUtils() {
         return configUtils;
+    }
+
+    public String getMcVersion() {
+        return mcVersion;
     }
 
     public MySQL MySQL() {

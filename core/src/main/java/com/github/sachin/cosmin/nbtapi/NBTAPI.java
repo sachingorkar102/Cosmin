@@ -11,28 +11,14 @@ public class NBTAPI {
     private String version;
     public static NMSHelper NMSHelper;
 
-    public boolean loadVersions(@NotNull JavaPlugin plugin){
+    public boolean loadVersions(@NotNull JavaPlugin plugin,String mcVersion){
         this.version = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-//        if(version.equals("v1_12_R1")){
-//            NMSHelper = new NBTItem_1_12_R1(null);
-//            return true;
-//        }
-//        else if(version.equals("v1_14_R1")){
-//            NMSHelper = new NBTItem_1_14_R1(null);
-//            return true;
-//        }
-//        else if(version.equals("v1_15_R1")){
-//            NMSHelper = new NBTItem_1_15_R1(null);
-//            return true;
-//        }
-//        else if(version.equals("v1_16_R1")){
-//            NMSHelper = new NBTItem_1_16_R1(null);
-//            return true;
-//        }
-//        else if(version.equals("v1_16_R2")){
-//            NMSHelper = new NBTItem_1_16_R2(null);
-//            return true;
-//        }
+        if(mcVersion.equals("1.19")){
+            version = "v1_19_R1";
+        }
+        else if(mcVersion.equals("1.19.1")){
+            version = "v1_19_R11";
+        }
         try {
             //abstractNmsHandler = (AbstractNMSHandler) Class.forName(packageName + ".internal.nms." + internalsName + ".NMSHandler").newInstance();
             NMSHelper = (NMSHelper) Class.forName("com.github.sachin.cosmin.nms."+version+".NMSHandler").getDeclaredConstructor().newInstance();

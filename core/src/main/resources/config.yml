@@ -122,5 +122,8 @@ blacklist-materials:
 
 # weather or not player should drop there items present in cosmin gui on death
 # Bypass permission: cosmin.deathdrops.bypass
-drop-items-on-death: true  
+drop-items-on-death: true
+
+#  the amount of delay in ticks, to show the changes to armor after closing player inventory or cosmetic inventory
+delay-after-equip: 2
   

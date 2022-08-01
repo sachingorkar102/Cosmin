@@ -23,7 +23,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
                 <configuration>
-                    <finalName>Cosmin-4.0</finalName>
+                    <finalName>Cosmin-4.2</finalName>
                 </configuration>
             </plugin>
             <plugin>
@@ -36,8 +36,6 @@
                     <target>${java.version}</target>
                 </configuration>
                 <dependencies>
-                    <!-- Compiler -->
-                    <!-- The default compiler has troubles with the class PlayerDataInfo -->
                     <dependency>
                         <groupId>org.codehaus.plexus</groupId>
                         <artifactId>plexus-compiler-eclipse</artifactId>
@@ -74,6 +72,11 @@
             <artifactId>core</artifactId>
             <version>2.4</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sachin.cosmin</groupId>
+            <artifactId>nms1_19_1</artifactId>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>com.github.sachin.cosmin</groupId>

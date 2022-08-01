@@ -54,15 +54,22 @@ public class GuiListener implements Listener{
                             cosminPlayer.setFakeSlotItems();
                         }
                     };
-                }.runTaskLater(plugin, 2);
+                }.runTaskLater(plugin, plugin.getConfig().getInt(CosminConstants.DELAY_AFTER_EQUIP,2));
             }
         }
         else if(e.getView().getTopInventory().getType() == InventoryType.CRAFTING && plugin.getPlayerManager().containsPlayer(player)){
             CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
             cosminPlayer.clearNonExsistantArmorItems();
             cosminPlayer.computeAndPutEquipmentPairList();
-            cosminPlayer.sendPacketWithinRange(60, player);
-            cosminPlayer.setFakeSlotItems();
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if(player.isOnline()){
+                        cosminPlayer.sendPacketWithinRange(60, player);
+                        cosminPlayer.setFakeSlotItems();
+                    }
+                }
+            }.runTaskLater(plugin,plugin.getConfig().getInt(CosminConstants.DELAY_AFTER_EQUIP,2));
             cosminPlayer.setInventoryOpen(false);
         }
     }

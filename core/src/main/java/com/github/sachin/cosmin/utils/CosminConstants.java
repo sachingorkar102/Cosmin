@@ -73,6 +73,8 @@ public class CosminConstants {
     public static final String HOTKEY_OPEN_COSMETIC_SET_GUI = "hot-keys.open-cosmetic-set-gui";
     public static final String HOTKEY_CLEAR_COSMETIC_SET = "hot-keys.clear-cosmetic-set";
 
+    public static final String DELAY_AFTER_EQUIP = "delay-after-equip";
+
 
     // list of some unclickable slots
     public static final List<Integer> TOGGLABLE_SLOTS = Arrays.asList(2,3,4,5,6);

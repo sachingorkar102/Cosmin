@@ -48,7 +48,8 @@ public class SetSlotPacketListener extends PacketAdapter{
         }
         CItemSlot cSlot = equipSlotMap.get(affectedSlot);
         if(!cosminPlayer.getOrignalArmorMap().get(cSlot)){
-            packet.getItemModifier().write(0, cosminPlayer.getEquipmentMap().get(cSlot));
+
+            packet.getItemModifier().write(0, cosminPlayer.getSlotItem(cSlot));
         }
     }
 }
