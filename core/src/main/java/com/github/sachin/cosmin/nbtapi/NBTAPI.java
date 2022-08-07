@@ -16,7 +16,7 @@ public class NBTAPI {
         if(mcVersion.equals("1.19")){
             version = "v1_19_R1";
         }
-        else if(mcVersion.equals("1.19.1")){
+        else if(mcVersion.equals("1.19.1") || mcVersion.equals("1.19.2")){
             version = "v1_19_R11";
         }
         try {

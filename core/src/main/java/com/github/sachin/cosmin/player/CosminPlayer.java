@@ -140,7 +140,7 @@ public class CosminPlayer {
     public void clearCosminInv(){
         Cosmin plugin = Cosmin.getInstance();
         for(int i=11;i<16;i++){
-            cosminInvContents.set(i, null);
+            cosminInvContents.set(i, new ItemStack(Material.AIR));
             cosminInvContents.set(i-9, plugin.miscItems.getDisableItem());
         }
     }
@@ -151,7 +151,7 @@ public class CosminPlayer {
 
     public ItemStack getSlotItem(CItemSlot slot){
         ItemStack item = equipmentMap.get(slot);
-        if(plugin.getMcVersion().equals("1.19.1") && item == null){
+        if(item == null){
             return new ItemStack(Material.AIR);
         }
        return item;
@@ -159,7 +159,7 @@ public class CosminPlayer {
 
     public ItemStack getOrignalItem(CItemSlot slot){
         ItemStack item = getBukkitPlayer().get().getInventory().getItem(slot.getAltSlotId());
-        if(plugin.getMcVersion().equals("1.19.1") && item == null){
+        if(item == null){
             return new ItemStack(Material.AIR);
         }
         return item;
