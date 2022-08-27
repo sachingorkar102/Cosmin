@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -239,6 +240,16 @@ public class GuiListener implements Listener{
                 onConfirmGuiClickEvent(e);
                 return;
             }
+        }
+        else if(clickedInv instanceof PlayerInventory && e.isShiftClick() && (inv.getHolder() instanceof GuiHolder) && e.getCurrentItem() != null){
+             GuiHolder holder = (GuiHolder) inv.getHolder();
+             if(holder.getContext()==GuiContext.COSMIN_INVENTORY){
+                 for(int s : getSlots(e)){
+                     if(equipSlotMap.containsKey(s) && plugin.getConfigUtils().matchBlackListMaterial(e.getCurrentItem().getType(),equipSlotMap.get(s))){
+                         e.setCancelled(true);
+                     }
+                 }
+             }
         }
         else if(e.getView().getTopInventory().getType() == InventoryType.CRAFTING){
             if(plugin.getPlayerManager().containsPlayer(player)){

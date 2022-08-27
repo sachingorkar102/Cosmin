@@ -200,6 +200,10 @@ public class ConfigUtils {
         return false;
     }
 
+    public boolean validMaterial(){
+        return false;
+    }
+
     public List<ClickType> getHotKeysList() {
         if(hotKeysList.isEmpty()){
             hotKeysList.add(Enums.getIfPresent(ClickType.class, plugin.getConfig().getString(CosminConstants.HOTKEY_TOGGLE_DISPLAY))
