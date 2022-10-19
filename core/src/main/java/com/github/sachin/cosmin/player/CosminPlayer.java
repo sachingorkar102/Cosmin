@@ -2,7 +2,9 @@ package com.github.sachin.cosmin.player;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.MinecraftKey;
 import com.comphenix.protocol.wrappers.Pair;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosmeticSet;
@@ -10,10 +12,8 @@ import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.ItemBuilder;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -27,6 +27,9 @@ public class CosminPlayer {
 
     private List<ItemStack> cosminInvContents = new ArrayList<>();
     private Map<CItemSlot,ItemStack> equipmentMap = new HashMap<>();
+
+    public int swiftSneakLevel = 0;
+
     private Map<CItemSlot,Boolean> orignalArmorMap = new HashMap<>();
     private Set<String> purchasedItems = new HashSet<>();
     private Set<String> purchasedSets = new HashSet<>();
@@ -65,6 +68,7 @@ public class CosminPlayer {
     public Map<CItemSlot,ItemStack> getEquipmentMap() {
         return equipmentMap;
     }
+
     public Set<String> getPurchasedItems() {
         return purchasedItems;
     }
@@ -183,6 +187,7 @@ public class CosminPlayer {
         // clearNonExsistantArmorItems();
         Map<CItemSlot,ItemStack> pairs = new HashMap<>();
         PlayerInventory inv = player.getInventory();
+        swiftSneakLevel = 0;
         for(int i =2;i<7;i++){
             ItemStack orignalArmor = null;
             // 2  3  4  5  6
@@ -216,6 +221,9 @@ public class CosminPlayer {
                     slot = CItemSlot.LEGS;
                     if(inv.getLeggings() != null){
                         orignalArmor = inv.getLeggings().clone();
+                        if(plugin.isPost1_19() && orignalArmor.getEnchantmentLevel(Enchantment.SWIFT_SNEAK) > 0){
+                            swiftSneakLevel = orignalArmor.getEnchantmentLevel(Enchantment.SWIFT_SNEAK);
+                        }
                     }
                     if(!armorName.endsWith("LEGGINGS") && !armorName.equals("AIR")){
                         isValidArmor = false;
@@ -358,16 +366,56 @@ public class CosminPlayer {
         if(player.getGameMode() == GameMode.CREATIVE) return;
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
         for (CItemSlot slot : equipmentMap.keySet()) {
+            ItemStack item = getSlotItem(slot);
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
             packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
-            packet.getItemModifier().write(0, getSlotItem(slot));
+            packet.getItemModifier().write(0, item);
+
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);
+                plugin.getProtocolManager().sendServerPacket(player,stopSound(item));
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public PacketContainer stopSound(ItemStack armor){
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.STOP_SOUND);
+        packet.getSoundCategories().writeSafely(0,EnumWrappers.SoundCategory.PLAYERS);
+        String armorType = armor.getType().toString();
+
+        String key;
+        if(armorType.contains("DIAMOND")) key = "item.armor.equip_diamond";
+        else if(armorType.contains("GOLDEN")) key = "item.armor.equip_gold";
+        else if(armorType.contains("IRON")) key = "item.armor.equip_iron";
+        else if(armorType.contains("LEATHER")) key = "item.armor.equip_leather";
+        else if(armorType.contains("NETHERITE")) key = "item.armor.equip_netherite";
+        else if(armorType.contains("CHAINMAIL")) key = "item.armor.equip_chain";
+        else key = "item.armor.equip_generic";
+
+        packet.getMinecraftKeys().writeSafely(0,new MinecraftKey(key));
+        return packet;
+    }
+
+    public void setFakeItem(CItemSlot slot,ItemStack item){
+        if(!getBukkitPlayer().isPresent()) return;
+        Player player = getBukkitPlayer().get();
+        if(!player.isOnline()) return;
+        if(player.getGameMode() == GameMode.CREATIVE) return;
+        if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
+        preventSetSlotPacket(true);
+        packet.getIntegers().write(0, 0);
+        packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
+        packet.getItemModifier().write(0, item);
+        try {
+            plugin.getProtocolManager().sendServerPacket(player, packet);
+            plugin.getProtocolManager().sendServerPacket(player,stopSound(item));
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
         }
     }
 
@@ -380,13 +428,15 @@ public class CosminPlayer {
         Player player = getBukkitPlayer().get();
         if(!player.isOnline()) return;
         for (CItemSlot slot : CItemSlot.values()) {
+            ItemStack item = getOrignalItem(slot);
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
             packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
-            packet.getItemModifier().write(0, getOrignalItem(slot));
+            packet.getItemModifier().write(0, item);
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);
+                plugin.getProtocolManager().sendServerPacket(player,stopSound(item));
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }

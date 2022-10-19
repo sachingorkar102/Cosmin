@@ -303,6 +303,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
 //        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_18_R2")|| minecraftVersion.equals("v1_19_R1");
     }
 
+    public boolean isPost1_19(){
+        return Arrays.asList("v1_19_R1").contains(minecraftVersion);
+    }
+
     public void registerCommands(){
         this.commandManager = new CommandManager(this);
         this.commandManager.registerSubCommands();

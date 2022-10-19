@@ -2,6 +2,7 @@ package com.github.sachin.cosmin.nbtapi;
 
 import com.github.sachin.cosmin.nbtapi.nms.NMSHelper;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 
 
 public class NBTItem {
@@ -68,6 +69,8 @@ public class NBTItem {
     public double getDouble(String key){
         return helper.getDouble(key);
     }
+
+//    public void applyHeadTexture(SkullMeta meta, String b64){}
     
 
     

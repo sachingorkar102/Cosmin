@@ -11,6 +11,8 @@ import com.github.sachin.cosmin.utils.InventoryUtils;
 import com.github.sachin.cosmin.utils.ItemBuilder;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +23,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
@@ -211,6 +214,35 @@ public class PlayerListener implements Listener{
             }.runTaskLater(plugin, 2);
         }
 
+    }
+
+    @EventHandler
+    public void onPlayerToggleSneak(PlayerToggleSneakEvent e){
+        if(!plugin.isPost1_19()) return;
+        Player player = e.getPlayer();
+        if(!plugin.getPlayerManager().containsPlayer(player)) return;
+        CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+        if(cPlayer.swiftSneakLevel> 0 && e.isSneaking()){
+            ItemStack leggings = cPlayer.getSlotItem(CItemSlot.LEGS);
+            if(leggings.getType()== Material.AIR){
+                ItemStack buttonLeggings = new ItemStack(Material.STONE_BUTTON);
+                ItemMeta meta = buttonLeggings.getItemMeta();
+                meta.addEnchant(Enchantment.SWIFT_SNEAK,cPlayer.swiftSneakLevel,false);
+                buttonLeggings.setItemMeta(meta);
+                cPlayer.setFakeItem(CItemSlot.LEGS,buttonLeggings);
+            }
+            else{
+                leggings = leggings.clone();
+                ItemMeta meta = leggings.getItemMeta();
+                meta.addEnchant(Enchantment.SWIFT_SNEAK,cPlayer.swiftSneakLevel,false);
+                leggings.setItemMeta(meta);
+                cPlayer.setFakeItem(CItemSlot.LEGS,leggings);
+            }
+        }
+        else{
+            cPlayer.computeAndPutEquipmentPairList();
+            cPlayer.setFakeSlotItems();
+        }
     }
 
 

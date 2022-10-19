@@ -19,8 +19,6 @@ import com.github.sachin.cosmin.xseries.XMaterial;
 import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -173,7 +171,7 @@ public class ItemBuilder {
             }
             else if((meta instanceof SkullMeta) && options.contains("texture")){
                 SkullMeta skullMeta = (SkullMeta) meta;
-                mutateItemMeta(skullMeta, options.getString("texture"));
+//                mutateItemMeta(skullMeta, options.getString("texture"));
             }
             if(options.contains("model")){
                 try {
@@ -441,33 +439,6 @@ public class ItemBuilder {
         return list;
     }
 
-    private static void mutateItemMeta(SkullMeta meta, String b64) {
-        Field metaProfileField ;
-        Method metaSetProfileMethod;
-		try {
-            metaSetProfileMethod = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            metaSetProfileMethod.setAccessible(true);
-
-			metaSetProfileMethod.invoke(meta, makeProfile(b64));
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-			try {
-                metaProfileField = meta.getClass().getDeclaredField("profile");
-                metaProfileField.setAccessible(true);
-
-				metaProfileField.set(meta, makeProfile(b64));
-
-			} catch (NoSuchFieldException | IllegalAccessException ex2) {
-				ex2.printStackTrace();
-			}
-		}
-	}
-
-    private static GameProfile makeProfile(String b64) {
-		UUID id = new UUID(b64.substring(b64.length() - 20).hashCode(),b64.substring(b64.length() - 10).hashCode());
-		GameProfile profile = new GameProfile(id, "someName");
-		profile.getProperties().put("textures", new Property("textures", b64));
-		return profile;
-	}
     
     
 }
