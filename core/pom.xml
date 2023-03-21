@@ -128,6 +128,7 @@
             <version>2.11.0</version>
             <scope>compile</scope>
         </dependency>
+        <!--folder zipping-->
         <dependency>
             <groupId>net.lingala.zip4j</groupId>
             <artifactId>zip4j</artifactId>
@@ -146,7 +147,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
-            <version>4.6.0</version>
+            <version>4.8.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -174,6 +175,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Itemsadder-->
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.2.5</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

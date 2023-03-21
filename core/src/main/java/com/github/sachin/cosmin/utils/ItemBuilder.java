@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.gui.GuiContext;
+import com.github.sachin.cosmin.integration.ItemsAddersAPI;
 import com.github.sachin.cosmin.nbtapi.NBTItem;
 import com.github.sachin.cosmin.xseries.XEnchantment;
 import com.github.sachin.cosmin.xseries.XMaterial;
@@ -204,6 +205,9 @@ public class ItemBuilder {
         ItemStack armorItem = null;
         if(section.contains("item")){
             armorItem = section.getItemStack("item");
+        }
+        else if(section.contains("ItemsAdder") && ItemsAddersAPI.isEnabled && ItemsAddersAPI.isInRegistry(section.getString("ItemsAdder"))){
+            armorItem = ItemsAddersAPI.getItem(section.getString("ItemsAdder"));
         }
         else{
             armorItem = itemFromFile(section, null);
