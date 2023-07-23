@@ -14,6 +14,7 @@ import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.gui.GuiContext;
 import com.github.sachin.cosmin.integration.ItemsAddersAPI;
+import com.github.sachin.cosmin.integration.OraxenApi;
 import com.github.sachin.cosmin.nbtapi.NBTItem;
 import com.github.sachin.cosmin.xseries.XEnchantment;
 import com.github.sachin.cosmin.xseries.XMaterial;
@@ -21,6 +22,7 @@ import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import io.th0rgal.oraxen.api.OraxenItems;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Color;
@@ -209,7 +211,10 @@ public class ItemBuilder {
         else if(section.contains("ItemsAdder") && ItemsAddersAPI.isEnabled && ItemsAddersAPI.isInRegistry(section.getString("ItemsAdder"))){
             armorItem = ItemsAddersAPI.getItem(section.getString("ItemsAdder"));
         }
-        else{
+        else if (section.contains("Oraxen") && OraxenApi.isEnabled && OraxenItems.exists(section.getString("Oraxen"))) {
+            armorItem = OraxenApi.getItem(section.getString("Oraxen"));
+        }
+        else {
             armorItem = itemFromFile(section, null);
         }
         armorItem = setHatItem(armorItem,armorName);
