@@ -41,6 +41,9 @@ database:
   password: ""
   name: "name of data base"
   table-name: cosmin_player_data
+  # in seconds
+  max-life-time: 1800
+  auto-reconnect: true
 
 
 # inventory short cuts used to do certain actions ONLY in cosmetic GUI

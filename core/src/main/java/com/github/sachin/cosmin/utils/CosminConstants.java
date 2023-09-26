@@ -44,6 +44,10 @@ public class CosminConstants {
     public static final String DB_TABLE_NAME = "database.table-name";
     public static final String DB_TYPE = "database.type";
 
+    public static final String DB_MAX_LIFE_TIME = "database.max-life-time";
+
+    public static final String DB_AUTO_RECONNECT = "database.auto-reconnect";
+
     // config key for prevent external slots
     public static final String ALLOW_EXTERNAL_ARMOR = "allow-external-armor";
     public static final String ALIASES = "aliases";
@@ -88,7 +92,7 @@ public class CosminConstants {
 
     public static final List<Integer> EQUIPMENT_SLOTS = Arrays.asList(5,6,7,8,45);
     public static final List<String> COMPATIBLE_VERSIONS_PRE_NETHER_UPDATE = Arrays.asList("v1_12_R1","v1_13_R1","v1_13_R2","v1_14_R1","v1_15_R1");
-    public static final List<String> COMPATIBLE_VERSIONS_POST_NETHER_UPDATE = Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3","v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1");
+    public static final List<String> COMPATIBLE_VERSIONS_POST_NETHER_UPDATE = Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3","v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2");
 
     public static final boolean ISDEMO  = false;
 

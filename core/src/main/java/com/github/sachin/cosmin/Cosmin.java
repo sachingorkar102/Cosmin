@@ -299,12 +299,12 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public boolean is1_17_1(){
-        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1").contains(minecraftVersion);
+        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2").contains(minecraftVersion);
 //        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_18_R2")|| minecraftVersion.equals("v1_19_R1");
     }
 
     public boolean isPost1_19(){
-        return Arrays.asList("v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1").contains(minecraftVersion);
+        return Arrays.asList("v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2").contains(minecraftVersion);
     }
 
     public void registerCommands(){
