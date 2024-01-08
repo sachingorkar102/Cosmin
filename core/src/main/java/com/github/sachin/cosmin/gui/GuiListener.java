@@ -32,13 +32,13 @@ public class GuiListener implements Listener{
             equipSlotMap.put(cSlot.getFakeSlotId(), cSlot);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiCloseEvent(InventoryCloseEvent e){
         Player player = (Player) e.getPlayer();
-        
+
         if(e.getInventory().getHolder() instanceof GuiHolder){
-            
+
             GuiHolder holder = (GuiHolder) e.getInventory().getHolder();
             // CosminPlayer cosminPlayer = new CosminPlayer(player,Arrays.asList(holder.getInventory().getContents()));
             if(holder.getContext() == GuiContext.COSMIN_INVENTORY){
@@ -77,7 +77,7 @@ public class GuiListener implements Listener{
 
     @EventHandler
     public void cosminGuiDragEvent(InventoryDragEvent e){
-        
+
         if(e.getInventory().getHolder() instanceof PagedGui){
             e.setCancelled(true);
         }
@@ -131,7 +131,7 @@ public class GuiListener implements Listener{
         return slots;
     }
 
-   
+
 
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void cosminGuiClickEvent(InventoryClickEvent e){
@@ -183,7 +183,7 @@ public class GuiListener implements Listener{
                     if(airSlot != -1 && stacked > 0) {
                         slots.add(airSlot);
                     }
-                    
+
                     for(int slot : slots){
                         for(int i : armorMap.keySet()){
                             if(i==slot && !armorMap.get(i)){
@@ -191,9 +191,9 @@ public class GuiListener implements Listener{
                                 break;
                             }
                         }
-                        
+
                     }
-                    
+
                 }
             }
         }
@@ -207,12 +207,12 @@ public class GuiListener implements Listener{
             GuiHolder holder = (GuiHolder) clickedInv.getHolder();
             ItemStack clickedItem = e.getCurrentItem();
             if(holder.getContext()== GuiContext.COSMIN_INVENTORY){
-                
+
 
                 if(CosminConstants.COSMIN_ARMOR_SLOTS.contains(clickedSlot)){
-                    
+
                     if((e.getCursor() != null && plugin.getConfigUtils().matchBlackListMaterial(e.getCursor().getType(), equipSlotMap.get(e.getSlot()))) || ItemBuilder.isHatItem(clickedItem) || !armorMap.get(clickedSlot)) e.setCancelled(true);
-                    
+
                 }
                 else if(clickedItem != null && clickedItem.isSimilar(plugin.miscItems.getCosmeticSetButton())){
                     onCosmeticSetClickEvent(e, player,holder);
@@ -242,14 +242,14 @@ public class GuiListener implements Listener{
             }
         }
         else if(clickedInv instanceof PlayerInventory && e.isShiftClick() && (inv.getHolder() instanceof GuiHolder) && e.getCurrentItem() != null){
-             GuiHolder holder = (GuiHolder) inv.getHolder();
-             if(holder.getContext()==GuiContext.COSMIN_INVENTORY){
-                 for(int s : getSlots(e)){
-                     if(equipSlotMap.containsKey(s) && plugin.getConfigUtils().matchBlackListMaterial(e.getCurrentItem().getType(),equipSlotMap.get(s))){
-                         e.setCancelled(true);
-                     }
-                 }
-             }
+            GuiHolder holder = (GuiHolder) inv.getHolder();
+            if(holder.getContext()==GuiContext.COSMIN_INVENTORY){
+                for(int s : getSlots(e)){
+                    if(equipSlotMap.containsKey(s) && plugin.getConfigUtils().matchBlackListMaterial(e.getCurrentItem().getType(),equipSlotMap.get(s))){
+                        e.setCancelled(true);
+                    }
+                }
+            }
         }
         else if(e.getView().getTopInventory().getType() == InventoryType.CRAFTING){
             if(plugin.getPlayerManager().containsPlayer(player)){
@@ -301,7 +301,7 @@ public class GuiListener implements Listener{
         // on right click
         if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(3)){
             plugin.guiManager.showCosmeticSetGui(player, holder.getTargetPlayer());
-            
+
         }
         // on drop
         else if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(4)){
@@ -327,7 +327,7 @@ public class GuiListener implements Listener{
             plugin.getMessageManager().sendMessage(CosminConstants.M_CANT_DEQUIP, player);
         }
         else if(e.getClick() == plugin.getConfigUtils().getHotKeysList().get(0)){
-            
+
             if(ItemBuilder.isEnableItem(clickedItem)){
                 e.setCurrentItem(plugin.guiManager.generateToolTips(plugin.miscItems.getDisableItem(), clickedSlot));
             }
@@ -351,7 +351,7 @@ public class GuiListener implements Listener{
             if(ItemBuilder.isHatItem(armor) && ItemBuilder.isCrossMatchAllowed(armor)){
                 e.getClickedInventory().setItem(clickedSlot+9, null);
             }
-        }   
+        }
         e.setCancelled(true);
 
     }

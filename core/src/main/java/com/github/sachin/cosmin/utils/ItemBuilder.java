@@ -1,19 +1,15 @@
 package com.github.sachin.cosmin.utils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.gui.GuiContext;
-import com.github.sachin.cosmin.integration.ItemsAddersAPI;
+import com.github.sachin.cosmin.compat.ItemsAddersAPI;
 import com.github.sachin.cosmin.nbtapi.NBTItem;
 import com.github.sachin.cosmin.xseries.XEnchantment;
 import com.github.sachin.cosmin.xseries.XMaterial;

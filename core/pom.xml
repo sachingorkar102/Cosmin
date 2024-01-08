@@ -151,6 +151,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>dev.lone.cosmeticscore</groupId>
+            <artifactId>CosmeticCore</artifactId>
+            <version>1.2.3b</version>
+            <systemPath>${project.basedir}/lib/CosmeticsCore.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
+
         <!-- Placeholder Api -->
         <dependency>
             <groupId>me.clip</groupId>

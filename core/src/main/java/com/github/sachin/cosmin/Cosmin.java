@@ -23,7 +23,7 @@ import com.github.sachin.cosmin.economy.PlayerPointsHook;
 import com.github.sachin.cosmin.economy.VaultHook;
 import com.github.sachin.cosmin.gui.GuiListener;
 import com.github.sachin.cosmin.gui.GuiManager;
-import com.github.sachin.cosmin.integration.CosminPAPIExpansion;
+import com.github.sachin.cosmin.compat.CosminPAPIExpansion;
 import com.github.sachin.cosmin.listener.PlayerListener;
 import com.github.sachin.cosmin.nbtapi.NBTAPI;
 import com.github.sachin.cosmin.player.CosminPlayer;
@@ -299,12 +299,12 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public boolean is1_17_1(){
-        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2").contains(minecraftVersion);
+        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2","v1_20_R3").contains(minecraftVersion);
 //        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_18_R2")|| minecraftVersion.equals("v1_19_R1");
     }
 
     public boolean isPost1_19(){
-        return Arrays.asList("v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2").contains(minecraftVersion);
+        return Arrays.asList("v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2","v1_20_R3").contains(minecraftVersion);
     }
 
     public void registerCommands(){
@@ -348,6 +348,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         File resourceFolder = new File(getDataFolder(),"resource-packs");
         if(!resourceFolder.exists()) resourceFolder.mkdir();
         registerCommand("cosmetic", new CosmeticCommand(this));
+
         // registerCommands();
         // Bukkit.getOnlinePlayers().forEach(p -> p.updateCommands());
         getServer().getConsoleSender().sendMessage(messageManager.getMessage(CosminConstants.M_RELOADED));

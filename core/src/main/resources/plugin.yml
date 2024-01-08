@@ -1,9 +1,9 @@
 name: Cosmin
-version: 6.2
+version: 7.1
 main: com.github.sachin.cosmin.Cosmin
 api-version: 1.13
 depend: [ProtocolLib]
-softdepend: [PlaceholderAPI,Vault,PlayerPoints,ItemsAdder]
+softdepend: [PlaceholderAPI,Vault,PlayerPoints,ItemsAdder,CosmeticsCore]
 authors: [ sachingorkar ]
 description: Provides two pair of armor slots one for function another for display
 commands:

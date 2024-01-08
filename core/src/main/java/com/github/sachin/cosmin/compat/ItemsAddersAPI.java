@@ -1,4 +1,4 @@
-package com.github.sachin.cosmin.integration;
+package com.github.sachin.cosmin.compat;
 
 import com.github.sachin.cosmin.Cosmin;
 import org.bukkit.inventory.ItemStack;

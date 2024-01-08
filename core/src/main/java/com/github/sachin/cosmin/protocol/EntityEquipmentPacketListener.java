@@ -7,6 +7,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.Pair;
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.compat.CosmeticCoreAPI;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
@@ -54,6 +55,13 @@ public class EntityEquipmentPacketListener extends PacketAdapter{
                 }
             }
             for (CItemSlot slot: CItemSlot.values()) {
+                if(CosmeticCoreAPI.isEnabled && slot==CItemSlot.HEAD){
+                    ItemStack ccHat = CosmeticCoreAPI.getHatItem(player);
+                    if(ccHat != null){
+                        newPairs.add(new Pair<>(slot.getProtocolSlot(),ccHat));
+                        continue;
+                    }
+                }
                 if(cosminPlayer.getOrignalArmorMap().get(slot)){
                     newPairs.add(new Pair<>(slot.getProtocolSlot(),player.getInventory().getItem(slot.getAltSlotId())));
                 }

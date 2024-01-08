@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosmeticSet;
 import com.github.sachin.cosmin.armor.CosminArmor;
+import com.github.sachin.cosmin.compat.CosmeticCoreAPI;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.ItemBuilder;
@@ -294,6 +295,13 @@ public class CosminPlayer {
             PacketContainer packet = plugin.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
             packet.getIntegers().write(0, player.getEntityId());
             for(CItemSlot slot:equipmentMap.keySet()){
+                if(CosmeticCoreAPI.isEnabled && slot==CItemSlot.HEAD){
+                    ItemStack ccHat = CosmeticCoreAPI.getHatItem(player);
+                    if(ccHat != null){
+                        pairs.add(new Pair<>(slot.getProtocolSlot(),ccHat));
+                        continue;
+                    }
+                }
                 if(getOrignalArmorMap().get(slot)){
                     pairs.add(new Pair<>(slot.getProtocolSlot(),player.getInventory().getItem(slot.getAltSlotId())));
                 }
@@ -308,10 +316,11 @@ public class CosminPlayer {
             return;
         }
         for (CItemSlot slot : equipmentMap.keySet()) {
+            ItemStack item = equipmentMap.get(slot);
             PacketContainer packet = plugin.getProtocolManager().createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
             packet.getIntegers().write(0, player.getEntityId());
             packet.getItemSlots().write(0, slot.getProtocolSlot());
-            packet.getItemModifier().write(0, equipmentMap.get(slot));
+            packet.getItemModifier().write(0, item);
             if(!getOrignalArmorMap().get(slot)){
                 sendPacket(packet, targetPlayer);
             }

@@ -39,3 +39,7 @@ confirm-button:
 cancel-button:
   id: RED_WOOL
   display: "&cCancel"  
+
+main-gui-layout:
+  - shop-button|filler-glass|head-toggle-slot|chest-toggle-slot|legs-toggle-slot|feet-toggle-slot|offhand-toggle-slot|filler-glass|filler-glass
+  - filler-glass|filler-glass|head-slot|chest-slot|legs-slot|feet-slot|offhand-slot|filler-glass|filler-glass

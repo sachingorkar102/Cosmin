@@ -1,6 +1,7 @@
 package com.github.sachin.cosmin.utils;
 
 import com.github.sachin.cosmin.Cosmin;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,6 +13,8 @@ public class MiscItems {
     private Cosmin plugin;
 
     private File miscItemsFile;
+
+    private YamlConfiguration config;
 
     private ItemStack fillerGlass;
     private ItemStack enableItem;
@@ -36,18 +39,18 @@ public class MiscItems {
 
     public void loadMiscItems(){
         try (FileReader reader = new FileReader(miscItemsFile)) {
-            YamlConfiguration yml = new YamlConfiguration();
-            yml.load(reader);
-            backButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.BACK_BUTTON), CosminConstants.BACK_BUTTON);
-            fillerGlass = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.FILLAR_GLASS),CosminConstants.FILLAR_GLASS);
-            enableItem = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.ENABLE_ITEM),CosminConstants.ENABLE_ITEM);
-            disableItem = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.DISABLE_ITEM),CosminConstants.DISABLE_ITEM);
-            previousButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.PREVIOUS_BUTTON), CosminConstants.PREVIOUS_BUTTON);
-            nextButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.NEXT_BUTTON), CosminConstants.NEXT_BUTTON);
-            cosmeticSetButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.COSMETIC_SET_BUTTON), CosminConstants.COSMETIC_SET_BUTTON);
-            shopButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.SHOP_BUTTON), CosminConstants.SHOP_BUTTON);
-            confirmButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.CONFIRM_BUTTON), CosminConstants.CONFIRM_BUTTON);
-            cancelButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.CANCEL_BUTTON), CosminConstants.CANCEL_BUTTON);
+            config = new YamlConfiguration();
+            config.load(reader);
+            backButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.BACK_BUTTON), CosminConstants.BACK_BUTTON);
+            fillerGlass = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.FILLAR_GLASS),CosminConstants.FILLAR_GLASS);
+            enableItem = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.ENABLE_ITEM),CosminConstants.ENABLE_ITEM);
+            disableItem = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.DISABLE_ITEM),CosminConstants.DISABLE_ITEM);
+            previousButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.PREVIOUS_BUTTON), CosminConstants.PREVIOUS_BUTTON);
+            nextButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.NEXT_BUTTON), CosminConstants.NEXT_BUTTON);
+            cosmeticSetButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.COSMETIC_SET_BUTTON), CosminConstants.COSMETIC_SET_BUTTON);
+            shopButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.SHOP_BUTTON), CosminConstants.SHOP_BUTTON);
+            confirmButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.CONFIRM_BUTTON), CosminConstants.CONFIRM_BUTTON);
+            cancelButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.CANCEL_BUTTON), CosminConstants.CANCEL_BUTTON);
             // applyButton = ItemBuilder.itemFromFile(yml.getConfigurationSection(CosminConstants.APLLY_BUTTON), CosminConstants.APLLY_BUTTON);
             reader.close();
         } catch (Exception e) {
@@ -90,6 +93,8 @@ public class MiscItems {
     public ItemStack getCancelButton() {
         return cancelButton;
     }
-    
-    
+
+    public YamlConfiguration getConfig() {
+        return config;
+    }
 }

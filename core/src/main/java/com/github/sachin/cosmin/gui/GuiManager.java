@@ -1,6 +1,7 @@
 package com.github.sachin.cosmin.gui;
 
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.cosmin.compat.CosmeticCoreAPI;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.ItemBuilder;
@@ -31,7 +32,7 @@ public class GuiManager {
     //     final Inventory inventory = Bukkit.createInventory(holder, 18,getTitle(player));
     //     holder.setInventory(getCosminInventory(player, inventory));
     //     player.openInventory(inventory);
-        
+
     // }
 
     public void showFakeGui(@NotNull Player player,@Nullable Player targetPlayer){
@@ -46,10 +47,10 @@ public class GuiManager {
         }
         holder.setInventory(getCosminInventory(p, inventory));
         player.openInventory(inventory);
-        
+
     }
 
-    private String getTitle(Player player,String config){
+    public String getTitle(Player player,String config){
         String message = plugin.getConfig().getString(config,"GUI");
         if(plugin.isPAPIEnabled()){
             message = PlaceholderAPI.setPlaceholders(player, message);
@@ -57,7 +58,7 @@ public class GuiManager {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-  
+
 
     public Inventory getCosminInventory(Player player,Inventory inventory){
         List<ItemStack> contents;
@@ -78,7 +79,7 @@ public class GuiManager {
             inventory.setItem(slot, item);
         }
         for(int slot:CosminConstants.FILLAR_SLOTS){
-            
+
             inventory.setItem(slot, plugin.miscItems.getFillerGlass());
         }
         for(int slot:CosminConstants.COSMIN_ARMOR_SLOTS){
@@ -103,18 +104,18 @@ public class GuiManager {
         return list;
     }
 
-    
-    
 
-    
+
+
+
     public void showPagedGui(@NotNull Player player,@Nullable Player targePlayer,@NotNull GuiContext context){
-        
+
         final PagedGui pholder = new PagedGui(player,targePlayer, context);
         pholder.setItems();
         pholder.openPage();
     }
     public void showCosmeticSetGui(@NotNull Player player,@Nullable Player targePlayer){
-        
+
         final CosmeticSetGui sholder = new CosmeticSetGui(player,targePlayer);
         sholder.setItems();
         sholder.openPage();
@@ -149,7 +150,7 @@ public class GuiManager {
 
     }
 
-    
+
 
     public ItemStack generateToolTips(ItemStack item,int slot){
         if(!ItemBuilder.showToolTip(item)) return item;
@@ -169,7 +170,7 @@ public class GuiManager {
                 toolTip = plugin.getConfig().getString(CosminConstants.TOGGLE_ITEM_TOOLTIP+"FEET"," ");
                 break;
             case 6:
-                toolTip = plugin.getConfig().getString(CosminConstants.TOGGLE_ITEM_TOOLTIP+"OFFHAND"," ");   
+                toolTip = plugin.getConfig().getString(CosminConstants.TOGGLE_ITEM_TOOLTIP+"OFFHAND"," ");
                 break;
         }
         meta.setDisplayName(ItemBuilder.getDisplayName(item)+ " "+ChatColor.translateAlternateColorCodes('&', toolTip));

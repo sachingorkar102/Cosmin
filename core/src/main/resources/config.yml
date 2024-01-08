@@ -129,4 +129,5 @@ drop-items-on-death: true
 
 #  the amount of delay in ticks, to show the changes to armor after closing player inventory or cosmetic inventory
 delay-after-equip: 2
-  
+
+
