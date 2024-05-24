@@ -1,14 +1,14 @@
 package com.github.sachin.cosmin.protocol;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.*;
 import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ public class SetSlotPacketListener extends PacketAdapter{
     private Map<Integer,CItemSlot> equipSlotMap = new HashMap<>();
 
     public SetSlotPacketListener(Cosmin plugin) {
-        super(plugin, PacketType.Play.Server.SET_SLOT);
+        super(plugin, ListenerPriority.LOWEST, PacketType.Play.Server.SET_SLOT);
         this.plugin = plugin;
         equipSlotMap.clear();
         for(CItemSlot cSlot:CItemSlot.values()){
@@ -33,10 +33,12 @@ public class SetSlotPacketListener extends PacketAdapter{
     public void onPacketSending(PacketEvent e) {
         Player player = e.getPlayer();
         PacketContainer packet = e.getPacket();
+
         if(!plugin.getPlayerManager().containsPlayer(player) || packet.getIntegers().read(0) != 0) return;
         CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
         int affectedSlot = packet.getIntegers().read(plugin.is1_17_1() ? 2 : 1);
         if(cosminPlayer.getInventoryOpen()) return;
+
         if(affectedSlot == 0 || affectedSlot == -1){
             cosminPlayer.setFakeSlotItems();
             return;
@@ -48,7 +50,6 @@ public class SetSlotPacketListener extends PacketAdapter{
         }
         CItemSlot cSlot = equipSlotMap.get(affectedSlot);
         if(!cosminPlayer.getOrignalArmorMap().get(cSlot)){
-
             packet.getItemModifier().write(0, cosminPlayer.getSlotItem(cSlot));
         }
     }

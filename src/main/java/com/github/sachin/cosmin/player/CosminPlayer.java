@@ -10,6 +10,7 @@ import com.github.sachin.cosmin.Cosmin;
 import com.github.sachin.cosmin.armor.CosmeticSet;
 import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.compat.CosmeticCoreAPI;
+import com.github.sachin.cosmin.compat.PacketEvents;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.ItemBuilder;
@@ -373,10 +374,15 @@ public class CosminPlayer {
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
         for (CItemSlot slot : equipmentMap.keySet()) {
             ItemStack item = getSlotItem(slot);
+
+            if(plugin.isGrimACEnabled()) {
+                PacketEvents.setFakeSlotItem(this,slot.getEquipmentSlotId(),item);
+                continue;
+            }
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
-            packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
+            packet.getIntegers().write(plugin.getPacketInt(), slot.getEquipmentSlotId());
             packet.getItemModifier().write(0, item);
 
             try {
@@ -412,10 +418,14 @@ public class CosminPlayer {
         if(!player.isOnline()) return;
         if(player.getGameMode() == GameMode.CREATIVE) return;
         if(equipmentMap.isEmpty()) computeAndPutEquipmentPairList();
+        if(plugin.isGrimACEnabled()){
+            PacketEvents.setFakeSlotItem(this,slot.getEquipmentSlotId(),item);
+            return;
+        }
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
         preventSetSlotPacket(true);
         packet.getIntegers().write(0, 0);
-        packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
+        packet.getIntegers().write(plugin.getPacketInt(), slot.getEquipmentSlotId());
         packet.getItemModifier().write(0, item);
         try {
             plugin.getProtocolManager().sendServerPacket(player, packet);
@@ -425,9 +435,7 @@ public class CosminPlayer {
         }
     }
 
-    public int getPacketInt(){
-        return plugin.is1_17_1() ? 2 : 1;
-    }
+
 
     public void equipOrignalArmor(){
         if(!getBukkitPlayer().isPresent()) return;
@@ -435,10 +443,14 @@ public class CosminPlayer {
         if(!player.isOnline()) return;
         for (CItemSlot slot : CItemSlot.values()) {
             ItemStack item = getOrignalItem(slot);
+            if(plugin.isGrimACEnabled()){
+                PacketEvents.setFakeSlotItem(this,slot.getEquipmentSlotId(),item);
+                continue;
+            }
             PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
             preventSetSlotPacket(true);
             packet.getIntegers().write(0, 0);
-            packet.getIntegers().write(getPacketInt(), slot.getEquipmentSlotId());
+            packet.getIntegers().write(plugin.getPacketInt(), slot.getEquipmentSlotId());
             packet.getItemModifier().write(0, item);
             try {
                 plugin.getProtocolManager().sendServerPacket(player, packet);

@@ -6,7 +6,6 @@ import com.github.sachin.cosmin.armor.CosminArmor;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.utils.CItemSlot;
 import com.github.sachin.cosmin.utils.CosminConstants;
-import com.github.sachin.cosmin.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -150,6 +149,7 @@ public class GuiListener implements Listener{
         if(clickedInv == null) return;
         Map<Integer,Boolean> armorMap = plugin.getConfigUtils().getExternalArmorMap();
 
+
         // check for shift clicking in a disabled slot
         if(inv.getHolder() instanceof GuiHolder){
             GuiHolder guiHolder = (GuiHolder) inv.getHolder();
@@ -262,7 +262,7 @@ public class GuiListener implements Listener{
                     if(holder.getItemSlotMap().get(s) != i) continue;
                     slot = s;
                 }
-                if(slot != null && plugin.getConfigUtils().matchBlackListMaterial(e.getCurrentItem().getType(),slot)){
+                if(slot != null && plugin.getConfigUtils().matchAllowedListMaterial(e.getCurrentItem().getType(),slot)){
                     e.setCancelled(true);
                 }
             }

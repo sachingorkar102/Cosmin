@@ -90,6 +90,18 @@ public class PlayerListener implements Listener{
         }
     }
 
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent e){
+        Player player = e.getPlayer();
+        if(plugin.getPlayerManager().containsPlayer(player)) {
+            CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+            cosminPlayer.computeAndPutEquipmentPairList();
+            cosminPlayer.setFakeSlotItems();
+        }
+    }
+
+
     @EventHandler
     public void playerQuit(PlayerQuitEvent e){
         Player player = e.getPlayer();

@@ -5,7 +5,7 @@
 
     <groupId>com.github.sachin.cosmin</groupId>
     <artifactId>Cosmin</artifactId>
-    <version>7.1</version>
+    <version>7.3</version>
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -116,6 +116,11 @@
             <name>Oraxen Repository</name>
             <url>https://repo.oraxen.com/releases</url>
         </repository>
+
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -225,5 +230,20 @@
             <systemPath>${project.basedir}/lib/Oraxen-1.163.0.jar</systemPath>
         </dependency>
 
+<!--        GrimAC-->
+        <dependency>
+            <groupId>com.github.GrimAnticheat</groupId>
+            <artifactId>Grim</artifactId>
+            <version>2.3.62</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/grimac-2.3.62.jar</systemPath>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.github.retrooper.packetevents</groupId>-->
+<!--            <artifactId>spigot</artifactId>-->
+<!--            <version>2.3.0</version>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

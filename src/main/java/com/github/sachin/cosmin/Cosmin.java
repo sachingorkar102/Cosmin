@@ -17,6 +17,7 @@ import com.github.sachin.cosmin.armor.ArmorManager;
 import com.github.sachin.cosmin.commands.CommandManager;
 import com.github.sachin.cosmin.commands.CosmeticCommand;
 import com.github.sachin.cosmin.commands.TabComplete;
+import com.github.sachin.cosmin.compat.PacketEvents;
 import com.github.sachin.cosmin.database.MySQL;
 import com.github.sachin.cosmin.database.PlayerData;
 import com.github.sachin.cosmin.economy.PlayerPointsHook;
@@ -27,15 +28,13 @@ import com.github.sachin.cosmin.compat.CosminPAPIExpansion;
 import com.github.sachin.cosmin.listener.PlayerListener;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.player.PlayerManager;
-import com.github.sachin.cosmin.protocol.EntityEquipmentPacketListener;
-import com.github.sachin.cosmin.protocol.PlayerUseItemPacketListener;
-import com.github.sachin.cosmin.protocol.SetSlotPacketListener;
-import com.github.sachin.cosmin.protocol.SpawnPlayerPacketListener;
+import com.github.sachin.cosmin.protocol.*;
 import com.github.sachin.cosmin.utils.ConfigUtils;
 import com.github.sachin.cosmin.utils.CosminConstants;
 import com.github.sachin.cosmin.utils.InventoryUtils;
 import com.github.sachin.cosmin.utils.Message;
 import com.github.sachin.cosmin.utils.MiscItems;
+import com.github.sachin.prilib.McVersion;
 import com.github.sachin.prilib.Prilib;
 import com.github.sachin.prilib.nms.NBTItem;
 import com.google.gson.Gson;
@@ -64,6 +63,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     public boolean postNetherUpdate;
     private boolean papiEnabled;
+
+    private boolean isGrimACEnabled = false;
     private CosminPAPIExpansion papiExpansion;
     public boolean isEconomyEnabled;
     public GuiManager guiManager;
@@ -141,11 +142,19 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
         // register packet listeners
         this.protocolManager = ProtocolLibrary.getProtocolManager();
+        this.isGrimACEnabled = getServer().getPluginManager().isPluginEnabled("GrimAC");
+        if(isGrimACEnabled){
+            getLogger().info("grimac enabled, Registering packet listener for packetevents library");
+            PacketEvents.enablePacketEvents();
+        }
+        else{
+            this.protocolManager.addPacketListener(new SetSlotPacketListener(this));
+        }
         this.protocolManager.addPacketListener(new EntityEquipmentPacketListener(this));
-        this.protocolManager.addPacketListener(new SetSlotPacketListener(this));
         this.protocolManager.addPacketListener(new SpawnPlayerPacketListener(this));
         this.protocolManager.addPacketListener(new PlayerUseItemPacketListener(this));
         Bukkit.getOnlinePlayers().forEach(p -> {entityIdMap.put(p.getEntityId(), p);});
+
 
         loadPlayerData();
 
@@ -156,6 +165,9 @@ public final class Cosmin extends JavaPlugin implements Listener{
     public void onDisable() {
         if(pluginDisabled) return;
         savePlayerData();
+        if(isGrimACEnabled){
+            PacketEvents.disablePacketEvents();
+        }
     }
 
     public void enabledEconomy(){
@@ -288,13 +300,17 @@ public final class Cosmin extends JavaPlugin implements Listener{
         return false;
     }
 
+    public int getPacketInt(){
+        return this.is1_17_1() ? 2 : 1;
+    }
+
     public boolean is1_17_1(){
-        return Arrays.asList("v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2","v1_20_R3").contains(prilib.getBukkitVersion());
+        return prilib.getMcVersion().isAtLeast(new McVersion(1,17,1));
 //        return minecraftVersion.equals("v1_17_R1") || minecraftVersion.equals("v1_18_R1") || minecraftVersion.equals("v1_18_R2")|| minecraftVersion.equals("v1_19_R1");
     }
 
     public boolean isPost1_19(){
-        return Arrays.asList("v1_19_R1","v1_19_R2","v1_19_R3","v1_20_R1","v1_20_R2","v1_20_R3").contains(prilib.getBukkitVersion());
+        return prilib.getMcVersion().isAtLeast(new McVersion(1,19));
     }
 
     public void registerCommands(){
@@ -397,6 +413,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
 
     public boolean isPAPIEnabled(){
         return papiEnabled;
+    }
+
+    public boolean isGrimACEnabled() {
+        return isGrimACEnabled;
     }
 
     public boolean isEconomyEnabled(){
