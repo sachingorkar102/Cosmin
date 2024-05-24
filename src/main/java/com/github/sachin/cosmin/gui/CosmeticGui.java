@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
@@ -81,10 +82,10 @@ public class CosmeticGui extends GuiHolder{
             inventory.setItem(tItemSlotMap.get(slot), item);
 
         }
-        if(setButtonSlot !=-1){
-            inventory.setItem(setButtonSlot,plugin.miscItems.getFillerGlass());
-        }
-        if( plugin.getConfigUtils().isCosmeticSetEnabled() && player.hasPermission(CosminConstants.PERM_COSMETICSET)){
+//        if(setButtonSlot ==-1){
+//            inventory.setItem(setButtonSlot,plugin.miscItems.getFillerGlass());
+//        }
+        if(setButtonSlot != -1 && plugin.getConfigUtils().isCosmeticSetEnabled() && player.hasPermission(CosminConstants.PERM_COSMETICSET)){
             inventory.setItem(setButtonSlot, plugin.miscItems.getCosmeticSetButton());
         }
 
@@ -146,7 +147,8 @@ public class CosmeticGui extends GuiHolder{
                 slot = s;
             }
             if(slot==null) return;
-            if((e.getCursor() != null && plugin.getConfigUtils().matchBlackListMaterial(e.getCursor().getType(), slot)) || ItemBuilder.isHatItem(clickedItem) || !plugin.getConfigUtils().getExternalArmorMap().get(slot.getFakeSlotId())) e.setCancelled(true);
+            if(e.getAction()== InventoryAction.HOTBAR_SWAP || e.getAction()==InventoryAction.HOTBAR_MOVE_AND_READD) e.setCancelled(true);
+            if((e.getCursor() != null && plugin.getConfigUtils().matchAllowedListMaterial(e.getCursor().getType(), slot)) || ItemBuilder.isHatItem(clickedItem) || !plugin.getConfigUtils().getExternalArmorMap().get(slot.getFakeSlotId())) e.setCancelled(true);
         }
         else if(clickedItem != null && clickedItem.isSimilar(plugin.miscItems.getCosmeticSetButton())){
             onCosmeticSetClickEvent(e, player,this);
@@ -167,7 +169,7 @@ public class CosmeticGui extends GuiHolder{
                     if(itemSlotMap.get(s) != i) continue;
                     slot = s;
                 }
-                if(plugin.getConfigUtils().matchBlackListMaterial(e.getOldCursor().getType(), slot) || !plugin.getConfigUtils().getExternalArmorMap().get(slot.getFakeSlotId())){
+                if(plugin.getConfigUtils().matchAllowedListMaterial(e.getOldCursor().getType(), slot) || !plugin.getConfigUtils().getExternalArmorMap().get(slot.getFakeSlotId())){
                     e.setCancelled(true);
                 }
             }
@@ -239,8 +241,8 @@ public class CosmeticGui extends GuiHolder{
     }
     public void createLayout(List<String> invlayoutList){
         Map<Integer, ItemStack> invLayout = new HashMap<>();
-        if(invlayoutList.size() > 5){
-            plugin.getLogger().severe("Error in creating gui layout (inventory size can not exceed 5 rows), using the default layout...");
+        if(invlayoutList.size() > 6){
+            plugin.getLogger().severe("Error in creating gui layout (inventory size can not exceed 6 rows), using the default layout...");
             invSize = CosminConstants.DEFAULT_INV_SIZE;
             createLayout(CosminConstants.DEFAULT_GUI_LAYOUT);
             return;

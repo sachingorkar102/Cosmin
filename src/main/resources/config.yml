@@ -112,7 +112,8 @@ wardrobe-enabled:
 # if set to true: when player closes wardrobe it will open the cosmetic gui 
 open-cosmetic-gui-on-wardrobe-close: true  
 
-# list of materials that cant be placed in fake armor slots
+# list of materials that cant be placed in cosmetic armor slots
+#  whitelist-materials and blacklist-materials are mutually exclusive, you cannot use both at same time
 # Pro tip: 
   # use NAME$ to take those names into account which end with "NAME" eg. "BANNER$"
   # use ^NAME to take those names into acccount which start with "NAME" eg. "^NETHERITE"
@@ -122,6 +123,19 @@ blacklist-materials:
   LEGS: []
   FEET: []
   OFFHAND: [TRIDENT]
+
+# list of materials that can be only placed in cosmetic armor slots,
+#  whitelist-materials and blacklist-materials are mutually exclusive, you cannot use both at same time
+# Pro tip:
+  # use NAME$ to take those names into account which end with "NAME" eg. "BANNER$"
+  # use ^NAME to take those names into acccount which start with "NAME" eg. "^NETHERITE"
+whitelist-materials:
+  HEAD: []
+  CHEST: []
+  LEGS: []
+  FEET: []
+  OFFHAND: []
+
 
 # weather or not player should drop there items present in cosmin gui on death
 # Bypass permission: cosmin.deathdrops.bypass

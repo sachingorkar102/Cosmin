@@ -35,6 +35,8 @@ public class ConfigUtils {
 
     private final Map<Integer,Boolean> externalArmorMap = new HashMap<>();
     private final Map<CItemSlot,List<String>> blackListMaterials = new HashMap<>();
+
+    private final Map<CItemSlot,List<String>> whiteListMaterials = new HashMap<>();
     private final List<ClickType> hotKeysList = new ArrayList<>();
     private final List<ConfigurationSection> cosmeticSetSections = new ArrayList<>();
 
@@ -119,6 +121,7 @@ public class ConfigUtils {
         loadCosmeticItems();
         loadCosmeticSets();
         blackListMaterials.clear();
+        whiteListMaterials.clear();
         externalArmorMap.clear();
         hotKeysList.clear();
         
@@ -185,9 +188,36 @@ public class ConfigUtils {
         return blackListMaterials;
     }
 
-    public boolean matchBlackListMaterial(Material mat,CItemSlot slot){
+    public Map<CItemSlot, List<String>> getWhiteListMaterials() {
+        if(whiteListMaterials.isEmpty()){
+            for(CItemSlot slot : CItemSlot.values()){
+                if(getBlackListMaterials().get(slot).isEmpty()){
+                    whiteListMaterials.put(slot,plugin.getConfig().getStringList("whitelist-materials."+slot.toString()));
+                }
+                else{
+                    whiteListMaterials.put(slot,new ArrayList<>());
+                }
+            }
+        }
+        return whiteListMaterials;
+    }
+
+    public boolean matchAllowedListMaterial(Material mat, CItemSlot slot){
         String str = mat.toString();
-        for(String s : getBlackListMaterials().get(slot)){
+        List<String> blackList = getBlackListMaterials().get(slot);
+        List<String> whiteList = getWhiteListMaterials().get(slot);
+        if(!whiteList.isEmpty()){
+            if(str.equalsIgnoreCase("AIR")) return false;
+            return !matchString(str,whiteList);
+        }
+        if(!blackList.isEmpty()){
+            return matchString(str,blackList);
+        }
+        return false;
+    }
+
+    private boolean matchString(String str,List<String> list){
+        for(String s : list){
             if(s.startsWith("^") && str.startsWith(s.replace("^", ""))){
                 return true;
             }
