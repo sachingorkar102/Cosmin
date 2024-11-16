@@ -8,6 +8,8 @@
 # For feature requests or bug reports contact me on discord https://discord.gg/VdfqQZjHrJ or pm me directly at sachin#8481
 
 
+debug-mode: false
+
 
 # Aliases for command used to open cosmin GUI
 # restart/reload may require for this option to apply changes
@@ -103,11 +105,11 @@ allow-empty-slots:
 
 # weather or not wardrobe is enabled for the specified slot
 wardrobe-enabled:
-  HEAD: false
-  CHEST: false
-  LEGS: false
-  FEET: false
-  OFFHAND: false 
+  HEAD: true
+  CHEST: true
+  LEGS: true
+  FEET: true
+  OFFHAND: true
 
 # if set to true: when player closes wardrobe it will open the cosmetic gui 
 open-cosmetic-gui-on-wardrobe-close: true  
@@ -146,8 +148,10 @@ delay-after-equip: 2
 
 # customize the main gui
 # any other cosmin item id or Material id can be used instead of "filler-glass"
+# for cosmetic set shop button use the key "set-button"
 main-gui-layout:
-  - set-button|filler-glass|toggle-head-slot|toggle-chest-slot|toggle-legs-slot|toggle-feet-slot|toggle-offhand-slot|filler-glass|filler-glass
+  - filler-glass|filler-glass|toggle-head-slot|toggle-chest-slot|toggle-legs-slot|toggle-feet-slot|toggle-offhand-slot|filler-glass|filler-glass
   - filler-glass|filler-glass|head-slot|chest-slot|legs-slot|feet-slot|offhand-slot|filler-glass|filler-glass
+
 
 

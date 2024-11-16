@@ -3,7 +3,7 @@ version: ${project.version}
 main: com.github.sachin.cosmin.Cosmin
 api-version: 1.13
 depend: [ProtocolLib]
-softdepend: [PlaceholderAPI,Vault,PlayerPoints,ItemsAdder,CosmeticsCore,Oraxen,GrimAC]
+softdepend: [PlaceholderAPI,Vault,PlayerPoints,ItemsAdder,CosmeticsCore,Oraxen,GrimAC,MMOItems]
 authors: [ sachingorkar ]
 description: Provides two pair of armor slots one for function another for display
 commands:

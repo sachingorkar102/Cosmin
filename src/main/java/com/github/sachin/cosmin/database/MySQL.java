@@ -8,7 +8,10 @@ import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySQL {
 
@@ -64,6 +67,24 @@ public class MySQL {
             validConnection = false;
             e.printStackTrace();
         }
+    }
+
+    public List<String> getPlayers(){
+        List<String> entries = new ArrayList<>();
+        String query = "SELECT UUID FROM " + table;
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                entries.add(resultSet.getString("UUID"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return entries;
     }
 
     public boolean isConnected(){

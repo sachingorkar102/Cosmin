@@ -36,7 +36,7 @@ public class SpawnPlayerPacketListener extends PacketAdapter{
                 if(!plugin.MySQL().isConnected()) return;
                 PlayerData playerData = new PlayerData(player.getUniqueId());
                 if(playerData.playerExists() && !plugin.getPlayerManager().containsPlayer(player)){
-                    CosminPlayer cPlayer = new CosminPlayer(player.getUniqueId(),Arrays.asList(InventoryUtils.base64ToItemStackArray(playerData.getPlayerData())));
+                    CosminPlayer cPlayer = new CosminPlayer(player.getUniqueId(),plugin.getItemsFromYAML(InventoryUtils.decompressYAMLString(playerData.getPlayerData()),null));
                     // cPlayer.computeAndPutEquipmentPairList();
                     plugin.getPlayerManager().addPlayer(cPlayer);
                     equipCPlayer(cPlayer);

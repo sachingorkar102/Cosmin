@@ -14,6 +14,7 @@ import com.github.sachin.cosmin.compat.ItemsAddersAPI;
 import com.github.sachin.cosmin.xseries.XEnchantment;
 import com.github.sachin.cosmin.xseries.XMaterial;
 import com.github.sachin.prilib.nms.NBTItem;
+import com.github.sachin.prilib.utils.FastItemStack;
 import com.google.common.base.Enums;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -41,6 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 
 public class ItemBuilder {
@@ -217,8 +219,9 @@ public class ItemBuilder {
         if(section.contains("permission")){
             perm = section.getString("permission");
         }
-        
-        CosminArmor armor = new CosminArmor(armorItem,armorName,perm);
+        FastItemStack fastItem = new FastItemStack(armorItem);
+        fastItem.set(CosminConstants.COSMIN_ARMOR_KEY, PersistentDataType.STRING,armorName);
+        CosminArmor armor = new CosminArmor(fastItem.get(),armorName,perm);
         CItemSlot slot = Enums.getIfPresent(CItemSlot.class, section.getString("type","HEAD")).or(CItemSlot.HEAD);
         armor.setSlot(slot);
         if(!section.contains("type") && armorItem != null){
@@ -333,22 +336,24 @@ public class ItemBuilder {
     }
 
     public static boolean isHatItem(ItemStack item){
-        if(item == null || item.getType() == Material.AIR) return false;
+        if(item == null || item.getType().isAir()) return false;
         NBTItem nbti = plugin.getNBTItem(item);
-        return nbti.hasKey("cosmin-armor");
+        FastItemStack fastItem = new FastItemStack(item);
+        return nbti.hasKey("cosmin-armor") || fastItem.hasKey(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING);
     }
 
     public static ItemStack setHatItem(ItemStack item,String name){
-        if(item == null || item.getType() == Material.AIR) return null;
-        NBTItem nbti = plugin.getNBTItem(item);
-        nbti.setString("cosmin-armor",name);
-        return nbti.getItem();
+        if(item == null || item.getType().isAir()) return null;
+        return new FastItemStack(item).set(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING,name).get();
     }
 
     public static String getArmorName(ItemStack item){
-        if(item == null || item.getType() == Material.AIR) return null;
+        if(item == null || item.getType().isAir()) return null;
         NBTItem nbti = plugin.getNBTItem(item);
-        return nbti.getString("cosmin-armor");
+        FastItemStack fastItem = new FastItemStack(item);
+        if(nbti.hasKey("cosmin-armor")) return nbti.getString("cosmin-armor");
+        if(fastItem.hasKey(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING)) return fastItem.get(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING);
+        return "";
     }
 
     public static ItemStack removeHatNBT(ItemStack item){

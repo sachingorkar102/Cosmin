@@ -54,6 +54,7 @@ public class CosmeticGui extends GuiHolder{
     public void open(){
         List<ItemStack> contents;
         if(!plugin.getPlayerManager().containsPlayer(player)){
+            plugin.getMessageManager().sendDebugMessage("Creating player data for "+player.getName());
             plugin.getPlayerManager().createCosminPlayer(player);
         }
         CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
@@ -89,6 +90,7 @@ public class CosmeticGui extends GuiHolder{
             inventory.setItem(setButtonSlot, plugin.miscItems.getCosmeticSetButton());
         }
 
+        plugin.getMessageManager().sendDebugMessage("Displaying cosmetic inventory for "+player.getName());
         player.openInventory(inventory);
     }
 

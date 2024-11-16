@@ -23,10 +23,11 @@ public class CosmeticCommand extends BukkitCommand{
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if(sender instanceof Player){
             Player player = (Player) sender;
-            if(CosminConstants.ISDEMO && !player.isOp()){
-                plugin.getMessageManager().sendMessage(CosminConstants.M_NO_PERM, player);
-                return false;
-            }
+//            if(CosminConstants.ISDEMO && !player.isOp()){
+//                plugin.getMessageManager().sendMessage(CosminConstants.M_NO_PERM, player);
+//                return false;
+//            }
+            if(plugin.getCommandCoolDown().contains(player.getUniqueId())) return true;
             if(player.hasPermission(CosminConstants.PERM_COMMAND_COSMETICS)){
                 plugin.guiManager.showFakeGui(player,null);
             }else{

@@ -78,9 +78,11 @@ public class ConfigUtils {
             try (FileReader reader = new FileReader(itemFile)) {
                 YamlConfiguration yml = new YamlConfiguration();
                 yml.load(reader);
+
                 for(String key : yml.getKeys(false)){
                     try {
                         ConfigurationSection section = yml.getConfigurationSection(key);
+
                         if(section.contains("type") && isCosmeticSetEnabled){
                             if(section.getString("type","none").equalsIgnoreCase("SET")){
                                 cosmeticSetSections.add(section);
@@ -177,6 +179,9 @@ public class ConfigUtils {
     public boolean isMySQLEnabled(){
         return plugin.getConfig().getBoolean(CosminConstants.DB_ENABLED,false);
     }
+
+
+    public boolean isDebugEnabled() {return plugin.getConfig().getBoolean(CosminConstants.DEBUG_MODE,false);}
 
     public Map<CItemSlot, List<String>> getBlackListMaterials() {
         if(blackListMaterials.isEmpty()){

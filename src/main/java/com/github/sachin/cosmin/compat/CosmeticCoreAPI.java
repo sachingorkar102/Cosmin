@@ -14,11 +14,13 @@ public class CosmeticCoreAPI {
 
 
     public static ItemStack getHatItem(Player player){
-        for(Object obj : new dev.lone.cosmeticscore.api.temporary.CosmeticsCoreApi().getEquippedCosmeticsAccessors(player)){
-            dev.lone.cosmeticscore.api.temporary.CosmeticAccessor accessor = (dev.lone.cosmeticscore.api.temporary.CosmeticAccessor) obj;
+        for(Object obj : dev.lone.cosmeticscore.api.temporary.CosmeticsCoreApi.getEquippedCosmeticsAccessors(player)){
+            if(obj instanceof dev.lone.cosmeticscore.api.temporary.CosmeticAccessor){
+                dev.lone.cosmeticscore.api.temporary.CosmeticAccessor accessor = (dev.lone.cosmeticscore.api.temporary.CosmeticAccessor) obj;
 
-            if(accessor.getKey().endsWith("_hat")){
-                return accessor.getGuiModelItem();
+                if(accessor.getKey().endsWith("_hat")){
+                    return accessor.getGuiModelItem();
+                }
             }
         }
         return null;

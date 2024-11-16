@@ -1,9 +1,11 @@
 package com.github.sachin.cosmin.utils;
 
 import com.github.sachin.cosmin.Cosmin;
+import com.github.sachin.prilib.utils.FastItemStack;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.io.FileReader;
@@ -44,7 +46,9 @@ public class MiscItems {
             backButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.BACK_BUTTON), CosminConstants.BACK_BUTTON);
             fillerGlass = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.FILLAR_GLASS),CosminConstants.FILLAR_GLASS);
             enableItem = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.ENABLE_ITEM),CosminConstants.ENABLE_ITEM);
+//            enableItem = new FastItemStack(enableItem).set(CosminConstants.TOGGLE_ITEM_KEY, PersistentDataType.INTEGER,1).get();
             disableItem = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.DISABLE_ITEM),CosminConstants.DISABLE_ITEM);
+//            disableItem = new FastItemStack(disableItem).set(CosminConstants.TOGGLE_ITEM_KEY, PersistentDataType.INTEGER,0).get();
             previousButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.PREVIOUS_BUTTON), CosminConstants.PREVIOUS_BUTTON);
             nextButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.NEXT_BUTTON), CosminConstants.NEXT_BUTTON);
             cosmeticSetButton = ItemBuilder.itemFromFile(config.getConfigurationSection(CosminConstants.COSMETIC_SET_BUTTON), CosminConstants.COSMETIC_SET_BUTTON);

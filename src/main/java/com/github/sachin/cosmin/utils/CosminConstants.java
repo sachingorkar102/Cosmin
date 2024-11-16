@@ -1,5 +1,8 @@
 package com.github.sachin.cosmin.utils;
 
+import com.github.sachin.cosmin.Cosmin;
+import org.bukkit.NamespacedKey;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -83,6 +86,7 @@ public class CosminConstants {
 
     public static final List<String> DEFAULT_GUI_LAYOUT = Arrays.asList("set-button|filler-glass|toggle-head-slot|toggle-chest-slot|toggle-legs-slot|toggle-feet-slot|toggle-offhand-slot|filler-glass|filler-glass",
             "filler-glass|filler-glass|head-slot|chest-slot|legs-slot|feet-slot|offhand-slot|filler-glass|filler-glass");
+    public static final String DEBUG_MODE = "debug-mode";
 
     public static int DEFAULT_INV_SIZE = 18;
 
@@ -99,9 +103,12 @@ public class CosminConstants {
 
     public static final List<Integer> EQUIPMENT_SLOTS = Arrays.asList(5,6,7,8,45);
     public static final List<String> COMPATIBLE_VERSIONS_PRE_NETHER_UPDATE = Arrays.asList("v1_12_R1","v1_13_R1","v1_13_R2","v1_14_R1","v1_15_R1");
-    public static final List<String> COMPATIBLE_VERSIONS_POST_NETHER_UPDATE = Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3","v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_1","v1_20_2","v1_20_4","v1_20_5","v1_20_6");
+    public static final List<String> COMPATIBLE_VERSIONS_POST_NETHER_UPDATE = Arrays.asList("v1_16_R1","v1_16_R2","v1_16_R3","v1_17_R1","v1_18_R1","v1_18_R2","v1_19_R1","v1_19_R2","v1_19_R3","v1_20_1","v1_20_2","v1_20_4","v1_20_5","v1_20_6","v1_21");
 
     public static final boolean ISDEMO  = false;
+
+    public static final NamespacedKey TOGGLE_ITEM_KEY = Cosmin.getKey("toggle-item");
+    public static final NamespacedKey COSMIN_ARMOR_KEY = Cosmin.getKey("cosmin-armor");
 
 
 

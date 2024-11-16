@@ -57,6 +57,12 @@ public class Message {
         sender.sendMessage(getMessage(key));
     }
 
+    public void sendDebugMessage(String message){
+        if(plugin.getConfigUtils().isDebugEnabled()){
+            plugin.getLogger().info(message);
+        }
+    }
+
     public String getPrefix(){
         return messageConfig.getString("prefix");
     }

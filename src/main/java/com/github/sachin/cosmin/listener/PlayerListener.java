@@ -12,6 +12,8 @@ import com.github.sachin.cosmin.utils.ItemBuilder;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,31 +42,50 @@ public class PlayerListener implements Listener{
     public void playerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
         plugin.getEntityIdMap().put(player.getEntityId(), player);
+        plugin.getCommandCoolDown().add(player.getUniqueId());
         new BukkitRunnable(){
             @Override
             public void run() {
-                if(plugin.getConfigUtils().isMySQLEnabled()){
-                    if(plugin.MySQL().isConnected()){
-                        PlayerData playerData = new PlayerData(player.getUniqueId());
-                        if(playerData.playerExists()){
-                            CosminPlayer cosminPlayer = new CosminPlayer(player.getUniqueId(),Arrays.asList(InventoryUtils.base64ToItemStackArray(playerData.getPlayerData())));
-                            cosminPlayer.setPurchasedItems(playerData.getPurchasedItems("PurchasedItems"));
-                            cosminPlayer.setPurchasedSets(playerData.getPurchasedItems("PurchasedSets"));
-                            cosminPlayer.clearNonExsistantArmorItems();
-                            cosminPlayer.computeAndPutEquipmentPairList();
-                            plugin.getPlayerManager().addPlayer(cosminPlayer);
-                            cosminPlayer.setFakeSlotItems();
-                            return;
-                        }
+                if(plugin.getConfigUtils().isMySQLEnabled() && plugin.MySQL().isConnected()){
+                    PlayerData playerData = new PlayerData(player.getUniqueId());
+                    if(playerData.playerExists()){
+                        CosminPlayer cosminPlayer = new CosminPlayer(player.getUniqueId(),plugin.getItemsFromYAML(InventoryUtils.decompressYAMLString(playerData.getPlayerData()),null));
+                        cosminPlayer.setPurchasedItems(playerData.getPurchasedItems("PurchasedItems"));
+                        cosminPlayer.setPurchasedSets(playerData.getPurchasedItems("PurchasedSets"));
+                        cosminPlayer.clearNonExsistantArmorItems();
+                        cosminPlayer.computeAndPutEquipmentPairList();
+                        plugin.getPlayerManager().addPlayer(cosminPlayer);
+                        cosminPlayer.setFakeSlotItems();
+                        plugin.getCommandCoolDown().remove(player.getUniqueId());
+                        return;
                     }
+                    plugin.getCommandCoolDown().remove(player.getUniqueId());
                 }
                 if(plugin.getPlayerManager().containsPlayer(player)){
                     CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
                     cosminPlayer.setFakeSlotItems();
                     cosminPlayer.sendPacketWithinRange(60);
                 }
+                plugin.getCommandCoolDown().remove(player.getUniqueId());
             }
-        }.runTaskLater(plugin, 40);
+        }.runTaskLater(plugin, 20);
+    }
+
+    @EventHandler
+    public void playerQuit(PlayerQuitEvent e){
+        Player player = e.getPlayer();
+        plugin.getEntityIdMap().remove(player.getEntityId());
+        plugin.getCommandCoolDown().remove(player.getUniqueId());
+        if(plugin.getConfigUtils().isMySQLEnabled() && plugin.getPlayerManager().containsPlayer(player)){
+            PlayerData playerData = new PlayerData(player.getUniqueId());
+            CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
+
+            YamlConfiguration yamlConfig = new YamlConfiguration();
+            ConfigurationSection itemsConfig = plugin.convertToYaml(yamlConfig.createSection("items"),cPlayer.getCosminInvContents());
+
+            playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),cPlayer.getPurchasedItems(),cPlayer.getPurchasedSets());
+            plugin.getPlayerManager().removePlayer(player.getUniqueId());
+        }
     }
 
     @EventHandler
@@ -102,18 +123,7 @@ public class PlayerListener implements Listener{
     }
 
 
-    @EventHandler
-    public void playerQuit(PlayerQuitEvent e){
-        Player player = e.getPlayer();
-        plugin.getEntityIdMap().remove(player.getEntityId());
-        if(plugin.getConfigUtils().isMySQLEnabled() && plugin.getPlayerManager().containsPlayer(player)){
-            PlayerData playerData = new PlayerData(player.getUniqueId());
-            CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
-            String data = InventoryUtils.itemStackListToBase64(cPlayer.getCosminInvContents());
-            playerData.updatePlayerData(data,cPlayer.getPurchasedItems(),cPlayer.getPurchasedSets());
-            plugin.getPlayerManager().removePlayer(player.getUniqueId());
-        }
-    }
+
 
     @EventHandler(priority = EventPriority.HIGHEST,ignoreCancelled = true)
     public void playerSwapItemEvent(PlayerSwapHandItemsEvent e){

@@ -2,14 +2,10 @@ package com.github.sachin.cosmin;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -17,6 +13,7 @@ import com.github.sachin.cosmin.armor.ArmorManager;
 import com.github.sachin.cosmin.commands.CommandManager;
 import com.github.sachin.cosmin.commands.CosmeticCommand;
 import com.github.sachin.cosmin.commands.TabComplete;
+import com.github.sachin.cosmin.compat.MMOItemsAPI;
 import com.github.sachin.cosmin.compat.PacketEvents;
 import com.github.sachin.cosmin.database.MySQL;
 import com.github.sachin.cosmin.database.PlayerData;
@@ -29,14 +26,11 @@ import com.github.sachin.cosmin.listener.PlayerListener;
 import com.github.sachin.cosmin.player.CosminPlayer;
 import com.github.sachin.cosmin.player.PlayerManager;
 import com.github.sachin.cosmin.protocol.*;
-import com.github.sachin.cosmin.utils.ConfigUtils;
-import com.github.sachin.cosmin.utils.CosminConstants;
-import com.github.sachin.cosmin.utils.InventoryUtils;
-import com.github.sachin.cosmin.utils.Message;
-import com.github.sachin.cosmin.utils.MiscItems;
+import com.github.sachin.cosmin.utils.*;
 import com.github.sachin.prilib.McVersion;
 import com.github.sachin.prilib.Prilib;
 import com.github.sachin.prilib.nms.NBTItem;
+import com.github.sachin.prilib.utils.FastItemStack;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -44,11 +38,18 @@ import com.google.gson.JsonObject;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -65,6 +66,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private boolean papiEnabled;
 
     private boolean isGrimACEnabled = false;
+    private boolean isMMOItemsEnabled = false;
     private CosminPAPIExpansion papiExpansion;
     public boolean isEconomyEnabled;
     public GuiManager guiManager;
@@ -82,8 +84,12 @@ public final class Cosmin extends JavaPlugin implements Listener{
     private ConfigUtils configUtils;
     private File playerData;
 
+    private File playerDataYML;
+
     private MySQL mySQL;
     private Map<Integer,Player> entityIdMap = new HashMap<>();
+
+    private List<UUID> commandCoolDown = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -122,6 +128,8 @@ public final class Cosmin extends JavaPlugin implements Listener{
             this.saveResource(CosminConstants.MISC_ITEMS_FILE, false);
         }
         playerData = new File(getDataFolder(),CosminConstants.PLAYER_DATA_FILE);
+        playerDataYML = new File(getDataFolder(),"player-data.yml");
+        saveDefaultPlayerDataYML();
         saveDefaultPlayerData();
         // register events
         PluginManager pm = this.getServer().getPluginManager();
@@ -143,6 +151,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         // register packet listeners
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         this.isGrimACEnabled = getServer().getPluginManager().isPluginEnabled("GrimAC");
+        this.isMMOItemsEnabled = getServer().getPluginManager().isPluginEnabled("MMOItems");
         if(isGrimACEnabled){
             getLogger().info("grimac enabled, Registering packet listener for packetevents library");
             PacketEvents.enablePacketEvents();
@@ -190,6 +199,20 @@ public final class Cosmin extends JavaPlugin implements Listener{
         }
     }
 
+    public String getArmorName(FastItemStack fastItem){
+        String armorName = null;
+        if(fastItem.hasKey(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING)){
+            armorName =  fastItem.get(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING);
+        }
+        else if(ItemBuilder.isHatItem(fastItem.get())){
+            armorName = ItemBuilder.getArmorName(fastItem.get());
+        }
+        if(armorName != null && getArmorManager().containsArmor(armorName)){
+            return armorName;
+        }
+        return null;
+    }
+
 
     public void loadPlayerData(){
         
@@ -197,94 +220,235 @@ public final class Cosmin extends JavaPlugin implements Listener{
         if(configUtils.isMySQLEnabled()){
             if(this.mySQL.isConnected()){
                 getLogger().info("Already connected to database not loading data from "+CosminConstants.PLAYER_DATA_FILE);
-                Bukkit.getServer().getOnlinePlayers().forEach(p -> {
-                    PlayerData playerData = new PlayerData(p.getUniqueId());
+                for(String id : mySQL.getPlayers()){
+                    UUID uuid = UUID.fromString(id);
+                    PlayerData playerData = new PlayerData(uuid);
+                    boolean isYamlString = InventoryUtils.isYamlString(playerData.getPlayerData());
                     if(playerData.playerExists()){
-                        List<ItemStack> items = Arrays.asList(InventoryUtils.base64ToItemStackArray(playerData.getPlayerData()));
-                        CosminPlayer cosminPlayer = new CosminPlayer(p.getUniqueId(),items);
+                        List<ItemStack> items;
+                        if(!isYamlString){
+                            items = Arrays.asList(InventoryUtils.base64ToItemStackArray(playerData.getPlayerData()));
+                        }else{
+                            items = getItemsFromYAML(InventoryUtils.decompressYAMLString(playerData.getPlayerData()),null);
+                        }
+                        CosminPlayer cosminPlayer = new CosminPlayer(uuid,items);
                         cosminPlayer.computeAndPutEquipmentPairList();
                         cosminPlayer.setPurchasedItems(playerData.getPurchasedItems("PurchasedItems"));
                         cosminPlayer.setPurchasedSets(playerData.getPurchasedItems("PurchasedSets"));
-                        getPlayerManager().addPlayer(cosminPlayer);
+                        Player player = Bukkit.getPlayer(uuid);
+                        if(player != null && player.isOnline()){
+                            getPlayerManager().addPlayer(cosminPlayer);
+                        }
+                        if(!isYamlString){
+                            YamlConfiguration yamlConfig = new YamlConfiguration();
+                            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents());
+                            playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),cosminPlayer.getPurchasedItems(),cosminPlayer.getPurchasedSets());
+                        }
                     }
-                });
+                }
                 return;
             }
         }
-        try (FileReader reader = new FileReader(playerData)) {
-            JsonObject object = gson.fromJson(reader, JsonObject.class);
-            if(object == null) return;
-            getLogger().info("Loading player data from player-data.json...");
-            playerManager.clear();
-            for (Entry<String,JsonElement> element : object.entrySet()) {
-                UUID uuid = UUID.fromString(element.getKey());
-                JsonObject playerInfo = element.getValue().getAsJsonObject();
-                
-                List<ItemStack> contents = Arrays.asList(InventoryUtils.base64ToItemStackArray(playerInfo.get("contents").getAsString()));
-                if(contents == null || contents.isEmpty()) continue;
-                CosminPlayer cosminPlayer = new CosminPlayer(uuid,contents);
-                JsonArray purchasedItems = playerInfo.get("purchased-items").getAsJsonArray();
-                JsonArray purchasedSets = playerInfo.get("purchased-sets").getAsJsonArray();
-                for(JsonElement e:purchasedItems){
-                    cosminPlayer.addPurchasedItem(e.getAsString());
+        if(playerData.exists()){
+            getLogger().info("loading player data from player-data.json for last time...");
+            try (FileReader reader = new FileReader(playerData)) {
+                JsonObject object = gson.fromJson(reader, JsonObject.class);
+                if(object != null){
+                    playerManager.clear();
+                    for (Entry<String,JsonElement> element : object.entrySet()) {
+                        UUID uuid = UUID.fromString(element.getKey());
+                        JsonObject playerInfo = element.getValue().getAsJsonObject();
+
+                        List<ItemStack> contents = Arrays.asList(InventoryUtils.base64ToItemStackArray(playerInfo.get("contents").getAsString()));
+                        if(contents == null || contents.isEmpty()) continue;
+                        CosminPlayer cosminPlayer = new CosminPlayer(uuid,contents);
+                        JsonArray purchasedItems = playerInfo.get("purchased-items").getAsJsonArray();
+                        JsonArray purchasedSets = playerInfo.get("purchased-sets").getAsJsonArray();
+                        for(JsonElement e:purchasedItems){
+                            cosminPlayer.addPurchasedItem(e.getAsString());
+                        }
+                        for(JsonElement e:purchasedSets){
+                            cosminPlayer.addPurchasedSet(e.getAsString());
+                        }
+                        playerManager.addPlayer(cosminPlayer);
+                    }
+
                 }
-                for(JsonElement e:purchasedSets){
-                    cosminPlayer.addPurchasedSet(e.getAsString());
-                }
-                playerManager.addPlayer(cosminPlayer);
-                
+
+                reader.close();
+            } catch (Exception e) {
+                getLogger().warning("could not load player data");
+                e.printStackTrace();
             }
-            // reader.close();
-        } catch (Exception e) {
-            getLogger().warning("could not load player data");
-            e.printStackTrace();
+            getLogger().info("renaming player-data.json to player-data-disabled.json, since now switching to player-data.yml as storage option");
+            File disabledData = new File(getDataFolder(),"player-data-disabled.json");
+            if(disabledData.exists()){
+                disabledData.delete();
+            }
+
+            playerData.renameTo(disabledData);
+
         }
-        
+        else{
+            YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerDataYML);
+            for(String key : yamlConfiguration.getKeys(false)){
+                ConfigurationSection playerConfig = yamlConfiguration.getConfigurationSection(key);
+                UUID uuid = UUID.fromString(key);
+                List<ItemStack> items = new ArrayList<>();
+                if(playerConfig.isConfigurationSection("items")){
+                    ConfigurationSection itemConfig = playerConfig.getConfigurationSection("items");
+                    items = getItemsFromYAML(null,itemConfig);
+                }
+                else if(playerConfig.isString("items")){
+                    items = getItemsFromYAML(InventoryUtils.decompressYAMLString(playerConfig.getString("items")),null);
+                }
+                CosminPlayer cosminPlayer = new CosminPlayer(uuid,items);
+                cosminPlayer.setPurchasedItems(new HashSet<>(playerConfig.getStringList("purchased-items")));
+                cosminPlayer.setPurchasedSets(new HashSet<>(playerConfig.getStringList("purchased-sets")));
+                playerManager.addPlayer(cosminPlayer);
+            }
+        }
+
+
     }
 
     public void savePlayerData(){
         saveDefaultPlayerData();
         if(configUtils.isMySQLEnabled()){
-            if(this.mySQL != null){
-                if(this.mySQL.isConnected()){
-                    getLogger().info("Already connected to database not saving data to "+CosminConstants.PLAYER_DATA_FILE);
-                    for(CosminPlayer player : getPlayerManager().getCosminPlayers()){
-                        PlayerData playerData = new PlayerData(player.getUuid());
-                        String data = InventoryUtils.itemStackListToBase64(player.getCosminInvContents());
-                        playerData.updatePlayerData(data,player.getPurchasedItems(),player.getPurchasedSets());
-                    }
-                    return;
+            if(this.mySQL != null && this.mySQL.isConnected()){
+                getLogger().info("Already connected to database not saving data to "+CosminConstants.PLAYER_DATA_FILE);
+                for(CosminPlayer player : getPlayerManager().getCosminPlayers()){
+                    PlayerData playerData = new PlayerData(player.getUuid());
+                    YamlConfiguration yamlConfig = new YamlConfiguration();
+                    ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),player.getCosminInvContents());
+//                        String data = InventoryUtils.itemStackListToBase64(player.getCosminInvContents());
+                    playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),player.getPurchasedItems(),player.getPurchasedSets());
                 }
+                return;
             }
         }
         if(playerManager.getCosminPlayers().isEmpty()) return;
-        try (FileWriter writer = new FileWriter(playerData)) {
-            JsonObject object = new JsonObject();
-            getLogger().info("Saving player data to player-data.json...");
-            for(CosminPlayer cosminPlayer: playerManager.getCosminPlayers()){
-                JsonObject playerInfo = new JsonObject();
-                JsonArray purchasedItems = new JsonArray();
-                JsonArray purchasedSets = new JsonArray();
-                for(String i:cosminPlayer.getPurchasedItems()){
-                    purchasedItems.add(i);
-                }
-                for(String i:cosminPlayer.getPurchasedSets()){
-                    purchasedSets.add(i);
-                }
-                playerInfo.addProperty("name", cosminPlayer.getBukkitPlayerOffline().getName());
-                playerInfo.add("purchased-items", purchasedItems);
-                playerInfo.add("purchased-sets", purchasedSets);
-                playerInfo.addProperty("contents", InventoryUtils.itemStackListToBase64(cosminPlayer.getCosminInvContents()));
-                object.add(cosminPlayer.getUuid().toString(), playerInfo);
-            }
-            gson.toJson(object,writer);
-            // writer.close();
-        } catch (Exception e) {
-            getLogger().warning("Could not store player data");
-            e.printStackTrace();
+        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(playerDataYML);
+        for(CosminPlayer cosminPlayer : playerManager.getCosminPlayers()){
+            ConfigurationSection playerConfig = yamlConfiguration.createSection(cosminPlayer.getUuid().toString());
+            playerConfig.set("purchased-items", new ArrayList<>(cosminPlayer.getPurchasedItems()));
+
+            playerConfig.set("purchased-sets",new ArrayList<>(cosminPlayer.getPurchasedSets()));
+            playerConfig.set("name",cosminPlayer.getBukkitPlayerOffline().getName());
+            YamlConfiguration yamlConfig = new YamlConfiguration();
+            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents());
+            playerConfig.set("items",InventoryUtils.compressYAMLString(yamlConfig.saveToString()));
         }
+        try {
+            yamlConfiguration.save(playerDataYML);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if(playerData.exists()){
+            getLogger().info("renaming player-data.json to player-data-disabled.json, since now switching to player-data.yml as storage option");
+            playerData.renameTo(new File(getDataFolder(),"player-data-disabled.json"));
+        }
+//        try (FileWriter writer = new FileWriter(playerData)) {
+//            JsonObject object = new JsonObject();
+//            getLogger().info("Saving player data to player-data.json...");
+//            for(CosminPlayer cosminPlayer: playerManager.getCosminPlayers()){
+//                JsonObject playerInfo = new JsonObject();
+//                JsonArray purchasedItems = new JsonArray();
+//                JsonArray purchasedSets = new JsonArray();
+//                for(String i:cosminPlayer.getPurchasedItems()){
+//                    purchasedItems.add(i);
+//                }
+//                for(String i:cosminPlayer.getPurchasedSets()){
+//                    purchasedSets.add(i);
+//                }
+//                playerInfo.addProperty("name", cosminPlayer.getBukkitPlayerOffline().getName());
+//                playerInfo.add("purchased-items", purchasedItems);
+//                playerInfo.add("purchased-sets", purchasedSets);
+//                playerInfo.addProperty("contents", InventoryUtils.itemStackListToBase64(cosminPlayer.getCosminInvContents()));
+//                object.add(cosminPlayer.getUuid().toString(), playerInfo);
+//            }
+//            gson.toJson(object,writer);
+//            // writer.close();
+//        } catch (Exception e) {
+//            getLogger().warning("Could not store player data");
+//            e.printStackTrace();
+//        }
     }
 
+    public ConfigurationSection convertToYaml(ConfigurationSection itemsConfig,List<ItemStack> items){
+        for(int i=0;i<items.size();i++){
+            ItemStack item = items.get(i);
+            String key = Integer.toString(i);
+            FastItemStack fastItem = new FastItemStack(item);
+            if(item==null){
+                itemsConfig.set(key,new ItemStack(Material.AIR));
+                continue;
+            }
+            else if(item.isSimilar(miscItems.getDisableItem())){
+                fastItem.set(CosminConstants.TOGGLE_ITEM_KEY, PersistentDataType.INTEGER,0);
+                itemsConfig.set(key,fastItem.get());
+            }
+            else if(item.isSimilar(miscItems.getEnableItem())){
+                fastItem.set(CosminConstants.TOGGLE_ITEM_KEY,PersistentDataType.INTEGER,1);
+                itemsConfig.set(key,fastItem.get());
+            }
+            else if(ItemBuilder.isHatItem(item) && !fastItem.hasKey(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING)){
+                itemsConfig.set(key,fastItem.set(CosminConstants.COSMIN_ARMOR_KEY,PersistentDataType.STRING,ItemBuilder.getArmorName(item)).get());
+            }
+            if(getConfigUtils().isCosmeticSetEnabled() && item.isSimilar(miscItems.getCosmeticSetButton())){continue;}
+            if(item.isSimilar(miscItems.getFillerGlass())){continue;}
+            if(isMMOItemsEnabled && MMOItemsAPI.isMMOItem(item)){
+                itemsConfig.set(key,MMOItemsAPI.setMMOItemInfo(item));
+                continue;
+            }
+            itemsConfig.set(key,item);
+        }
+        return itemsConfig;
+    }
+
+
+    public List<ItemStack> getItemsFromYAML(String yamlString,ConfigurationSection itemConfig){
+        List<ItemStack> items = Arrays.asList(new ItemStack[18]);
+        if(itemConfig == null && yamlString != null){
+            try {
+                YamlConfiguration yamlConfig = new YamlConfiguration();
+                yamlConfig.loadFromString(yamlString);
+                itemConfig = yamlConfig.getConfigurationSection("items");
+            } catch (InvalidConfigurationException e) {
+                return items;
+            }
+        }
+
+        for(int i=0;i<18;i++){
+            if(CosminConstants.FILLAR_SLOTS.contains(i)) items.set(i,miscItems.getFillerGlass());
+            else if(itemConfig.contains(Integer.toString(i))){
+                ItemStack item = itemConfig.getItemStack(Integer.toString(i));
+                if(item==null || item.getType().isAir()) {
+                    items.set(i, item);
+                    continue;
+                }
+                FastItemStack fastItem = new FastItemStack(item);
+                String armorName = getArmorName(fastItem);
+                if(fastItem.hasKey(CosminConstants.TOGGLE_ITEM_KEY,PersistentDataType.INTEGER)){
+                    items.set(i,fastItem.get(CosminConstants.TOGGLE_ITEM_KEY,PersistentDataType.INTEGER)==0 ? miscItems.getDisableItem() : miscItems.getEnableItem());
+                }
+                else if(armorName != null){
+                    items.set(i,getArmorManager().getArmor(armorName).getItem());
+                }
+                else if(isMMOItemsEnabled && fastItem.hasKey(MMOItemsAPI.ID,PersistentDataType.STRING)){
+                    items.set(i,MMOItemsAPI.getMMOItem(item));
+                }
+                else{
+                    items.set(i,item);
+                }
+            }
+
+        }
+        if(getConfigUtils().isCosmeticSetEnabled()){
+            items.set(0,miscItems.getCosmeticSetButton());
+        }
+        return items;
+    }
 
     private boolean setupVersion(){
         if(CosminConstants.COMPATIBLE_VERSIONS_PRE_NETHER_UPDATE.contains(prilib.getBukkitVersion())){
@@ -292,7 +456,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
             getLogger().info("Running pre nether update");
             return true;
         }
-        else if(CosminConstants.COMPATIBLE_VERSIONS_POST_NETHER_UPDATE.contains(prilib.getBukkitVersion())){
+        else if(prilib.getMcVersion().isAtLeast(new McVersion(1,16))){
             getLogger().info("Running post nether update");
             postNetherUpdate = true;
             return true;
@@ -321,6 +485,10 @@ public final class Cosmin extends JavaPlugin implements Listener{
         this.getCommand("cosmin").setTabCompleter(new TabComplete(this));
         registerCommand("cosmetic", new CosmeticCommand(this));
         
+    }
+
+    public static NamespacedKey getKey(String key){
+        return new NamespacedKey(Cosmin.getInstance(),key);
     }
 
     private void registerCommand(String fallback, BukkitCommand command) {
@@ -363,9 +531,16 @@ public final class Cosmin extends JavaPlugin implements Listener{
     }
 
     public void saveDefaultPlayerData(){
-        if(!playerData.exists()){
-            getLogger().info("Could not find player-data.json, generating one...");
-            this.saveResource(CosminConstants.PLAYER_DATA_FILE, false);
+//        if(!playerData.exists()){
+//            getLogger().info("Could not find player-data.json, generating one...");
+//            this.saveResource(CosminConstants.PLAYER_DATA_FILE, false);
+//        }
+    }
+
+    public void saveDefaultPlayerDataYML(){
+        if(!playerDataYML.exists()){
+            getLogger().info("Could not find player-data.yml, generating one...");
+            this.saveResource("player-data.yml", false);
         }
     }
 
@@ -423,6 +598,9 @@ public final class Cosmin extends JavaPlugin implements Listener{
         return isEconomyEnabled;
     }
 
+    public boolean isMMOItemsEnabled() {
+        return isMMOItemsEnabled;
+    }
 
     public VaultHook getVaultEco() {
         return vaultEco;
@@ -432,6 +610,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
         return playerPointsEco;
     }
 
-
-
+    public List<UUID> getCommandCoolDown() {
+        return commandCoolDown;
+    }
 }
