@@ -217,9 +217,20 @@ public final class Cosmin extends JavaPlugin implements Listener{
     public void loadPlayerData(){
         
         saveDefaultPlayerData();
-        if(configUtils.isMySQLEnabled()){
-            if(this.mySQL.isConnected()){
-                getLogger().info("Already connected to database not loading data from "+CosminConstants.PLAYER_DATA_FILE);
+        if(configUtils.isMySQLEnabled() && mySQL.isConnected()){
+            getLogger().info("Already connected to database not loading data from "+CosminConstants.PLAYER_DATA_FILE);
+            if(mySQL.hasDataUpdated()){
+                for(Player player : Bukkit.getOnlinePlayers()){
+                    PlayerData playerData = new PlayerData(player.getUniqueId());
+                    List<ItemStack> items = getItemsFromYAML(InventoryUtils.decompressYAMLString(playerData.getPlayerData()),null);
+                    CosminPlayer cosminPlayer = new CosminPlayer(player.getUniqueId(),items);
+                    cosminPlayer.computeAndPutEquipmentPairList();
+                    cosminPlayer.setPurchasedItems(playerData.getPurchasedItems("PurchasedItems"));
+                    cosminPlayer.setPurchasedSets(playerData.getPurchasedItems("PurchasedSets"));
+                    getPlayerManager().addPlayer(cosminPlayer);
+                }
+
+            }else{
                 for(String id : mySQL.getPlayers()){
                     UUID uuid = UUID.fromString(id);
                     PlayerData playerData = new PlayerData(uuid);
@@ -241,13 +252,15 @@ public final class Cosmin extends JavaPlugin implements Listener{
                         }
                         if(!isYamlString){
                             YamlConfiguration yamlConfig = new YamlConfiguration();
-                            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents());
+                            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents(),true);
                             playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),cosminPlayer.getPurchasedItems(),cosminPlayer.getPurchasedSets());
                         }
                     }
                 }
-                return;
+                mySQL.changeDataUpdateStatus();
             }
+            return;
+
         }
         if(playerData.exists()){
             getLogger().info("loading player data from player-data.json for last time...");
@@ -320,7 +333,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
                 for(CosminPlayer player : getPlayerManager().getCosminPlayers()){
                     PlayerData playerData = new PlayerData(player.getUuid());
                     YamlConfiguration yamlConfig = new YamlConfiguration();
-                    ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),player.getCosminInvContents());
+                    ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),player.getCosminInvContents(),false);
 //                        String data = InventoryUtils.itemStackListToBase64(player.getCosminInvContents());
                     playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),player.getPurchasedItems(),player.getPurchasedSets());
                 }
@@ -336,7 +349,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
             playerConfig.set("purchased-sets",new ArrayList<>(cosminPlayer.getPurchasedSets()));
             playerConfig.set("name",cosminPlayer.getBukkitPlayerOffline().getName());
             YamlConfiguration yamlConfig = new YamlConfiguration();
-            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents());
+            ConfigurationSection itemsConfig = convertToYaml(yamlConfig.createSection("items"),cosminPlayer.getCosminInvContents(),false);
             playerConfig.set("items",InventoryUtils.compressYAMLString(yamlConfig.saveToString()));
         }
         try {
@@ -375,7 +388,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
 //        }
     }
 
-    public ConfigurationSection convertToYaml(ConfigurationSection itemsConfig,List<ItemStack> items){
+    public ConfigurationSection convertToYaml(ConfigurationSection itemsConfig,List<ItemStack> items,boolean convertMMOItem){
         for(int i=0;i<items.size();i++){
             ItemStack item = items.get(i);
             String key = Integer.toString(i);
@@ -397,7 +410,7 @@ public final class Cosmin extends JavaPlugin implements Listener{
             }
             if(getConfigUtils().isCosmeticSetEnabled() && item.isSimilar(miscItems.getCosmeticSetButton())){continue;}
             if(item.isSimilar(miscItems.getFillerGlass())){continue;}
-            if(isMMOItemsEnabled && MMOItemsAPI.isMMOItem(item)){
+            if(isMMOItemsEnabled && MMOItemsAPI.isMMOItem(item) && convertMMOItem){
                 itemsConfig.set(key,MMOItemsAPI.setMMOItemInfo(item));
                 continue;
             }

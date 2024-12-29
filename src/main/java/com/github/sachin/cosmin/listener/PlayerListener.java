@@ -81,7 +81,7 @@ public class PlayerListener implements Listener{
             CosminPlayer cPlayer = plugin.getPlayerManager().getPlayer(player);
 
             YamlConfiguration yamlConfig = new YamlConfiguration();
-            ConfigurationSection itemsConfig = plugin.convertToYaml(yamlConfig.createSection("items"),cPlayer.getCosminInvContents());
+            ConfigurationSection itemsConfig = plugin.convertToYaml(yamlConfig.createSection("items"),cPlayer.getCosminInvContents(),false);
 
             playerData.updatePlayerData(InventoryUtils.compressYAMLString(yamlConfig.saveToString()),cPlayer.getPurchasedItems(),cPlayer.getPurchasedSets());
             plugin.getPlayerManager().removePlayer(player.getUniqueId());

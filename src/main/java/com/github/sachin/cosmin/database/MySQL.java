@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MySQL {
 
@@ -21,6 +22,8 @@ public class MySQL {
     private boolean validConnection = false;
     private HikariDataSource dataSource;
     private String table;
+
+    public static final UUID DATA_CHANGED_UUID = UUID.fromString("13469a69-6ef8-4144-89b8-93e4e5987654");
     
 
     public MySQL(Cosmin plugin){
@@ -129,6 +132,33 @@ public class MySQL {
                 e.printStackTrace();
             }
         });
+    }
+
+    public boolean hasDataUpdated(){
+        try {
+            PreparedStatement pStatement = getConnection().prepareStatement("SELECT * FROM "+getTable()+" WHERE UUID=?");
+            pStatement.setString(1, DATA_CHANGED_UUID.toString());
+            ResultSet result = pStatement.executeQuery();
+            return result.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public void changeDataUpdateStatus(){
+        try {
+            PreparedStatement pStatement = getConnection().prepareStatement("INSERT INTO "+getTable()+"(`Player`,`UUID`,`Contents`,`PurchasedItems`,`PurchasedSets`) VALUES (?,?,?,?,?)");
+            pStatement.setString(1, "data_updated_entry");
+            pStatement.setString(2, DATA_CHANGED_UUID.toString());
+            pStatement.setString(3, " ");
+            pStatement.setString(4, " ");
+            pStatement.setString(5, " ");
+            pStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getTable() {

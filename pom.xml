@@ -5,7 +5,7 @@
 
     <groupId>com.github.sachin.cosmin</groupId>
     <artifactId>Cosmin</artifactId>
-    <version>8.2</version>
+    <version>8.3</version>
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>

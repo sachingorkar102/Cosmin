@@ -56,8 +56,6 @@ public class PlayerData {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Bukkit.getScheduler().runTaskAsynchronously(Cosmin.getInstance(), () -> {
-        // });
     }
 
     public void updatePlayerData(String data,Set<String> purchasedItems,Set<String> purchasedSets){

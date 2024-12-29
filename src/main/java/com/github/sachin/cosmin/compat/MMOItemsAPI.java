@@ -40,9 +40,10 @@ public class MMOItemsAPI {
         type = fItem.get(TYPE,PersistentDataType.STRING);
         id = fItem.get(ID,PersistentDataType.STRING);
         tier = fItem.get(TIER,PersistentDataType.STRING);
-        level = fItem.get(LEVEL,PersistentDataType.INTEGER);
+        level = fItem.hasKey(LEVEL,PersistentDataType.INTEGER) ? fItem.get(LEVEL,PersistentDataType.INTEGER) : 0;
+        if(level==-1) level = 0;
 
-        if(type != null && id != null && tier != null && level != -1){
+        if(type != null && id != null && tier != null){
             TierManager tiers = MMOItems.plugin.getTiers();
             boolean tierExists = tiers.has(tier);
             TypeManager types = MMOItems.plugin.getTypes();
@@ -54,6 +55,7 @@ public class MMOItemsAPI {
                 return MMOItem;
             }
         }
+        Cosmin.getInstance().getLogger().info("Could not find MMOItem with ID: "+id+" and TYPE: "+type);
         return item;
     }
 }
