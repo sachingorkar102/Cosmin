@@ -53,11 +53,12 @@ public class CosmeticGui extends GuiHolder{
 
     public void open(){
         List<ItemStack> contents;
-        if(!plugin.getPlayerManager().containsPlayer(player)){
-            plugin.getMessageManager().sendDebugMessage("Creating player data for "+player.getName());
-            plugin.getPlayerManager().createCosminPlayer(player);
+        Player tarPlayer = getPlayer();
+        if(!plugin.getPlayerManager().containsPlayer(tarPlayer)){
+            plugin.getMessageManager().sendDebugMessage("Creating player data for "+tarPlayer.getName());
+            plugin.getPlayerManager().createCosminPlayer(tarPlayer);
         }
-        CosminPlayer cosminPlayer = plugin.getPlayerManager().getPlayer(player);
+        CosminPlayer cosminPlayer = getCosminPlayer();
         contents = cosminPlayer.getCosminInvContents();
         for(int slot:fillerSlots.keySet()){
             inventory.setItem(slot,fillerSlots.get(slot));
@@ -90,7 +91,7 @@ public class CosmeticGui extends GuiHolder{
             inventory.setItem(setButtonSlot, plugin.miscItems.getCosmeticSetButton());
         }
 
-        plugin.getMessageManager().sendDebugMessage("Displaying cosmetic inventory for "+player.getName());
+        plugin.getMessageManager().sendDebugMessage("Displaying cosmetic inventory for "+tarPlayer.getName());
         player.openInventory(inventory);
     }
 
@@ -128,7 +129,7 @@ public class CosmeticGui extends GuiHolder{
         plugin.getPlayerManager().addPlayer(cosminPlayer);
         new BukkitRunnable(){
             public void run() {
-                if(player.isOnline() && !(player.getOpenInventory().getTopInventory().getHolder() instanceof PagedGui)){
+                if(getPlayer().isOnline() && !(player.getOpenInventory().getTopInventory().getHolder() instanceof PagedGui)){
                     cosminPlayer.sendPacketWithinRange(60);
                     cosminPlayer.setFakeSlotItems();
                 }
